@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1769e0">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
 <meta name="description" content="REV؛ همراه کاربردی سفر با خودروی برقی">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
@@ -11,7 +12,10 @@
 <style>
 :root{color-scheme:light;--blue:#1769e0;--blue-dark:#1256bd;--blue-soft:#eaf2ff;--ink:#182230;--muted:#697586;--line:#e7ebf1;--bg:#fff;--surface:#fff}
 *{box-sizing:border-box}
-html{background:#fff}
+html{background:#fff!important;color-scheme:light} 
+:root{color-scheme:light!important} 
+body,.app-shell,main,header,.list,.item,.help-link,.primary-box{background-color:#fff} 
+body{color:#182230!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Vazirmatn,Vazir,Tahoma,sans-serif;padding-bottom:94px;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
 button,a{touch-action:manipulation}
@@ -54,7 +58,7 @@ main{padding-top:24px}
 .nav a.active{background:#fff;color:var(--blue);font-weight:850}
 .nav a:active{background:#dce9ff;color:var(--blue)}
 footer{text-align:center;color:#8993a3;font-size:10px;padding:24px 0 6px}
-@media(min-width:700px){body{background:#f5f7fb}.app-shell{max-width:560px;margin:18px auto;background:#fff;min-height:calc(100vh - 36px);border:1px solid var(--line);border-radius:20px;overflow:hidden;position:relative;padding-bottom:0}.bottom{position:sticky;margin-top:12px}.wrap{width:calc(100% - 36px)}header{position:sticky}}
+@media(min-width:700px){body{background:#fff!important}.app-shell{max-width:560px;margin:18px auto;background:#fff;min-height:calc(100vh - 36px);border:1px solid var(--line);border-radius:20px;overflow:hidden;position:relative;padding-bottom:0}.bottom{position:sticky;margin-top:12px}.wrap{width:calc(100% - 36px)}header{position:sticky}}
 </style>
 </head>
 <body>
