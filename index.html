@@ -26,7 +26,7 @@ header{position:sticky;top:0;z-index:5;background:#ffffffed;border-bottom:1px so
 .mark{width:35px;height:35px;border-radius:11px;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:21px;font-weight:900}
 .brand-name{font-size:20px;font-weight:900;line-height:1.15;letter-spacing:.2px}
 .brand-sub{font-size:10px;color:var(--muted);display:block;margin-top:2px}
-.profile{width:39px;height:39px;border:1px solid var(--line);border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--blue);font-size:20px}
+.profile{width:39px;height:39px;flex:0 0 39px;border:1px solid var(--line);border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--blue);font-size:20px;overflow:hidden;padding:0;line-height:0}.profile img{display:block;width:100%;height:100%;min-width:100%;min-height:100%;max-width:none;max-height:none;object-fit:cover;object-position:50% 50%;border-radius:50%;margin:0;padding:0;border:0;box-sizing:border-box}
 main{padding-top:24px}
 .intro{margin-bottom:20px}
 .intro h1{font-size:23px;line-height:1.5;margin:0 0 4px;font-weight:850;letter-spacing:-.3px}
@@ -79,5 +79,26 @@ footer{text-align:center;color:#8993a3;font-size:10px;padding:24px 0 6px}
 <a href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg></i>خدمات</a>
 </div></nav>
 </div>
+<script>
+/* نمایش عکس پروفایل انتخاب‌شده در آواتار دایره‌ای صفحه اصلی اپ REV */
+(async function loadHomeProfileAvatar(){
+  const avatarLink=document.querySelector('a.profile');
+  if(!avatarLink)return;
+  try{
+    const response=await fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'});
+    if(!response.ok)return;
+    const result=await response.json();
+    const avatar=result?.user?.avatar_data;
+    if(!result?.success||typeof avatar!=='string'||!/^data:image\/(?:jpeg|png|webp);base64,/i.test(avatar))return;
+    const img=document.createElement('img');
+    img.src=avatar;
+    img.alt='';
+    img.width=39;
+    img.height=39;
+    img.decoding='async';
+    img.onload=()=>{avatarLink.replaceChildren(img);};
+  }catch(_error){/* در صورت نبود ورود یا در دسترس نبودن API، آیکون پیش‌فرض حفظ می‌شود. */}
+})();
+</script>
 <script src="./register-sw.js" defer></script>
 </body></html>
