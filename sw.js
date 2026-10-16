@@ -1,5 +1,5 @@
-const CACHE_NAME = "rev-mobile-shell-v8";
-const SHELL = ["./", "./index.html", "./trips.html", "./account.html", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
+const CACHE_NAME = "rev-mobile-shell-v9";
+const SHELL = ["./", "./index.html", "./trips.html", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
