@@ -8,8 +8,15 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#080b0d",
-  "theme_color": "#080b0d",
+  "background_color": "#ffffff",
+  "theme_color": "#1769e0",
   "orientation": "portrait",
-  "icons": [{"src":"./rev-app-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "icons": [
+    {
+      "src": "./rev-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
