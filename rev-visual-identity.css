@@ -1,28 +1,30 @@
-/* REV Mobile Visual Identity — white surfaces, electric blue actions */
+/* REV Mobile Visual Identity v2 — fixed white/blue design */
 :root{
-  color-scheme:light!important;
-  --rev-blue:#0866ff;
-  --rev-blue-deep:#064fc4;
-  --rev-blue-soft:#edf4ff;
-  --rev-ink:#17253b;
-  --rev-muted:#65758b;
-  --rev-line:#e3eaf4;
-  --rev-white:#fff;
+ color-scheme:light!important;
+ --blue:#0866ff!important;--blue-dark:#0754d6!important;--blue-soft:#edf4ff!important;
+ --ink:#17253b!important;--muted:#65758b!important;--line:#e2eaf4!important;
+ --bg:#ffffff!important;--surface:#ffffff!important;--green:#0866ff!important;
 }
-html,body{background:#fff!important;color:var(--rev-ink)!important;color-scheme:light!important}
-body{font-family:Vazirmatn,Vazir,Tahoma,sans-serif!important}
-header{background:rgba(255,255,255,.96)!important;border-color:var(--rev-line)!important}
-.mark{background:var(--rev-blue)!important;color:#fff!important;border-radius:11px!important}
-.primary-box,.hero{background:#f3f7ff!important;border:1px solid #dce8ff!important;box-shadow:none!important}
-.primary,.btn.primary{background:var(--rev-blue)!important;border-color:var(--rev-blue)!important;color:#fff!important;box-shadow:0 3px 0 var(--rev-blue-deep)!important}
-.primary:active,.btn.primary:active{background:var(--rev-blue-deep)!important}
-.item,.list,.metric,.trip,.help-link{background:#fff!important;border-color:var(--rev-line)!important}
+html,body{background:#fff!important;background-image:none!important;color:#17253b!important;color-scheme:light!important}
+body{font-family:Vazirmatn,Vazir,IRANSansX,Tahoma,sans-serif!important}
+.app-shell{background:#fff!important;color:#17253b!important}
+header,.top,.wrap,main,footer{color:#17253b!important}
+header{background:rgba(255,255,255,.97)!important;background-image:none!important;border-bottom:1px solid #e2eaf4!important;box-shadow:0 2px 14px rgba(23,37,59,.04)!important}
+.brand-name,.intro h1,.section-head h2,.copy b,.primary-box h2{color:#17253b!important}
+.brand-sub,.intro p,.primary-box p,.copy small,footer,.section-head span{color:#65758b!important}
+.mark{background:#0866ff!important;color:#fff!important;border-radius:11px!important}
+.primary-box,.hero{background:#f5f8ff!important;background-image:none!important;border:1px solid #dce8ff!important;color:#17253b!important;box-shadow:none!important}
+.primary,.btn.primary{background:#0866ff!important;background-image:none!important;border:1px solid #0866ff!important;color:#fff!important;box-shadow:0 3px 0 #0754d6!important}
+.primary:active,.btn.primary:active{background:#0754d6!important}
+.list,.item,.metric,.trip,.help-link,.card,.panel{background:#fff!important;background-image:none!important;color:#17253b!important;border-color:#e2eaf4!important;box-shadow:none!important}
 .item:active{background:#f5f8ff!important}
-.ico{background:var(--rev-blue-soft)!important;color:var(--rev-blue)!important}
-.bottom{background:#fff!important;border-top:1px solid var(--rev-line)!important;box-shadow:0 -5px 20px #1422380d!important}
-.nav a{color:#687991!important}
-.nav a.active{background:var(--rev-blue-soft)!important;color:var(--rev-blue)!important;font-weight:850!important}
-.nav a:active{background:#e6efff!important;color:var(--rev-blue)!important}
-.profile{background:#fff!important;color:var(--rev-blue)!important;border-color:var(--rev-line)!important}
-.pill{background:#edf4ff!important;color:var(--rev-blue)!important}
-@media(min-width:700px){body{background:#f7f9fc!important}.app-shell{background:#fff!important}}
+.ico,.help-link .ico,.pill{background:#edf4ff!important;color:#0866ff!important;border-color:#dce8ff!important}
+.bottom{background:#fff!important;background-image:none!important;border-top:1px solid #e2eaf4!important;box-shadow:0 -5px 20px rgba(20,34,56,.06)!important}
+.nav a{color:#65758b!important;background:transparent!important}
+.nav a.active{background:#edf4ff!important;color:#0866ff!important;font-weight:850!important}
+.nav a:active{background:#e6efff!important;color:#0866ff!important}
+.profile{background:#fff!important;color:#0866ff!important;border-color:#e2eaf4!important}
+input,select,textarea{background:#fff!important;color:#17253b!important;border-color:#dce6f4!important;color-scheme:light!important}
+button:focus-visible,a:focus-visible{outline:3px solid #86b5ff!important;outline-offset:2px!important}
+@media(min-width:700px){html,body{background:#f5f8fc!important}.app-shell{background:#fff!important;border-color:#e2eaf4!important}}
+@media(prefers-color-scheme:dark){html,body,.app-shell,header,main,footer,.list,.item,.help-link{background:#fff!important;color:#17253b!important;color-scheme:light!important}}
