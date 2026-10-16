@@ -80,24 +80,37 @@ footer{text-align:center;color:#8993a3;font-size:10px;padding:24px 0 6px}
 </div></nav>
 </div>
 <script>
-/* نمایش عکس پروفایل انتخاب‌شده در آواتار دایره‌ای صفحه اصلی اپ REV */
-(async function loadHomeProfileAvatar(){
+/* نمایش فوری عکس ذخیره‌شده و همگام‌سازی آن با حساب کاربری */
+(function loadHomeProfileAvatar(){
   const avatarLink=document.querySelector('a.profile');
   if(!avatarLink)return;
-  try{
-    const response=await fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'});
-    if(!response.ok)return;
-    const result=await response.json();
-    const avatar=result?.user?.avatar_data;
-    if(!result?.success||typeof avatar!=='string'||!/^data:image\/(?:jpeg|png|webp);base64,/i.test(avatar))return;
+  const cacheKey='rev_home_avatar_v1';
+  const validAvatar=value=>typeof value==='string'&&/^data:image\/(?:jpeg|png|webp);base64,/i.test(value);
+  function showAvatar(data){
+    if(!validAvatar(data))return;
     const img=document.createElement('img');
-    img.src=avatar;
+    img.src=data;
     img.alt='';
     img.width=39;
     img.height=39;
     img.decoding='async';
-    img.onload=()=>{avatarLink.replaceChildren(img);};
-  }catch(_error){/* در صورت نبود ورود یا در دسترس نبودن API، آیکون پیش‌فرض حفظ می‌شود. */}
+    img.onload=()=>avatarLink.replaceChildren(img);
+  }
+  /* کش محلی باعث می‌شود هنگام بازگشت به صفحه، عکس منتظر API نماند. */
+  try{const cached=localStorage.getItem(cacheKey);if(validAvatar(cached))showAvatar(cached);}catch(_error){}
+  fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'})
+    .then(response=>{if(!response.ok)throw new Error('profile unavailable');return response.json();})
+    .then(result=>{
+      if(!result?.success)return;
+      const avatar=result?.user?.avatar_data;
+      if(validAvatar(avatar)){
+        try{localStorage.setItem(cacheKey,avatar);}catch(_error){}
+        showAvatar(avatar);
+      }else{
+        try{localStorage.removeItem(cacheKey);}catch(_error){}
+      }
+    })
+    .catch(()=>{/* در صورت قطع شبکه، عکس کش‌شده باقی می‌ماند. */});
 })();
 </script>
 <script src="./register-sw.js" defer></script>
