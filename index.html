@@ -9,110 +9,100 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
 <title>REV | همراه سفر برقی</title>
-<style>
-:root{color-scheme:light;--blue:#0866ff;--blue-dark:#064fc4;--blue-soft:#edf4ff;--ink:#142238;--muted:#65758b;--line:#e2eaf5;--bg:#fff;--surface:#fff}
-*{box-sizing:border-box}
-html{background:#fff!important;color-scheme:light} 
-:root{color-scheme:light!important} 
-body,.app-shell,main,header,.list,.item,.help-link,.primary-box{background-color:#fff} 
-body{color:#182230!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Vazirmatn,Vazir,Tahoma,sans-serif;padding-bottom:164px;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
-button,a{touch-action:manipulation}
-.wrap{width:min(560px,100% - 32px);margin-inline:auto}
-header{position:sticky;top:0;z-index:5;background:#ffffffed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
-.top{height:60px;display:flex;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:9px}
-.mark{width:35px;height:35px;border-radius:11px;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:21px;font-weight:900}
-.brand-name{font-size:20px;font-weight:900;line-height:1.15;letter-spacing:.2px}
-.brand-sub{font-size:10px;color:var(--muted);display:block;margin-top:2px}
-.profile{width:39px;height:39px;flex:0 0 39px;border:1px solid var(--line);border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--blue);font-size:20px;overflow:hidden;padding:0;line-height:0}.profile img{display:block;width:100%;height:100%;min-width:100%;min-height:100%;max-width:none;max-height:none;object-fit:cover;object-position:50% 50%;border-radius:50%;margin:0;padding:0;border:0;box-sizing:border-box}
-main{padding-top:24px}
-.intro{margin-bottom:20px}
-.intro h1{font-size:23px;line-height:1.5;margin:0 0 4px;font-weight:850;letter-spacing:-.3px}
-.intro p{margin:0;color:var(--muted);font-size:13px}
-.primary-box{padding:18px 16px 16px;border:1px solid #dbe7fb;border-radius:16px;background:#f1f6ff;margin-bottom:27px}
-.primary-box h2{font-size:16px;margin:0 0 4px}
-.primary-box p{font-size:12px;color:var(--muted);margin:0 0 15px}
-.primary{min-height:50px;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:var(--blue);color:#fff;border-radius:11px;padding:12px 15px;font-size:15px;font-weight:800;box-shadow:0 3px 0 #0e4fae}
-.primary:active{background:var(--blue-dark);transform:translateY(1px);box-shadow:0 2px 0 #0e4fae}
-.section{margin-top:25px}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin:0 1px 10px}
-.section-head h2{font-size:16px;margin:0;font-weight:850}
-.section-head span{font-size:11px;color:var(--muted)}
-.list{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
-.item{display:flex;align-items:center;gap:12px;min-height:70px;padding:12px 13px;border-bottom:1px solid var(--line);background:#fff}
-.item:last-child{border-bottom:0}
-.item:active{background:#f6f9ff}
-.ico{width:44px;height:44px;flex:0 0 44px;border-radius:14px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-size:21px;font-style:normal}.ico svg{width:23px;height:23px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav svg{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.copy{flex:1;min-width:0}
-.copy b{display:block;font-size:13px;font-weight:750}
-.copy small{display:block;color:var(--muted);font-size:11px;margin-top:2px;line-height:1.5}
-.arrow{color:#98a2b3;font-size:22px;line-height:1}
-.help-link{display:flex;align-items:center;gap:12px;padding:13px;margin-top:10px;border:1px solid var(--line);border-radius:13px;background:#fff}
-.help-link .ico{background:#f0f5ff}
-.bottom{position:fixed;z-index:10;bottom:0;left:0;right:0;background:linear-gradient(115deg,#0758e8,#087bff);padding:6px 8px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -5px 22px #0758e82b}
-.nav{width:min(560px,100%);margin:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
-.nav a{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#dce9ff;font-size:10px;border-radius:10px}
-.nav i{font-style:normal;font-size:21px;line-height:1.2;display:grid;place-items:center}.profile svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nav a.active{background:#fff;color:var(--blue);font-weight:850}
-.nav a:active{background:#dce9ff;color:var(--blue)}
-footer{text-align:center;color:#8993a3;font-size:10px;padding:24px 0 6px}
-@media(min-width:700px){body{background:#fff!important}.app-shell{max-width:560px;margin:18px auto;background:#fff;min-height:calc(100vh - 36px);border:1px solid var(--line);border-radius:20px;overflow:hidden;position:relative;padding-bottom:0}.bottom{position:sticky;margin-top:12px}.wrap{width:calc(100% - 36px)}header{position:sticky}}
-</style>
-<link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-2">
+<link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
 </head>
-<body>
+<body class="has-bottom-nav">
 <div class="app-shell">
-<header><div class="wrap top">
-<a class="brand" href="./index.html" aria-label="صفحه خانه REV"><span class="mark">R</span><span><span class="brand-name">REV</span><span class="brand-sub">همراه سفر برقی</span></span></a>
-<a class="profile" href="https://mojtabaalimi64-cloud.github.io/rev/account.html" aria-label="حساب کاربری"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.4 3.1-5.2 7-5.2s6.4 1.8 7 5.2"/></svg></a>
+
+<header class="app-header"><div class="wrap top">
+  <div class="greet">
+    <a class="avatar" id="avatarLink" href="https://mojtabaalimi64-cloud.github.io/rev/account.html" aria-label="حساب کاربری">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.4 3.1-5.2 7-5.2s6.4 1.8 7 5.2"/></svg>
+    </a>
+    <div><div class="hello" id="greetName">سلام 👋</div><div class="sub">آماده‌ای برای سفر برقی؟</div></div>
+  </div>
+  <a class="icon-btn" href="https://mojtabaalimi64-cloud.github.io/rev/news.html" aria-label="اطلاعیه‌ها">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg>
+    <span class="dot" aria-hidden="true"></span>
+  </a>
 </div></header>
+
 <main class="wrap">
-<section class="intro"><h1>سفر برقی، ساده‌تر</h1><p>ابزارهای موردنیاز سفر با خودروی برقی، یک‌جا.</p></section>
-<section class="primary-box" aria-labelledby="trip-title"><h2 id="trip-title">برای سفر آماده‌ای؟</h2><p>مبدأ و مقصد را مشخص کن و مسیرت را با توقف‌های شارژ برنامه‌ریزی کن.</p><a class="primary" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span>شروع برنامه‌ریزی سفر</span><span aria-hidden="true">←</span></a></section>
-<footer>REV · همراه سفر برقی تو</footer>
+  <section class="hero-card" aria-labelledby="heroTitle">
+    <div class="bolt" aria-hidden="true">⚡</div>
+    <h1 id="heroTitle">سفر برقی، ساده‌تر</h1>
+    <p>مبدأ و مقصد را مشخص کن؛ مسیرت را با توقف‌های شارژ برنامه‌ریزی کن.</p>
+    <a class="btn-light" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span>شروع برنامه‌ریزی سفر</span><span aria-hidden="true">←</span></a>
+  </section>
+
+  <section class="section" aria-labelledby="quickTitle">
+    <div class="section-head"><h2 id="quickTitle">دسترسی سریع</h2></div>
+    <div class="quick-grid">
+      <a class="quick-card" href="https://mojtabaalimi64-cloud.github.io/rev/nearby-map.html">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/><path d="M12 7.5v5M9.5 10h5"/></svg></span>
+        <b>شارژ سریع</b><small>نزدیک‌ترین ایستگاه‌ها روی نقشه</small>
+      </a>
+      <a class="quick-card" href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l1.5-4h13L20 9M4 9v10h16V9M4 9h16M9 19v-6h6v6"/></svg></span>
+        <b>فروشگاه</b><small>لوازم و خدمات خودروی برقی</small>
+      </a>
+      <a class="quick-card" href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19 12a7 7 0 0 0-.14-1.4l2-1.55-2-3.46-2.35.94A7 7 0 0 0 14.1 5.1L13.75 2.6h-3.5L9.9 5.1a7 7 0 0 0-2.41 1.43l-2.35-.94-2 3.46 2 1.55a7 7 0 0 0 0 2.8l-2 1.55 2 3.46 2.35-.94a7 7 0 0 0 2.41 1.43l.35 2.5h3.5l.35-2.5a7 7 0 0 0 2.41-1.43l2.35.94 2-3.46-2-1.55c.09-.46.14-.93.14-1.4Z"/></svg></span>
+        <b>تعمیرگاه</b><small>تعمیر تخصصی خودروی برقی</small>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="myTripsTitle">
+    <div class="section-head"><h2 id="myTripsTitle">سفرهای من</h2><a href="./trips.html">مشاهده همه</a></div>
+    <a class="card row-item" href="./trips.html" style="display:flex">
+      <span class="ico">🧭</span>
+      <span class="copy"><b>خلاصه رانندگی</b><small>آمار سفرها و میانگین مصرف واقعی خودرویت</small></span>
+      <span class="chev" aria-hidden="true">‹</span>
+    </a>
+  </section>
+
+  <footer class="app-foot">REV · همراه سفر برقی تو</footer>
 </main>
-<nav class="bottom" aria-label="پیمایش اصلی"><div class="nav">
-<a class="active" href="./index.html" aria-current="page"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg></i>خانه</a>
-<a href="https://mojtabaalimi64-cloud.github.io/rev/nearby-map.html"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></i>نقشه</a>
-<a href="./trips.html"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg></i>سفرها</a>
-<a href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg></i>خدمات</a>
+
+<nav class="bottom-nav" aria-label="پیمایش اصلی"><div class="tabs">
+  <a class="active" href="./index.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg>خانه</a>
+  <a href="https://mojtabaalimi64-cloud.github.io/rev/nearby-map.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>نقشه</a>
+  <a href="./trips.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg>سفرها</a>
+  <a href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg>خدمات</a>
 </div></nav>
+
 </div>
 <script>
-/* نمایش فوری عکس ذخیره‌شده و همگام‌سازی آن با حساب کاربری */
-(function loadHomeProfileAvatar(){
-  const avatarLink=document.querySelector('a.profile');
-  if(!avatarLink)return;
-  const cacheKey='rev_home_avatar_v1';
-  const validAvatar=value=>typeof value==='string'&&/^data:image\/(?:jpeg|png|webp);base64,/i.test(value);
+/* نام و عکس کاربر از حساب REV؛ در صورت قطع شبکه، کش محلی نمایش داده می‌شود */
+(function(){
+  var avatarLink=document.getElementById('avatarLink');
+  var greetName=document.getElementById('greetName');
+  var cacheKey='rev_home_avatar_v1', nameKey='rev_home_name_v1';
+  function validAvatar(v){return typeof v==='string'&&/^data:image\/(?:jpeg|png|webp);base64,/i.test(v);}
   function showAvatar(data){
     if(!validAvatar(data))return;
-    const img=document.createElement('img');
-    img.src=data;
-    img.alt='';
-    img.width=39;
-    img.height=39;
-    img.decoding='async';
-    img.onload=()=>avatarLink.replaceChildren(img);
+    var img=document.createElement('img');img.src=data;img.alt='';img.decoding='async';
+    img.onload=function(){avatarLink.replaceChildren(img);};
   }
-  /* کش محلی باعث می‌شود هنگام بازگشت به صفحه، عکس منتظر API نماند. */
-  try{const cached=localStorage.getItem(cacheKey);if(validAvatar(cached))showAvatar(cached);}catch(_error){}
+  try{
+    var c=localStorage.getItem(cacheKey);if(validAvatar(c))showAvatar(c);
+    var n=localStorage.getItem(nameKey);if(n)greetName.textContent='سلام، '+n+' 👋';
+  }catch(e){}
   fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'})
-    .then(response=>{if(!response.ok)throw new Error('profile unavailable');return response.json();})
-    .then(result=>{
-      if(!result?.success)return;
-      const avatar=result?.user?.avatar_data;
-      if(validAvatar(avatar)){
-        try{localStorage.setItem(cacheKey,avatar);}catch(_error){}
-        showAvatar(avatar);
-      }else{
-        try{localStorage.removeItem(cacheKey);}catch(_error){}
-      }
+    .then(function(r){if(!r.ok)throw new Error('profile unavailable');return r.json();})
+    .then(function(res){
+      if(!res||!res.success)return;
+      var u=res.user||{};
+      var av=u.avatar_data;
+      if(validAvatar(av)){try{localStorage.setItem(cacheKey,av);}catch(e){}showAvatar(av);}
+      else{try{localStorage.removeItem(cacheKey);}catch(e){}}
+      var nm=u.name||u.full_name||u.first_name;
+      if(nm){try{localStorage.setItem(nameKey,nm);}catch(e){}greetName.textContent='سلام، '+nm+' 👋';}
     })
-    .catch(()=>{/* در صورت قطع شبکه، عکس کش‌شده باقی می‌ماند. */});
+    .catch(function(){});
 })();
 </script>
 <script src="./register-sw.js" defer></script>
-</body></html>
+</body>
+</html>

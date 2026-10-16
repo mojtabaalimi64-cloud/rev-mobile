@@ -1,67 +1,126 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
 <meta name="description" content="سفرهای من در REV؛ برنامه‌ریزی، ثبت سفر و تحلیل مصرف خودرو">
-<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
 <title>سفرهای من | REV</title>
+<link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
 <style>
-:root{color-scheme:light;--blue:#0866ff;--blue-dark:#064fc4;--blue-soft:#edf4ff;--ink:#142238;--muted:#65758b;--line:#e2eaf5;--bg:#fff;--surface:#fff;--green:#0c9b59}
-/* صفحه سفرها تمام‌عرض است؛ پنل کناری در این صفحه نمایش داده نشود */#revPersistentNav,.rev-persistent-nav,#serviceNav,.sidebar,.right-sidebar,.right-panel,.side-panel,.service-panel{display:none!important;visibility:hidden!important;width:0!important;max-width:0!important;}*{box-sizing:border-box}html,body{margin:0;background:#fff;color:var(--ink);font:14px/1.7 Vazirmatn,Vazir,Tahoma,sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.wrap{width:min(560px,100% - 32px);margin-inline:auto;padding-bottom:18px}
-header{position:sticky;top:0;z-index:5;background:#ffffffed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.top{height:60px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:9px}.mark{width:35px;height:35px;border-radius:11px;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:21px;font-weight:900}.brand-name{font-size:20px;font-weight:900;line-height:1.15}.brand-sub{font-size:10px;color:var(--muted);display:block;margin-top:2px}.profile{width:39px;height:39px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--blue);font-size:19px}
-main{padding-top:20px;padding-bottom:24px}.eyebrow{font-size:11px;color:var(--blue);font-weight:800;letter-spacing:.2px}.intro{margin-bottom:17px}.intro h1{font-size:24px;line-height:1.45;margin:3px 0 4px;font-weight:900}.intro p{margin:0;color:var(--muted);font-size:12px}
-.hero{padding:18px 16px;border:1px solid #dbe7fb;border-radius:17px;background:linear-gradient(145deg,#f1f6ff,#fff);margin-bottom:20px}.hero h2{font-size:17px;margin:5px 0}.hero p{font-size:12px;color:var(--muted);margin:0 0 15px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{min-height:45px;display:flex;align-items:center;justify-content:center;text-align:center;gap:7px;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:12px;font-weight:800}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 0 #0e4fae}
-.section{margin-top:22px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 1px 10px}.section-head h2{font-size:16px;margin:0;font-weight:900}.section-head a{font-size:11px;color:var(--blue);font-weight:800}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{padding:12px;border:1px solid var(--line);border-radius:13px;background:#fff;min-width:0}.metric small{display:block;color:var(--muted);font-size:11px;line-height:1.5}.metric strong{display:block;font-size:22px;line-height:1.6;font-variant-numeric:tabular-nums}.unit{font-size:10px;color:var(--muted);font-weight:500}.status{font-size:11px;color:var(--muted);margin-top:10px;min-height:19px}
-.list{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}.trip{padding:12px;border-bottom:1px solid var(--line)}.trip:last-child{border-bottom:0}.trip-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:850;font-size:13px}.pill{font-size:10px;background:#eaf8f0;color:#0a8750;border-radius:99px;padding:3px 8px;white-space:nowrap}.trip-meta{font-size:11px;color:var(--muted);margin-top:4px}.empty{padding:18px 14px;text-align:center;font-size:12px;color:var(--muted);line-height:1.9}
-.bottom{position:fixed;z-index:10;bottom:0;left:0;right:0;background:linear-gradient(115deg,#0758e8,#087bff);padding:6px 8px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -5px 22px #0758e82b}.nav{width:min(560px,100%);margin:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}.nav a{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#dce9ff;font-size:10px;border-radius:10px}.nav a.active{background:#ffffff24;color:#fff;font-weight:900}.nav svg{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-body{padding-bottom:calc(75px + env(safe-area-inset-bottom))}@media(min-width:480px){.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:21px}}
+.eyebrow{font-size:11px;color:var(--teal);font-weight:800;letter-spacing:.3px}
+.page-title{font-size:23px;margin:2px 0 4px;font-weight:900}
+.page-sub{margin:0;color:var(--muted);font-size:12.5px}
+.trip{padding:13px 14px;border-bottom:1px solid var(--line)}
+.trip:last-child{border-bottom:0}
+.trip-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:850;font-size:13px}
+.trip-meta{font-size:11px;color:var(--muted);margin-top:4px}
+@media(min-width:480px){.metrics{grid-template-columns:repeat(4,1fr)}}
 </style>
-<link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-2">
 </head>
-<body>
-<header><div class="wrap top"><a href="./index.html" class="brand"><span class="mark">↯</span><span><span class="brand-name">REV</span><span class="brand-sub">همراه سفر برقی</span></span></a><a class="profile" href="https://mojtabaalimi64-cloud.github.io/rev/account.html" aria-label="حساب کاربری">♙</a></div></header>
+<body class="has-bottom-nav">
+<div class="app-shell">
+
+<header class="app-header"><div class="wrap top">
+  <div class="greet">
+    <a class="avatar" href="https://mojtabaalimi64-cloud.github.io/rev/account.html" aria-label="حساب کاربری">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.4 3.1-5.2 7-5.2s6.4 1.8 7 5.2"/></svg>
+    </a>
+    <div><div class="hello">سفرهای من</div><div class="sub">برنامه‌ریزی، ثبت و تحلیل مصرف</div></div>
+  </div>
+</div></header>
+
 <main class="wrap">
-<div class="intro"><div class="eyebrow">DRIVER CENTER</div><h1>سفرهای من</h1><p>برنامه‌ریزی مسیر، ثبت سفرهای واقعی و بررسی مصرف خودرو؛ همه در یک جا.</p></div>
-<section class="hero"><div class="eyebrow">سفر بعدی‌ات را آماده کن</div><h2>از مبدأ تا مقصد، با خیال راحت‌تر</h2><p>مسیر را برنامه‌ریزی کن، ایستگاه‌های شارژ را بررسی کن و پس از سفر، اطلاعات واقعی را برای تحلیل مصرف ذخیره کن.</p><div class="actions"><a class="btn primary" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html">⚡ برنامه‌ریزی سفر</a><a class="btn" href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html">◉ پروفایل راننده</a></div></section>
-<section class="section"><div class="section-head"><h2>خلاصه رانندگی</h2><a href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html">جزئیات کامل ↗</a></div>
-<div class="metrics">
-<div class="metric"><small>سفرهای ثبت‌شده</small><strong id="tripCount">—</strong></div>
-<div class="metric"><small>مسافت کل</small><strong><span id="distance">—</span> <span class="unit">km</span></strong></div>
-<div class="metric"><small>انرژی مصرفی</small><strong><span id="energy">—</span> <span class="unit">kWh</span></strong></div>
-<div class="metric"><small>میانگین مصرف واقعی</small><strong><span id="consumption">—</span> <span class="unit">kWh/100km</span></strong></div>
-</div><div id="status" class="status" role="status" aria-live="polite">در حال دریافت اطلاعات سفرها…</div></section>
-<section class="section"><div class="section-head"><h2>آخرین سفرها</h2><a href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html">تاریخچه کامل ↗</a></div><div class="list" id="recentTrips"><div class="empty">در حال بارگذاری سفرهای ثبت‌شده…</div></div></section>
-<section class="section"><div class="section-head"><h2>ابزارهای سفر</h2><span style="font-size:11px;color:var(--muted)">دسترسی سریع</span></div><div class="list">
-<a class="item" href="https://mojtabaalimi64-cloud.github.io/rev/nearby-map.html" style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--line)"><span style="width:40px;height:40px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);border-radius:12px;font-size:20px">⌖</span><span style="flex:1"><b style="display:block;font-size:13px">نقشه و ایستگاه‌های شارژ</b><small style="color:var(--muted);font-size:11px">مشاهده مراکز خدماتی روی نقشه</small></span><span style="color:#98a2b3">‹</span></a>
-<a class="item" href="https://mojtabaalimi64-cloud.github.io/rev/travel-plans.html" style="display:flex;align-items:center;gap:12px;padding:12px"><span style="width:40px;height:40px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);border-radius:12px;font-size:20px">▤</span><span style="flex:1"><b style="display:block;font-size:13px">برنامه‌های سفر ذخیره‌شده</b><small style="color:var(--muted);font-size:11px">بازگشت به مسیرها و برنامه‌های قبلی</small></span><span style="color:#98a2b3">‹</span></a>
-</div></section>
+  <section class="hero-card" aria-labelledby="planTitle" style="margin-top:18px">
+    <div class="eyebrow" style="color:#bfe3ee">سفر بعدی‌ات را آماده کن</div>
+    <h1 id="planTitle" style="font-size:19px">از مبدأ تا مقصد، با خیال راحت‌تر</h1>
+    <p>مسیر را برنامه‌ریزی کن، ایستگاه‌های شارژ را بررسی کن و پس از سفر، اطلاعات واقعی را برای تحلیل مصرف ذخیره کن.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:1">
+      <a class="btn-light" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html">⚡ برنامه‌ریزی سفر</a>
+      <a class="btn-light" href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html" style="background:rgba(255,255,255,.16);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.35)">◉ پروفایل راننده</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="statsTitle">
+    <div class="section-head"><h2 id="statsTitle">خلاصه رانندگی</h2><a href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html">جزئیات کامل</a></div>
+    <div class="metrics">
+      <div class="metric"><small>سفرهای ثبت‌شده</small><strong id="tripCount">—</strong></div>
+      <div class="metric"><small>مسافت کل</small><strong><span id="distance">—</span> <span class="unit">km</span></strong></div>
+      <div class="metric"><small>انرژی مصرفی</small><strong><span id="energy">—</span> <span class="unit">kWh</span></strong></div>
+      <div class="metric"><small>میانگین مصرف واقعی</small><strong><span id="consumption">—</span> <span class="unit">kWh/100km</span></strong></div>
+    </div>
+    <div id="status" class="status" role="status" aria-live="polite">در حال دریافت اطلاعات سفرها…</div>
+  </section>
+
+  <section class="section" aria-labelledby="recentTitle">
+    <div class="section-head"><h2 id="recentTitle">آخرین سفرها</h2><a href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html">تاریخچه کامل</a></div>
+    <div class="list-card" id="recentTrips"><div class="empty">در حال بارگذاری سفرهای ثبت‌شده…</div></div>
+  </section>
+
+  <section class="section" aria-labelledby="toolsTitle">
+    <div class="section-head"><h2 id="toolsTitle">ابزارهای سفر</h2></div>
+    <div class="list-card">
+      <a class="row-item" href="https://mojtabaalimi64-cloud.github.io/rev/nearby-map.html">
+        <span class="ico">⌖</span>
+        <span class="copy"><b>نقشه و ایستگاه‌های شارژ</b><small>مشاهده مراکز خدماتی روی نقشه</small></span>
+        <span class="chev" aria-hidden="true">‹</span>
+      </a>
+      <a class="row-item" href="https://mojtabaalimi64-cloud.github.io/rev/travel-plans.html">
+        <span class="ico">▤</span>
+        <span class="copy"><b>برنامه‌های سفر ذخیره‌شده</b><small>بازگشت به مسیرها و برنامه‌های قبلی</small></span>
+        <span class="chev" aria-hidden="true">‹</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="app-foot">REV · همراه سفر برقی تو</footer>
 </main>
-<nav class="bottom" aria-label="پیمایش اصلی"><div class="nav">
-<a href="./index.html"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg>خانه</a>
-<a href="https://mojtabaalimi64-cloud.github.io/rev/nearby-map.html"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>نقشه</a>
-<a class="active" href="./trips.html" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg>سفرها</a>
-<a href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg>خدمات</a>
+
+<nav class="bottom-nav" aria-label="پیمایش اصلی"><div class="tabs">
+  <a href="./index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg>خانه</a>
+  <a href="https://mojtabaalimi64-cloud.github.io/rev/nearby-map.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>نقشه</a>
+  <a class="active" href="./trips.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg>سفرها</a>
+  <a href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg>خدمات</a>
 </div></nav>
+
+</div>
 <script>
 (function(){
-const API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
-const $=id=>document.getElementById(id);
-const number=v=>v==null||v===''?'—':new Intl.NumberFormat('fa-IR',{maximumFractionDigits:1}).format(Number(v));
-const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const date=v=>{try{return new Date(v).toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'})}catch(_){return 'تاریخ نامشخص'}};
+var API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
+function $(id){return document.getElementById(id);}
+function number(v){return v==null||v==='?'?'—':new Intl.NumberFormat('fa-IR',{maximumFractionDigits:1}).format(Number(v));}
+function safe(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function date(v){try{return new Date(v).toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'});}catch(e){return 'تاریخ نامشخص';}}
 async function load(){
-try{
-const r=await fetch(API+'/api/driver/profile',{credentials:'include',cache:'no-store'});const j=await r.json().catch(()=>({}));
-if(!r.ok||!j.success)throw new Error(j.error||'برای مشاهده آمار شخصی، ابتدا وارد حساب REV شوید.');
-const p=j.profile||{},trips=Array.isArray(j.trips)?j.trips:[];
-$('tripCount').textContent=number(p.tripCount??trips.length);$('distance').textContent=number(p.totalDistanceKm);$('energy').textContent=number(p.totalEnergyKwh);$('consumption').textContent=p.averageKwhPer100Km==null?'—':number(p.averageKwhPer100Km);
-$('status').textContent='آمار از سفرهای ذخیره‌شده در حساب شما دریافت شد.';
-$('recentTrips').innerHTML=trips.length?trips.slice(0,5).map(t=>{const d=Number(t.distance_km),e=Number(t.energy_kwh),rate=d>0&&e>0?number(e/d*100):'—';return '<article class="trip"><div class="trip-title"><span>'+safe(t.vehicle_name||'سفر با خودرو')+'</span><span class="pill">'+safe(t.energy_source||'ثبت‌شده')+'</span></div><div class="trip-meta">'+safe(date(t.started_at))+' · '+number(t.distance_km)+' کیلومتر · '+number(t.energy_kwh)+' کیلووات‌ساعت</div><div class="trip-meta">مصرف این سفر: '+rate+' kWh/100 km</div></article>';}).join(''):'<div class="empty">هنوز سفری در حساب شما ثبت نشده است.<br>برای شروع، پروفایل راننده را باز و اولین سفر را ثبت کن.</div>';
-}catch(e){$('status').textContent=e.message||'دریافت اطلاعات ممکن نشد.';$('recentTrips').innerHTML='<div class="empty">برای مشاهده تاریخچه شخصی، وارد حساب REV شو. اگر وارد حساب هستی، اتصال سرویس سفر را بررسی کن.<br><a style="color:var(--blue);font-weight:800" href="https://mojtabaalimi64-cloud.github.io/rev/account.html">ورود به حساب کاربری ↗</a></div>';}
+  try{
+    var r=await fetch(API+'/api/driver/profile',{credentials:'include',cache:'no-store'});
+    var j=await r.json().catch(function(){return {};});
+    if(!r.ok||!j.success)throw new Error(j.error||'برای مشاهده آمار شخصی، ابتدا وارد حساب REV شوید.');
+    var p=j.profile||{},trips=Array.isArray(j.trips)?j.trips:[];
+    $('tripCount').textContent=number(p.tripCount!=null?p.tripCount:trips.length);
+    $('distance').textContent=number(p.totalDistanceKm);
+    $('energy').textContent=number(p.totalEnergyKwh);
+    $('consumption').textContent=p.averageKwhPer100Km==null?'—':number(p.averageKwhPer100Km);
+    $('status').textContent='آمار از سفرهای ذخیره‌شده در حساب شما دریافت شد.';
+    $('recentTrips').innerHTML=trips.length?trips.slice(0,5).map(function(t){
+      var d=Number(t.distance_km),e=Number(t.energy_kwh);
+      var rate=(d>0&&e>0)?number(e/d*100):'—';
+      return '<article class="trip"><div class="trip-title"><span>'+safe(t.vehicle_name||'سفر با خودرو')+'</span>'+
+        '<span class="pill teal">'+safe(t.energy_source||'ثبت‌شده')+'</span></div>'+
+        '<div class="trip-meta">'+safe(date(t.started_at))+' · '+number(t.distance_km)+' کیلومتر · '+number(t.energy_kwh)+' کیلووات‌ساعت</div>'+
+        '<div class="trip-meta">مصرف این سفر: '+rate+' kWh/100 km</div></article>';
+    }).join(''):'<div class="empty">هنوز سفری در حساب شما ثبت نشده است.<br>برای شروع، پروفایل راننده را باز و اولین سفر را ثبت کن.</div>';
+  }catch(e){
+    $('status').textContent=e.message||'دریافت اطلاعات ممکن نشد.';
+    $('recentTrips').innerHTML='<div class="empty">برای مشاهده تاریخچه شخصی، وارد حساب REV شو. اگر وارد حساب هستی، اتصال سرویس سفر را بررسی کن.<br><a style="color:var(--teal);font-weight:800" href="https://mojtabaalimi64-cloud.github.io/rev/account.html">ورود به حساب کاربری</a></div>';
+  }
 }
 load();
 })();
 </script>
 <script src="./register-sw.js" defer></script>
-</body></html>
+</body>
+</html>
