@@ -1,0 +1,28 @@
+/* REV Mobile Visual Identity — white surfaces, electric blue actions */
+:root{
+  color-scheme:light!important;
+  --rev-blue:#0866ff;
+  --rev-blue-deep:#064fc4;
+  --rev-blue-soft:#edf4ff;
+  --rev-ink:#17253b;
+  --rev-muted:#65758b;
+  --rev-line:#e3eaf4;
+  --rev-white:#fff;
+}
+html,body{background:#fff!important;color:var(--rev-ink)!important;color-scheme:light!important}
+body{font-family:Vazirmatn,Vazir,Tahoma,sans-serif!important}
+header{background:rgba(255,255,255,.96)!important;border-color:var(--rev-line)!important}
+.mark{background:var(--rev-blue)!important;color:#fff!important;border-radius:11px!important}
+.primary-box,.hero{background:#f3f7ff!important;border:1px solid #dce8ff!important;box-shadow:none!important}
+.primary,.btn.primary{background:var(--rev-blue)!important;border-color:var(--rev-blue)!important;color:#fff!important;box-shadow:0 3px 0 var(--rev-blue-deep)!important}
+.primary:active,.btn.primary:active{background:var(--rev-blue-deep)!important}
+.item,.list,.metric,.trip,.help-link{background:#fff!important;border-color:var(--rev-line)!important}
+.item:active{background:#f5f8ff!important}
+.ico{background:var(--rev-blue-soft)!important;color:var(--rev-blue)!important}
+.bottom{background:#fff!important;border-top:1px solid var(--rev-line)!important;box-shadow:0 -5px 20px #1422380d!important}
+.nav a{color:#687991!important}
+.nav a.active{background:var(--rev-blue-soft)!important;color:var(--rev-blue)!important;font-weight:850!important}
+.nav a:active{background:#e6efff!important;color:var(--rev-blue)!important}
+.profile{background:#fff!important;color:var(--rev-blue)!important;border-color:var(--rev-line)!important}
+.pill{background:#edf4ff!important;color:var(--rev-blue)!important}
+@media(min-width:700px){body{background:#f7f9fc!important}.app-shell{background:#fff!important}}
