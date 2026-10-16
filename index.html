@@ -3,36 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080b0d">
-<meta name="description" content="نمونه آزمایشی اپ موبایل REV برای سفر با خودروی برقی">
+<meta name="theme-color" content="#090d0c">
+<meta name="description" content="REV؛ دستیار سفر و زندگی با خودروی برقی">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
-<title>REV | دستیار سفر برقی</title>
+<title>REV | سفر برقی، هوشمندتر</title>
 <style>
-:root{color-scheme:dark;--bg:#080b0d;--panel:#10171b;--line:#29383e;--muted:#9eafb5;--green:#39ff88;--text:#f5f7f8}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0%,#12352a 0,transparent 34%),var(--bg);color:var(--text);font:15px/1.8 Vazirmatn,Vazir,Tahoma,sans-serif;min-height:100vh;padding-bottom:90px}
-a{color:inherit;text-decoration:none}.wrap{width:min(760px,100% - 28px);margin:auto}header{position:sticky;top:0;background:#080b0ded;border-bottom:1px solid var(--line);z-index:3}.head{display:flex;justify-content:space-between;align-items:center;padding:12px 0}.logo{font-size:29px;font-weight:950;letter-spacing:3px;color:var(--green)}.tagline,small,.muted{color:var(--muted);font-size:12px}
-main{padding:20px 0}.hero{border:1px solid #28523d;border-radius:24px;padding:24px;background:linear-gradient(135deg,#172b20,#10191d 65%,#0c211b)}.eyebrow{color:var(--green);font-size:12px;font-weight:800}.hero h1{font-size:clamp(24px,6vw,34px);line-height:1.45;margin:5px 0 8px}.hero p{color:#bdcbc5;font-size:13px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.btn{display:flex;justify-content:center;padding:11px 8px;border-radius:12px;border:1px solid #395247;background:#13221a;font-weight:800;font-size:13px}.primary{background:var(--green);color:#07100b;border-color:var(--green)}
-h2{font-size:18px;margin:24px 2px 11px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{display:flex;flex-direction:column;gap:7px;min-height:125px;padding:15px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,#131d21,#0e1417)}.ico{font-size:24px}.tile strong{font-size:14px}.tile small{line-height:1.6}.notice{margin-top:16px;padding:13px;border:1px solid #4b432a;background:#201c12;border-radius:14px;color:#e7d8ae;font-size:12px}.notice b{display:block;color:#ffe2a0}
-.bottom{position:fixed;bottom:0;left:0;right:0;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:#080b0df2;border-top:1px solid var(--line)}.nav{width:min(760px,100%);margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.nav a{display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--muted)}.nav span{font-size:19px}.nav .active{color:var(--green)}
-@media(min-width:620px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:30px}}
+:root{color-scheme:dark;--bg:#090d0c;--surface:#111816;--surface2:#17211d;--line:#293830;--muted:#9aa9a1;--text:#f5f8f5;--green:#6dff9b;--green2:#b1ffc7;--amber:#ffd27a;--radius:22px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 90% -10%,#1c4930 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.8 Vazirmatn,Vazir,Tahoma,sans-serif;padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+a{color:inherit;text-decoration:none}
+button,a{-webkit-tap-highlight-color:transparent}
+.wrap{width:min(720px,100% - 30px);margin-inline:auto}
+header{position:sticky;top:0;z-index:10;background:#090d0ceF;backdrop-filter:blur(18px);border-bottom:1px solid #26342c}
+.topbar{display:flex;align-items:center;justify-content:space-between;min-height:70px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}.brand-mark{display:grid;place-items:center;width:43px;height:43px;border-radius:15px;background:var(--green);color:#06110a;font-size:22px;font-weight:1000;letter-spacing:-2px;box-shadow:0 5px 24px #6dff9b22}.brand-name{font-size:23px;line-height:1.2;font-weight:1000;letter-spacing:2px}.brand-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.profile{width:42px;height:42px;border:1px solid var(--line);border-radius:15px;display:grid;place-items:center;background:var(--surface);font-size:19px}
+main{padding-top:22px}
+.hello{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.hello h1{font-size:22px;line-height:1.5;margin:0;font-weight:850}.hello p{font-size:12px;color:var(--muted);margin:2px 0 0}.status{white-space:nowrap;display:flex;align-items:center;gap:6px;border:1px solid #31553d;border-radius:999px;padding:5px 9px;color:var(--green2);font-size:10px;background:#13251a}.dot{width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 10px #6dff9b}
+.hero{position:relative;isolation:isolate;overflow:hidden;border:1px solid #365c42;border-radius:28px;background:linear-gradient(135deg,#1b3826 0%,#14221b 54%,#101815 100%);padding:22px 20px 18px;box-shadow:0 18px 50px #0003}.hero:before{content:"";position:absolute;z-index:-1;width:250px;height:250px;border-radius:50%;background:#6dff9b0b;left:-100px;top:-90px}.eyebrow{display:flex;align-items:center;gap:7px;color:var(--green);font-size:11px;font-weight:800;letter-spacing:.2px}.eyebrow i{display:block;width:20px;height:1px;background:var(--green)}
+.hero h2{font-size:clamp(26px,7vw,35px);line-height:1.45;letter-spacing:-.7px;margin:8px 0 7px;font-weight:900;max-width:450px}.hero p{margin:0;color:#bdc9c0;font-size:12px;max-width:400px}
+.route-art{height:120px;position:relative;margin:13px -5px 10px;overflow:hidden;border-radius:17px;background:linear-gradient(125deg,#13241b,#101a17);border:1px solid #ffffff0b}.route-art svg{width:100%;height:100%;display:block}.map-label{position:absolute;top:10px;right:11px;border:1px solid #ffffff18;background:#0a100dd9;padding:4px 9px;border-radius:8px;font-size:10px;color:#dce7df}.map-note{position:absolute;bottom:8px;left:9px;color:#9bb0a0;font-size:9px}
+.primary-action{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-radius:15px;background:var(--green);color:#06130a;font-weight:900;font-size:13px;box-shadow:0 7px 24px #6dff9b1b}.action-arrow{font-size:20px;line-height:1}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 2px 12px}.section-head h2{font-size:16px;margin:0;font-weight:850}.section-head a{font-size:11px;color:var(--green2)}
+.quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.quick{min-height:118px;padding:15px;border:1px solid var(--line);border-radius:19px;background:linear-gradient(145deg,#151e19,#101613);display:flex;flex-direction:column;justify-content:space-between;gap:12px;transition:transform .18s,border-color .18s}.quick:active{transform:scale(.98);border-color:#548c63}.quick-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.quick-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:13px;background:#20372a;color:var(--green);font-size:21px}.mini-arrow{font-size:16px;color:#718278}.quick strong{display:block;font-size:13px;font-weight:850}.quick small{display:block;color:var(--muted);font-size:10px;line-height:1.6;margin-top:2px}
+.feature-strip{display:flex;align-items:center;gap:13px;padding:15px;border:1px solid #3c4430;background:linear-gradient(110deg,#211f16,#171912);border-radius:19px;margin-top:12px}.feature-icon{flex:0 0 43px;width:43px;height:43px;border-radius:14px;background:#3a311c;display:grid;place-items:center;color:var(--amber);font-size:22px}.feature-copy{flex:1;min-width:0}.feature-copy strong{font-size:12px;display:block}.feature-copy small{display:block;font-size:10px;color:#b4b19f;margin-top:3px;line-height:1.6}.feature-arrow{font-size:20px;color:var(--amber)}
+.news-card{display:flex;align-items:center;gap:13px;padding:14px;border:1px solid var(--line);border-radius:19px;background:var(--surface)}.news-symbol{width:54px;height:54px;flex:0 0 54px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#20382a,#14231b);color:var(--green);font-size:25px}.news-copy{flex:1}.news-copy strong{display:block;font-size:12px}.news-copy small{display:block;color:var(--muted);font-size:10px;line-height:1.7;margin-top:3px}.news-arrow{color:var(--muted);font-size:18px}
+.bottom-nav{position:fixed;z-index:20;bottom:0;left:0;right:0;padding:9px 8px calc(8px + env(safe-area-inset-bottom));background:#0a0e0df5;backdrop-filter:blur(20px);border-top:1px solid #27342d}.nav-inner{width:min(720px,100%);margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-item{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#85948b;font-size:9px;font-weight:600;border-radius:12px}.nav-item .nav-icon{font-size:19px;line-height:1.3}.nav-item.active{color:var(--green);background:#14241a}.footnote{text-align:center;color:#718077;font-size:9px;margin:22px 0 0}
+@media(min-width:560px){.quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:28px}.route-art{height:145px}.quick{min-height:130px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
 </style>
 </head>
 <body>
-<header><div class="wrap head"><div><div class="logo">REV</div><div class="tagline">دستیار سفر با خودروی برقی</div></div><a class="btn" href="https://mojtabaalimi64-cloud.github.io/rev/account.html">حساب کاربری</a></div></header>
+<header><div class="wrap topbar">
+<a class="brand" href="./index.html" aria-label="صفحه اصلی REV"><span class="brand-mark">R</span><span><span class="brand-name">REV</span><span class="brand-sub" style="display:block">حرکت به‌سوی آینده</span></span></a>
+<a class="profile" href="https://mojtabaalimi64-cloud.github.io/rev/account.html" aria-label="حساب کاربری">♙</a>
+</div></header>
 <main class="wrap">
-<section class="hero"><div class="eyebrow">حرکت هوشمندتر، سفر مطمئن‌تر</div><h1>سفر برقی‌ات را<br>با اطمینان برنامه‌ریزی کن.</h1><p>مسیر را بررسی کن، ایستگاه‌های شارژ را پیدا کن و اطلاعات لازم برای سفر را یک‌جا داشته باش.</p><div class="actions"><a class="btn primary" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html">⌖ برنامه‌ریزی سفر</a><a class="btn" href="https://mojtabaalimi64-cloud.github.io/rev/safety-checklist.html">✓ چک‌لیست سفر</a></div></section>
-<h2>دسترسی سریع</h2>
-<section class="grid" aria-label="امکانات اصلی">
-<a class="tile" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span class="ico">🗺️</span><strong>نقشه و شارژ</strong><small>مشاهده مسیر و بررسی جایگاه‌های شارژ</small></a>
-<a class="tile" href="https://mojtabaalimi64-cloud.github.io/rev/travel-plans.html"><span class="ico">🧭</span><strong>سفرهای من</strong><small>ابزارهای مرتبط با سفر</small></a>
-<a class="tile" href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><span class="ico">🔧</span><strong>خدمات و مراکز</strong><small>فروشگاه‌ها، تعمیرگاه‌ها و مراکز شارژ</small></a>
-<a class="tile" href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html"><span class="ico">🚘</span><strong>پروفایل راننده</strong><small>اطلاعات مرتبط با رانندگی</small></a>
-<a class="tile" href="https://mojtabaalimi64-cloud.github.io/rev/article-ev.html"><span class="ico">📘</span><strong>دانش خودرو برقی</strong><small>راهنماها و مطالب آموزشی REV</small></a>
-<a class="tile" href="https://mojtabaalimi64-cloud.github.io/rev/news.html"><span class="ico">⚡</span><strong>اخبار و فناوری</strong><small>مطالب حوزه خودروهای برقی</small></a>
+<section class="hello"><div><h1>سلام، آمادهٔ حرکتی؟</h1><p>همه‌چیز برای سفر برقی تو، یک‌جا.</p></div><span class="status"><i class="dot"></i> همراه سفر</span></section>
+<section class="hero">
+<div class="eyebrow"><i></i> سفر هوشمند با REV</div>
+<h2>مقصدت را انتخاب کن.<br>با خیال راحت حرکت کن.</h2>
+<p>مسیرت را برنامه‌ریزی کن و پیش از حرکت، برای شارژ و توقف‌ها آماده باش.</p>
+<div class="route-art" aria-label="تصویر تزئینی مسیر روی نقشه">
+<svg viewBox="0 0 600 170" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+<g fill="none" stroke-linecap="round">
+<path d="M-10 32 C70 65 82 15 160 43 S260 106 330 61 S450 20 610 65" stroke="#31483a" stroke-width="14"/>
+<path d="M-10 132 C70 100 120 153 205 118 S340 24 410 84 S515 137 610 104" stroke="#293e32" stroke-width="19"/>
+<path d="M40 -10 C75 40 52 83 100 180 M240 -10 C214 42 273 93 245 180 M470 -10 C440 43 503 98 477 180" stroke="#26372d" stroke-width="8"/>
+<path d="M78 115 C130 96 170 120 222 96 S312 49 357 73 S422 119 475 64" stroke="#6dff9b" stroke-width="4" stroke-dasharray="7 9"/>
+</g>
+<circle cx="78" cy="115" r="10" fill="#6dff9b"/><circle cx="78" cy="115" r="4" fill="#102016"/>
+<circle cx="475" cy="64" r="10" fill="#f5f8f5"/><circle cx="475" cy="64" r="4" fill="#183522"/>
+<g fill="#eaf7ed" font-size="12" font-family="Tahoma,sans-serif"><text x="92" y="108">مبدأ</text><text x="459" y="48" text-anchor="end">مقصد</text></g>
+<g transform="translate(320 73)"><circle r="17" fill="#162b1d" stroke="#6dff9b" stroke-width="1.5"/><path d="M-4 -8 L3 -8 L-2 1 L5 1 L-5 10 L-1 3 L-7 3Z" fill="#6dff9b"/></g>
+</svg>
+<span class="map-label">مسیر سفر تو، در یک نگاه</span><span class="map-note">نمای گرافیکی نمونه</span>
+</div>
+<a class="primary-action" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span>برنامه‌ریزی سفر را شروع کن</span><span class="action-arrow">←</span></a>
 </section>
-<section class="notice"><b>درباره این نسخه آزمایشی</b>این نسخه برای بررسی تجربه موبایل است. GPS، اعلان‌ها، درخواست امداد و همگام‌سازی پس‌زمینه تا زمان پیاده‌سازی و آزمون سرویس مربوطه فعال محسوب نمی‌شوند.</section>
+<div class="section-head"><h2>دسترسی سریع</h2><a href="https://mojtabaalimi64-cloud.github.io/rev/travel-plans.html">همهٔ ابزارها ←</a></div>
+<section class="quick-grid" aria-label="امکانات اصلی REV">
+<a class="quick" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span class="quick-top"><span class="quick-icon">⌖</span><span class="mini-arrow">↖</span></span><span><strong>نقشه و شارژ</strong><small>مسیر و ایستگاه‌های شارژ</small></span></a>
+<a class="quick" href="https://mojtabaalimi64-cloud.github.io/rev/safety-checklist.html"><span class="quick-top"><span class="quick-icon">✓</span><span class="mini-arrow">↖</span></span><span><strong>چک‌لیست سفر</strong><small>پیش از حرکت آماده شو</small></span></a>
+<a class="quick" href="https://mojtabaalimi64-cloud.github.io/rev/travel-plans.html"><span class="quick-top"><span class="quick-icon">⇄</span><span class="mini-arrow">↖</span></span><span><strong>سفرهای من</strong><small>ابزارهای برنامه‌ریزی سفر</small></span></a>
+<a class="quick" href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><span class="quick-top"><span class="quick-icon">⚙</span><span class="mini-arrow">↖</span></span><span><strong>خدمات و مراکز</strong><small>تعمیرگاه، فروشگاه و شارژ</small></span></a>
+<a class="quick" href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html"><span class="quick-top"><span class="quick-icon">♙</span><span class="mini-arrow">↖</span></span><span><strong>پروفایل راننده</strong><small>اطلاعات خودرو و راننده</small></span></a>
+<a class="quick" href="https://mojtabaalimi64-cloud.github.io/rev/article-ev.html"><span class="quick-top"><span class="quick-icon">▤</span><span class="mini-arrow">↖</span></span><span><strong>دانش خودرو برقی</strong><small>راهنماها و آموزش REV</small></span></a>
+</section>
+<a class="feature-strip" href="https://mojtabaalimi64-cloud.github.io/rev/news.html"><span class="feature-icon">⚡</span><span class="feature-copy"><strong>دنیای خودروهای برقی را دنبال کن</strong><small>تازه‌ترین مطالب و فناوری‌های REV را ببین.</small></span><span class="feature-arrow">←</span></a>
+<div class="section-head"><h2>بیشتر از REV</h2></div>
+<a class="news-card" href="https://mojtabaalimi64-cloud.github.io/rev/news.html"><span class="news-symbol">↗</span><span class="news-copy"><strong>اخبار، فناوری و آیندهٔ حمل‌ونقل</strong><small>مطالب تازه دربارهٔ خودروهای برقی و فناوری‌های مرتبط</small></span><span class="news-arrow">←</span></a>
+<p class="footnote">REV · همراه مسیر برقی تو</p>
 </main>
-<nav class="bottom"><div class="nav"><a class="active" href="./index.html"><span>⌂</span>خانه</a><a href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span>⌖</span>نقشه</a><a href="https://mojtabaalimi64-cloud.github.io/rev/travel-plans.html"><span>🧭</span>سفرها</a><a href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><span>🔧</span>خدمات</a><a href="https://mojtabaalimi64-cloud.github.io/rev/account.html"><span>☻</span>حساب</a></div></nav>
+<nav class="bottom-nav" aria-label="ناوبری اصلی"><div class="nav-inner">
+<a class="nav-item active" href="./index.html" aria-current="page"><span class="nav-icon">⌂</span><span>خانه</span></a>
+<a class="nav-item" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span class="nav-icon">⌖</span><span>نقشه</span></a>
+<a class="nav-item" href="https://mojtabaalimi64-cloud.github.io/rev/travel-plans.html"><span class="nav-icon">⇄</span><span>سفرها</span></a>
+<a class="nav-item" href="https://mojtabaalimi64-cloud.github.io/rev/businesses.html"><span class="nav-icon">⚙</span><span>خدمات</span></a>
+<a class="nav-item" href="https://mojtabaalimi64-cloud.github.io/rev/account.html"><span class="nav-icon">♙</span><span>حساب</span></a>
+</div></nav>
 <script src="./register-sw.js" defer></script>
-</body></html>
+</body>
+</html>
