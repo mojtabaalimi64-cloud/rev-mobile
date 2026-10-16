@@ -1,5 +1,24 @@
-# REV Mobile
+# REV Mobile — نمونه اولیه مستقل
 
-Independent experimental mobile web app for REV. The main website repository is not modified by deployments from this repository.
+این مخزن مستقل، پوسته آزمایشی موبایل REV را نگه می‌دارد. انتشار آن از مخزن سایت اصلی جداست؛ تغییرات این مخزن به‌خودی‌خود سایت یا پنل مدیریت را تغییر نمی‌دهند.
 
-Enable GitHub Pages under Settings > Pages and select GitHub Actions to publish the app separately.
+## فعال‌کردن انتشار آزمایشی
+1. مخزن را باز کن: https://github.com/mojtabaalimi64-cloud/rev-mobile
+2. وارد **Settings → Pages** شو.
+3. در **Build and deployment**، گزینه **Source** را روی **GitHub Actions** بگذار.
+4. به زبانه **Actions** برو و اجرای workflow با نام **REV Mobile checks and Pages deploy** را بررسی کن.
+5. پس از موفقیت انتشار، آدرس آزمایشی این است: https://mojtabaalimi64-cloud.github.io/rev-mobile/
+
+## امکانات فعلی
+- رابط فارسی RTL و واکنش‌گرا با منوی پایین صفحه
+- لینک به صفحات فعلی سایت REV از طریق URLهای کامل
+- PWA manifest و Service Worker با محدوده همین مخزن
+- کش‌کردن محدود پوسته استاتیک؛ پاسخ‌های API، URLهای دارای query و داده‌های شخصی عمداً کش نمی‌شوند
+- آزمون خودکار فایل‌های ضروری، JSON و پیوندها
+- workflow مستقل برای آزمون و انتشار در GitHub Pages
+
+## محدودیت‌ها
+این نسخه هنوز اپ بومی Android نیست؛ یک وب‌اپ/PWA آزمایشی است. GPS، اعلان‌ها، درخواست امداد و همگام‌سازی پس‌زمینه تا زمان پیاده‌سازی و آزمون مستقل فعال محسوب نمی‌شوند. بعضی پیوندها به صفحات سایت اصلی می‌روند و ممکن است در مرورگر از پوسته سایت استفاده کنند. هیچ کلید محرمانه‌ای نباید در این مخزن عمومی قرار بگیرد.
+
+## نصب روی گوشی
+پس از انتشار موفق، لینک را در Chrome اندروید باز کن و از منوی مرورگر **Install app** یا **Add to Home screen** را انتخاب کن. نام گزینه ممکن است با نسخه مرورگر فرق کند.
