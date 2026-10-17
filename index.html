@@ -30,65 +30,39 @@
 @media(prefers-reduced-motion:reduce){#splashRoute,.splash-pop,.splash-label,.splash-brand,.splash-map{animation-duration:.01s !important;animation-delay:0s !important}}
 </style>
 <style>
-#onboard{position:fixed;inset:0;z-index:1500;background:var(--bg);display:none;align-items:center;justify-content:center;padding:24px}
+#onboard{position:fixed;inset:0;z-index:1500;background:#f5f8fa;display:none;align-items:center;justify-content:center;padding:24px}
 #onboard.show{display:flex}
-.ob-pages{width:min(400px,100%)}
-.ob-page{display:none}
-.ob-page.ob-active{display:block;animation:obPageIn .38s cubic-bezier(.2,.9,.3,1)}
-@keyframes obPageIn{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
-.ob-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:34px 24px 28px;box-shadow:var(--shadow-sm);text-align:center;position:relative}
-.ob-logo{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#0db1d6,#066d88);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(8,135,167,.35);margin-bottom:4px}
-.ob-logo svg{width:38px;height:38px}
-.ob-card h1{font-size:22px;margin:12px 0 8px;font-weight:900;color:#0b2b3a}
-.ob-sub{font-size:13px;color:var(--muted);margin:0 0 24px;line-height:2}
-.ob-card .field{text-align:right;margin-bottom:16px}
-.ob-card .field label{display:block;font-size:13px;font-weight:800;color:#33475c;margin-bottom:8px}
-.ob-phone{width:100%;font-size:26px !important;padding:18px 14px !important;text-align:center !important;letter-spacing:5px !important;font-weight:800 !important;border:2px solid #dcebf2 !important;border-radius:18px !important;background:#f8fbfd !important;color:#0b2b3a !important;box-sizing:border-box;direction:ltr}
-.ob-phone:focus{outline:none;border-color:var(--teal) !important;box-shadow:0 0 0 4px rgba(8,135,167,.12);background:#fff !important}
-.ob-code{width:100%;font-size:30px !important;padding:18px 14px !important;text-align:center !important;letter-spacing:10px !important;font-weight:800 !important;border:2px solid #dcebf2 !important;border-radius:18px !important;background:#f8fbfd !important;color:#0b2b3a !important;box-sizing:border-box;direction:ltr}
-.ob-code:focus{outline:none;border-color:var(--teal) !important;box-shadow:0 0 0 4px rgba(8,135,167,.12);background:#fff !important}
-.ob-big-btn{width:100%;padding:16px;font-size:16px;font-weight:900;margin-top:4px}
-.ob-back{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#f5f8fa;color:#33475c;font-size:18px;font-weight:900;cursor:pointer;line-height:1}
-.ob-foot{display:flex;justify-content:center;margin-top:16px}
-.ob-foot button{border:0;background:none;color:var(--teal);font-weight:800;font-size:13px;padding:8px;cursor:pointer}
-.ob-foot button:disabled{color:var(--muted);cursor:default}
-.ob-status{min-height:22px;font-size:12.5px;margin-top:12px;line-height:1.9}
-.ob-status.err{color:var(--red)}
-.ob-status.ok{color:var(--green)}
-@media(prefers-reduced-motion:reduce){.ob-page.ob-active{animation:none}}
+.ob-card{width:min(400px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px 22px;box-shadow:var(--shadow);text-align:center}
+.ob-card h1{font-size:20px;margin:14px 0 6px;font-weight:900}
+.ob-sub{font-size:12.5px;color:var(--muted);margin:0 0 20px;line-height:1.9}
+.ob-card .field{text-align:right}
+.ob-card input{text-align:left;letter-spacing:3px;font-weight:800}
+.ob-code{font-size:22px !important;text-align:center !important;letter-spacing:8px !important}
+.ob-foot{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;font-size:12px}
+.ob-foot button{border:0;background:none;color:var(--teal);font-weight:800;font-size:12px;padding:6px}
+.ob-foot button:disabled{color:var(--muted)}
+#obStatus{min-height:22px;font-size:12px;margin-top:10px}
+#obStatus.err{color:var(--red)}
+#obStatus.ok{color:var(--green)}
 </style>
 </head>
 <body class="has-bottom-nav">
 <div id="onboard" aria-hidden="true">
-  <div class="ob-pages">
-    <section class="ob-page ob-active" id="obPage1" aria-label="ورود با شماره موبایل">
-      <div class="ob-card">
-        <span class="ob-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="#ffffff"/></svg></span>
-        <h1>به REV خوش اومدی ⚡</h1>
-        <p class="ob-sub">شماره موبایلت رو وارد کن تا کد تأیید برات پیامک بشه.</p>
-        <div class="field">
-          <label for="obPhone">شماره موبایل</label>
-          <input id="obPhone" class="ob-phone" inputmode="numeric" autocomplete="tel" placeholder="09123456789" dir="ltr" maxlength="11">
-        </div>
-        <button class="btn-primary ob-big-btn" id="obSend">دریافت کد تأیید</button>
-        <div id="obStatus1" class="ob-status" role="status" aria-live="polite"></div>
-      </div>
-    </section>
-    <section class="ob-page" id="obPage2" aria-label="وارد کردن کد تأیید">
-      <div class="ob-card">
-        <button class="ob-back" id="obBack" type="button" aria-label="بازگشت و ویرایش شماره">→</button>
-        <span class="ob-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="#ffffff"/></svg></span>
-        <h1>کد تأیید رو وارد کن</h1>
-        <p class="ob-sub">کد ۶ رقمی به شماره <b id="obPhoneShow" dir="ltr"></b> پیامک شد.</p>
-        <div class="field">
-          <label for="obCode">کد تأیید</label>
-          <input id="obCode" class="ob-code" inputmode="numeric" maxlength="8" placeholder="••••••" dir="ltr" autocomplete="one-time-code">
-        </div>
-        <button class="btn-primary ob-big-btn" id="obVerify">تأیید و ورود</button>
-        <div class="ob-foot"><button id="obResend" type="button" disabled>ارسال مجدد (۶۰)</button></div>
-        <div id="obStatus2" class="ob-status" role="status" aria-live="polite"></div>
-      </div>
-    </section>
+  <div class="ob-card">
+    <span class="splash-logo" style="margin:0 auto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="#ffffff"/></svg></span>
+    <h1>به REV خوش اومدی ⚡</h1>
+    <p class="ob-sub">برای شروع، شماره موبایلت رو وارد کن تا کد تأیید برات پیامک بشه.</p>
+    <div id="obStep1">
+      <div class="field"><label for="obPhone">شماره موبایل</label><input id="obPhone" inputmode="numeric" autocomplete="tel" placeholder="09123456789" dir="ltr"><div class="hint">مثل 09123456789</div></div>
+      <button class="btn-primary" id="obSend">دریافت کد تأیید</button>
+    </div>
+    <div id="obStep2" hidden>
+      <p class="ob-sub" style="margin-bottom:14px">کد تأیید به شماره <b id="obPhoneShow" dir="ltr"></b> پیامک شد.</p>
+      <div class="field"><label for="obCode">کد تأیید</label><input id="obCode" class="ob-code" inputmode="numeric" maxlength="8" placeholder="•••••" dir="ltr" autocomplete="one-time-code"></div>
+      <button class="btn-primary" id="obVerify">تأیید و ورود</button>
+      <div class="ob-foot"><button id="obEdit" type="button">ویرایش شماره</button><span aria-hidden="true">·</span><button id="obResend" type="button" disabled>ارسال مجدد (۶۰)</button></div>
+    </div>
+    <div id="obStatus" role="status" aria-live="polite"></div>
   </div>
 </div>
 <div id="revSplash" aria-hidden="true">
@@ -305,12 +279,12 @@ Promise.race([Promise.all([authP,motionP]),capP]).then(function(v){
 })();
 </script>
 <script>
-/* آنبوردینگ: دو صفحه جدا — ۱) شماره موبایل ۲) کد تأیید (خواندن خودکار از پیامک) */
+/* آنبوردینگ: ورود با شماره موبایل و کد پیامک در اولین بازدید */
 (function(){
 var API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
 var FLAG='rev_onboarded_v1';
 function $(id){return document.getElementById(id)}
-function say(msg,kind,page){var s=$('obStatus'+(page||1));if(!s)return;s.textContent=msg;s.className='ob-status '+(kind||'')}
+function say(msg,kind){var s=$('obStatus');s.textContent=msg;s.className=kind||''}
 function validPhone(p){return /^09\d{9}$/.test(String(p||'').trim())}
 async function api(path,opts){var r=await fetch(API+path,Object.assign({credentials:'include',cache:'no-store',headers:{'Content-Type':'application/json'}},opts||{}));var j=null;try{j=await r.json()}catch(e){}if(!r.ok)throw new Error((j&&j.message)||'خطا در ارتباط با سرور');return j||{}}
 var resendTimer=null;
@@ -322,50 +296,40 @@ function watchOTP(){
     otpAbort=new AbortController();
     navigator.credentials.get({otp:{transport:['sms']},signal:otpAbort.signal}).then(function(cred){
       otpAbort=null;
-      if(cred&&cred.code){var c=String(cred.code).replace(/\D/g,'').slice(0,8);$('obCode').value=c;say('کد به‌صورت خودکار از پیامک خوانده شد.','ok',2);if(c.length>=6)$('obVerify').click()}
+      if(cred&&cred.code){$('obCode').value=String(cred.code).replace(/\D/g,'').slice(0,8);say('کد به‌صورت خودکار از پیامک خوانده شد.','ok')}
     }).catch(function(){otpAbort=null});
   }catch(e){}
 }
 function stopOTP(){if(otpAbort){try{otpAbort.abort()}catch(e){}otpAbort=null}}
 function startResend(){var b=$('obResend'),n=60;b.disabled=true;clearInterval(resendTimer);b.textContent='ارسال مجدد ('+n+')';resendTimer=setInterval(function(){n--;if(n<=0){clearInterval(resendTimer);b.disabled=false;b.textContent='ارسال مجدد کد'}else{b.textContent='ارسال مجدد ('+n+')'}},1000)}
-function goPage(n){$('obPage1').classList.toggle('ob-active',n===1);$('obPage2').classList.toggle('ob-active',n===2)}
-async function sendCode(){
+async function sendCode(silent){
   var phone=$('obPhone').value.trim();
-  if(!validPhone(phone)){say('شماره موبایل معتبر وارد کن (مثل 09123456789).','err',1);return}
-  var btn=$('obSend');btn.disabled=true;say('در حال ارسال کد…','',1);
+  if(!validPhone(phone)){say('شماره موبایل معتبر وارد کن (مثل 09123456789).','err');return}
+  var btn=$('obSend');btn.disabled=true;say('در حال ارسال کد…');
   try{var j=await api('/api/auth/sms/request',{method:'POST',body:JSON.stringify({phone:phone})});
     $('obPhoneShow').textContent=phone;
-    goPage(2);
-    say(j.message||'کد تأیید ارسال شد.','ok',2);
-    startResend();$('obCode').value='';$('obCode').focus();watchOTP();
-  }catch(e){say(e.message||'ارسال کد ممکن نشد. دوباره تلاش کن.','err',1)}
+    $('obStep1').hidden=true;$('obStep2').hidden=false;
+    say(j.message||'کد تأیید ارسال شد.','ok');startResend();$('obCode').focus();watchOTP();
+  }catch(e){say(e.message||'ارسال کد ممکن نشد. دوباره تلاش کن.','err')}
   finally{btn.disabled=false}
 }
-$('obSend').addEventListener('click',sendCode);
-$('obPhone').addEventListener('keydown',function(e){if(e.key==='Enter')sendCode()});
-$('obResend').addEventListener('click',async function(){
-  var phone=$('obPhone').value.trim();
-  if(!validPhone(phone)){goPage(1);return}
-  var btn=$('obResend');btn.disabled=true;say('در حال ارسال کد جدید…','',2);
-  try{await api('/api/auth/sms/request',{method:'POST',body:JSON.stringify({phone:phone})});say('کد جدید ارسال شد.','ok',2);startResend();$('obCode').value='';$('obCode').focus();watchOTP()}
-  catch(e){say(e.message||'ارسال کد ممکن نشد.','err',2);btn.disabled=false}
-});
-$('obBack').addEventListener('click',function(){stopOTP();clearInterval(resendTimer);say('','',2);goPage(1);setTimeout(function(){$('obPhone').focus()},80)});
-$('obCode').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,8);if(this.value.length>=6)$('obVerify').click()});
+$('obSend').addEventListener('click',function(){sendCode(false)});
+$('obResend').addEventListener('click',function(){sendCode(true)});
+$('obEdit').addEventListener('click',function(){stopOTP();$('obStep2').hidden=true;$('obStep1').hidden=false;clearInterval(resendTimer);say('')});
 $('obVerify').addEventListener('click',async function(){
   stopOTP();
   var phone=$('obPhone').value.trim(),code=$('obCode').value.trim();
-  if(code.length<4){say('کد تأیید را کامل وارد کن.','err',2);return}
-  var btn=$('obVerify');btn.disabled=true;say('در حال بررسی کد…','',2);
+  if(code.length<4){say('کد تأیید را کامل وارد کن.','err');return}
+  var btn=$('obVerify');btn.disabled=true;say('در حال بررسی کد…');
   try{await api('/api/auth/sms/verify',{method:'POST',body:JSON.stringify({phone:phone,code:code})});
     try{localStorage.setItem(FLAG,'1')}catch(e){}
     $('onboard').classList.remove('show');$('onboard').setAttribute('aria-hidden','true');
     document.dispatchEvent(new CustomEvent('rev:onboarded'));
-  }catch(e){say(e.message||'کد اشتباه است. دوباره تلاش کن.','err',2)}
+  }catch(e){say(e.message||'کد اشتباه است. دوباره تلاش کن.','err')}
   finally{btn.disabled=false}
 });
 window.revShowLogin=function(){
-  var ob=$('onboard');ob.classList.add('show');ob.setAttribute('aria-hidden','false');goPage(1);
+  var ob=$('onboard');ob.classList.add('show');ob.setAttribute('aria-hidden','false');
 };
 })();
 </script>
