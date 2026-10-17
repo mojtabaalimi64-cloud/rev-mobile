@@ -94,8 +94,14 @@
     </g>
     <text class="splash-label" style="animation-delay:2.1s" x="322" y="94" text-anchor="middle" font-size="12.5" font-weight="800" fill="#b3372f">مقصد</text>
     <g opacity="0">
-      <circle r="11" fill="#0887a7" opacity=".20"/>
-      <circle r="7" fill="#0887a7" stroke="#ffffff" stroke-width="2.5"/>
+      <circle r="18" fill="#0887a7" opacity=".14"/>
+      <g>
+        <rect x="-20" y="-8" width="40" height="13" rx="6.5" fill="#0887a7" stroke="#ffffff" stroke-width="2.5"/>
+        <path d="M-10,-8 L-6,-15 Q-5.5,-16.5 -4,-16.5 L6,-16.5 Q7.5,-16.5 8.5,-15 L12,-8 Z" fill="#0a5f78" stroke="#ffffff" stroke-width="2"/>
+        <circle cx="-11" cy="7" r="4.6" fill="#14293b" stroke="#ffffff" stroke-width="2.2"/>
+        <circle cx="11" cy="7" r="4.6" fill="#14293b" stroke="#ffffff" stroke-width="2.2"/>
+        <path d="M3.5,-5.5 L-1.5,1.5 H1.2 L-0.8,5.5 L4.8,-1 H2 Z" fill="#ffffff"/>
+      </g>
       <animate attributeName="opacity" from="0" to="1" begin="0.2s" dur="0.25s" fill="freeze"/>
       <animateMotion dur="2.2s" begin="0.15s" fill="freeze" path="M48,208 C110,190 130,150 200,140 S300,84 322,58"/>
     </g>
@@ -348,12 +354,12 @@ function isStandalone(){try{return (window.matchMedia&&matchMedia('(display-mode
 function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
 var done=false;try{done=localStorage.getItem('rev_install_done')==='1'}catch(e){}
 if(isStandalone()||done)return;
-var deferred=null,shown=false;
-function show(label){if(shown)return;shown=true;sec.hidden=false;if(label)btn.textContent=label}
+var deferred=null;
 function markDone(){try{localStorage.setItem('rev_install_done','1')}catch(e){}sec.hidden=true}
-window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;show()});
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e});
 window.addEventListener('appinstalled',markDone);
-if(isIOS())show('راهنمای نصب');
+sec.hidden=false;
+if(isIOS())btn.textContent='راهنمای نصب';
 btn.addEventListener('click',function(){
   if(deferred){
     var d=deferred;deferred=null;btn.disabled=true;
