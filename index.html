@@ -30,13 +30,13 @@
 @media(prefers-reduced-motion:reduce){#splashRoute,.splash-pop,.splash-label,.splash-brand,.splash-map{animation-duration:.01s !important;animation-delay:0s !important}}
 </style>
 <style>
-#onboard{position:fixed;inset:0;z-index:1500;background:linear-gradient(160deg,#e3f2f8 0%,#f5f8fa 55%,#eaf5fa 100%);display:none;align-items:center;justify-content:center;padding:24px}
+#onboard{position:fixed;inset:0;z-index:1500;background:var(--bg);display:none;align-items:center;justify-content:center;padding:24px}
 #onboard.show{display:flex}
 .ob-pages{width:min(400px,100%)}
 .ob-page{display:none}
 .ob-page.ob-active{display:block;animation:obPageIn .38s cubic-bezier(.2,.9,.3,1)}
 @keyframes obPageIn{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
-.ob-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:34px 24px 28px;box-shadow:0 24px 60px rgba(8,135,167,.14);text-align:center;position:relative}
+.ob-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:34px 24px 28px;box-shadow:var(--shadow-sm);text-align:center;position:relative}
 .ob-logo{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#0db1d6,#066d88);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(8,135,167,.35);margin-bottom:4px}
 .ob-logo svg{width:38px;height:38px}
 .ob-card h1{font-size:22px;margin:12px 0 8px;font-weight:900;color:#0b2b3a}
