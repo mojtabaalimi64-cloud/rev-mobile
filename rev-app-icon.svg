@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0866ff"/><path d="M276 56 128 278h98l-18 178 176-250H282z" fill="#ffffff"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="pinG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b93b8"/>
+      <stop offset=".55" stop-color="#0887a7"/>
+      <stop offset="1" stop-color="#066d88"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#f5f8fa"/>
+  <ellipse cx="256" cy="356" rx="72" ry="12" fill="#0887a7" opacity=".12"/>
+  <path d="M256,108 c-48,0 -87,39 -87,87 0,64 87,143 87,143 s87,-79 87,-143 c0,-48 -39,-87 -87,-87z" fill="url(#pinG)"/>
+  <circle cx="256" cy="196" r="40" fill="#ffffff"/>
+  <path d="M276 56 128 278h98l-18 178 176-250H282z" fill="#0887a7" transform="translate(256 196) scale(0.185) translate(-256 -256)"/>
+  <text x="256" y="448" text-anchor="middle" font-family="Verdana, Arial, Tahoma, sans-serif" font-size="62" font-weight="900" letter-spacing="5" fill="#0a5f78">rev</text>
+</svg>
