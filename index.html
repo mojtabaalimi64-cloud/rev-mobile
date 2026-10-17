@@ -10,8 +10,84 @@
 <link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
 <title>REV | همراه سفر برقی</title>
 <link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
+<style>
+#revSplash{position:fixed;inset:0;z-index:2000;background:#f5f8fa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;transition:opacity .5s ease}
+#revSplash.hide{opacity:0;pointer-events:none}
+.splash-map{width:min(340px,86vw);height:auto}
+.splash-map text{font-family:'Vazirmatn',Vazir,Tahoma,sans-serif}
+.splash-brand{display:flex;flex-direction:column;align-items:center;gap:9px}
+.splash-logo{width:66px;height:66px;border-radius:21px;background:linear-gradient(140deg,#0a5f78,#0887a7 60%,#0b93b8);display:grid;place-items:center;box-shadow:0 10px 26px rgba(8,135,167,.30)}
+.splash-logo svg{width:34px;height:34px}
+.splash-brand b{font-size:27px;font-weight:900;letter-spacing:7px;color:#14293b;margin-right:-7px}
+.splash-brand small{font-size:12px;color:#7e93a6}
+</style>
+<style>
+#onboard{position:fixed;inset:0;z-index:1500;background:#f5f8fa;display:none;align-items:center;justify-content:center;padding:24px}
+#onboard.show{display:flex}
+.ob-card{width:min(400px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px 22px;box-shadow:var(--shadow);text-align:center}
+.ob-card h1{font-size:20px;margin:14px 0 6px;font-weight:900}
+.ob-sub{font-size:12.5px;color:var(--muted);margin:0 0 20px;line-height:1.9}
+.ob-card .field{text-align:right}
+.ob-card input{text-align:left;letter-spacing:3px;font-weight:800}
+.ob-code{font-size:22px !important;text-align:center !important;letter-spacing:8px !important}
+.ob-foot{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;font-size:12px}
+.ob-foot button{border:0;background:none;color:var(--teal);font-weight:800;font-size:12px;padding:6px}
+.ob-foot button:disabled{color:var(--muted)}
+#obStatus{min-height:22px;font-size:12px;margin-top:10px}
+#obStatus.err{color:var(--red)}
+#obStatus.ok{color:var(--green)}
+</style>
 </head>
 <body class="has-bottom-nav">
+<div id="onboard" aria-hidden="true">
+  <div class="ob-card">
+    <span class="splash-logo" style="margin:0 auto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="#ffffff"/></svg></span>
+    <h1>به REV خوش اومدی ⚡</h1>
+    <p class="ob-sub">برای شروع، شماره موبایلت رو وارد کن تا کد تأیید برات پیامک بشه.</p>
+    <div id="obStep1">
+      <div class="field"><label for="obPhone">شماره موبایل</label><input id="obPhone" inputmode="numeric" autocomplete="tel" placeholder="09123456789" dir="ltr"><div class="hint">مثل 09123456789</div></div>
+      <button class="btn-primary" id="obSend">دریافت کد تأیید</button>
+    </div>
+    <div id="obStep2" hidden>
+      <p class="ob-sub" style="margin-bottom:14px">کد تأیید به شماره <b id="obPhoneShow" dir="ltr"></b> پیامک شد.</p>
+      <div class="field"><label for="obCode">کد تأیید</label><input id="obCode" class="ob-code" inputmode="numeric" maxlength="8" placeholder="•••••" dir="ltr" autocomplete="one-time-code"></div>
+      <button class="btn-primary" id="obVerify">تأیید و ورود</button>
+      <div class="ob-foot"><button id="obEdit" type="button">ویرایش شماره</button><span aria-hidden="true">·</span><button id="obResend" type="button" disabled>ارسال مجدد (۶۰)</button></div>
+    </div>
+    <div id="obStatus" role="status" aria-live="polite"></div>
+  </div>
+</div>
+<div id="revSplash" aria-hidden="true">
+  <svg class="splash-map" viewBox="0 0 360 250" role="img" aria-label="نقشه مسیر">
+    <rect x="0" y="0" width="360" height="250" fill="#f5f8fa"/>
+    <g fill="#edf3f7">
+      <rect x="16" y="16" width="72" height="46" rx="9"/>
+      <rect x="240" y="28" width="88" height="54" rx="9"/>
+      <rect x="122" y="122" width="58" height="58" rx="9"/>
+      <rect x="252" y="150" width="72" height="62" rx="9"/>
+      <rect x="18" y="150" width="58" height="62" rx="9"/>
+    </g>
+    <g stroke="#e4edf3" stroke-width="9" stroke-linecap="round">
+      <path d="M0,105 H360"/>
+      <path d="M105,0 V250"/>
+      <path d="M225,0 V250"/>
+      <path d="M0,205 H360"/>
+    </g>
+    <path d="M-10,235 C80,210 120,150 200,140 S310,80 370,55" fill="none" stroke="#d8e7ef" stroke-width="13" stroke-linecap="round"/>
+    <path d="M48,208 C110,190 130,150 200,140 S300,84 322,58" fill="none" stroke="#0887a7" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="10 8" opacity=".85"/>
+    <circle cx="48" cy="208" r="16" fill="#0887a7" opacity=".13"/>
+    <circle cx="48" cy="208" r="8.5" fill="#0887a7" stroke="#ffffff" stroke-width="3"/>
+    <text x="48" y="234" text-anchor="middle" font-size="12.5" font-weight="800" fill="#066d88">مبدأ</text>
+    <path d="M322,32 c-10,0 -17,7 -17,16 0,11 17,27 17,27 s17,-16 17,-27 c0,-9 -7,-16 -17,-16z" fill="#df5454"/>
+    <circle cx="322" cy="48" r="6" fill="#ffffff"/>
+    <text x="322" y="94" text-anchor="middle" font-size="12.5" font-weight="800" fill="#b3372f">مقصد</text>
+  </svg>
+  <div class="splash-brand">
+    <span class="splash-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z" fill="#ffffff"/></svg></span>
+    <b>REV</b>
+    <small>همراه سفر برقی تو</small>
+  </div>
+</div>
 <div class="app-shell">
 
 <header class="app-header"><div class="wrap top">
@@ -115,5 +191,63 @@
 })();
 </script>
 <script src="./register-sw.js" defer></script>
+<script>
+(function(){var s=document.getElementById('revSplash');if(!s)return;var done=false;
+function hide(){if(done)return;done=true;s.classList.add('hide');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},600)}
+var t0=Date.now();
+function onLoad(){setTimeout(hide,Math.max(0,700-(Date.now()-t0)))}
+if(document.readyState==='complete'){onLoad()}else{window.addEventListener('load',onLoad)}
+var _hide0=hide;hide=function(){_hide0();if(window.revMaybeOnboard)setTimeout(window.revMaybeOnboard,350)}
+setTimeout(hide,3000);})();
+</script>
+<script>
+/* آنبوردینگ: ورود با شماره موبایل و کد پیامک در اولین بازدید */
+(function(){
+var API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
+var FLAG='rev_onboarded_v1';
+function $(id){return document.getElementById(id)}
+function say(msg,kind){var s=$('obStatus');s.textContent=msg;s.className=kind||''}
+function validPhone(p){return /^09\d{9}$/.test(String(p||'').trim())}
+async function api(path,opts){var r=await fetch(API+path,Object.assign({credentials:'include',cache:'no-store',headers:{'Content-Type':'application/json'}},opts||{}));var j=null;try{j=await r.json()}catch(e){}if(!r.ok)throw new Error((j&&j.message)||'خطا در ارتباط با سرور');return j||{}}
+var resendTimer=null;
+function startResend(){var b=$('obResend'),n=60;b.disabled=true;clearInterval(resendTimer);b.textContent='ارسال مجدد ('+n+')';resendTimer=setInterval(function(){n--;if(n<=0){clearInterval(resendTimer);b.disabled=false;b.textContent='ارسال مجدد کد'}else{b.textContent='ارسال مجدد ('+n+')'}},1000)}
+async function sendCode(silent){
+  var phone=$('obPhone').value.trim();
+  if(!validPhone(phone)){say('شماره موبایل معتبر وارد کن (مثل 09123456789).','err');return}
+  var btn=$('obSend');btn.disabled=true;say('در حال ارسال کد…');
+  try{var j=await api('/api/auth/sms/request',{method:'POST',body:JSON.stringify({phone:phone})});
+    $('obPhoneShow').textContent=phone;
+    $('obStep1').hidden=true;$('obStep2').hidden=false;
+    say(j.message||'کد تأیید ارسال شد.','ok');startResend();$('obCode').focus();
+  }catch(e){say(e.message||'ارسال کد ممکن نشد. دوباره تلاش کن.','err')}
+  finally{btn.disabled=false}
+}
+$('obSend').addEventListener('click',function(){sendCode(false)});
+$('obResend').addEventListener('click',function(){sendCode(true)});
+$('obEdit').addEventListener('click',function(){$('obStep2').hidden=true;$('obStep1').hidden=false;clearInterval(resendTimer);say('')});
+$('obVerify').addEventListener('click',async function(){
+  var phone=$('obPhone').value.trim(),code=$('obCode').value.trim();
+  if(code.length<4){say('کد تأیید را کامل وارد کن.','err');return}
+  var btn=$('obVerify');btn.disabled=true;say('در حال بررسی کد…');
+  try{await api('/api/auth/sms/verify',{method:'POST',body:JSON.stringify({phone:phone,code:code})});
+    try{localStorage.setItem(FLAG,'1')}catch(e){}
+    $('onboard').classList.remove('show');$('onboard').setAttribute('aria-hidden','true');
+    document.dispatchEvent(new CustomEvent('rev:onboarded'));
+  }catch(e){say(e.message||'کد اشتباه است. دوباره تلاش کن.','err')}
+  finally{btn.disabled=false}
+});
+window.revMaybeOnboard=function(){
+  var done=false;try{done=!!localStorage.getItem(FLAG)}catch(e){}
+  if(done){
+    /* نشست قبلی معتبر است؟ فقط در صورت 401 صریح، دوباره ورود بخواه */
+    fetch(API+'/api/portal/me',{credentials:'include',cache:'no-store'}).then(function(r){
+      if(r.status===401){try{localStorage.removeItem(FLAG)}catch(e){}$('onboard').classList.add('show');$('onboard').setAttribute('aria-hidden','false')}
+    }).catch(function(){});
+    return;
+  }
+  $('onboard').classList.add('show');$('onboard').setAttribute('aria-hidden','false');
+};
+})();
+</script>
 </body>
 </html>
