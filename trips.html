@@ -155,30 +155,40 @@ function $(id){return document.getElementById(id);}
 function number(v){return v==null||v==='?'?'—':new Intl.NumberFormat('fa-IR',{maximumFractionDigits:1}).format(Number(v));}
 function safe(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function date(v){try{return new Date(v).toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'});}catch(e){return 'تاریخ نامشخص';}}
+var CACHE_KEY='rev_db_driver_v1';
+function renderAll(p,trips){
+  trips=Array.isArray(trips)?trips:[];
+  $('tripCount').textContent=number(p.tripCount!=null?p.tripCount:trips.length);
+  $('distance').textContent=number(p.totalDistanceKm);
+  $('energy').textContent=number(p.totalEnergyKwh);
+  $('consumption').textContent=p.averageKwhPer100Km==null?'—':number(p.averageKwhPer100Km);
+  $('recentTrips').innerHTML=trips.length?trips.slice(0,5).map(function(t){
+    var d=Number(t.distance_km),e=Number(t.energy_kwh);
+    var rate=(d>0&&e>0)?number(e/d*100):'—';
+    return '<article class="trip"><div class="trip-title"><span>'+safe(t.vehicle_name||'سفر با خودرو')+'</span>'+
+      '<span class="pill teal">'+safe(t.energy_source||'ثبت‌شده')+'</span></div>'+
+      '<div class="trip-meta">'+safe(date(t.started_at))+' · '+number(t.distance_km)+' کیلومتر · '+number(t.energy_kwh)+' کیلووات‌ساعت</div>'+
+      '<div class="trip-meta">مصرف این سفر: '+rate+' kWh/100 km</div></article>';
+  }).join(''):'<div class="empty">هنوز سفری در حساب شما ثبت نشده است.<br>برای شروع، پروفایل راننده را باز و اولین سفر را ثبت کن.</div>';
+}
 async function load(){
   try{
     var r=await fetch(API+'/api/driver/profile',{credentials:'include',cache:'no-store'});
     var j=await r.json().catch(function(){return {};});
     if(!r.ok||!j.success)throw new Error(j.error||'برای مشاهده آمار شخصی، ابتدا وارد حساب REV شوید.');
     var p=j.profile||{},trips=Array.isArray(j.trips)?j.trips:[];
-    $('tripCount').textContent=number(p.tripCount!=null?p.tripCount:trips.length);
-    $('distance').textContent=number(p.totalDistanceKm);
-    $('energy').textContent=number(p.totalEnergyKwh);
-    $('consumption').textContent=p.averageKwhPer100Km==null?'—':number(p.averageKwhPer100Km);
+    try{localStorage.setItem(CACHE_KEY,JSON.stringify({profile:p,trips:trips,ts:Date.now()}))}catch(e){}
+    renderAll(p,trips);
     $('status').textContent='آمار از سفرهای ذخیره‌شده در حساب شما دریافت شد.';
-    $('recentTrips').innerHTML=trips.length?trips.slice(0,5).map(function(t){
-      var d=Number(t.distance_km),e=Number(t.energy_kwh);
-      var rate=(d>0&&e>0)?number(e/d*100):'—';
-      return '<article class="trip"><div class="trip-title"><span>'+safe(t.vehicle_name||'سفر با خودرو')+'</span>'+
-        '<span class="pill teal">'+safe(t.energy_source||'ثبت‌شده')+'</span></div>'+
-        '<div class="trip-meta">'+safe(date(t.started_at))+' · '+number(t.distance_km)+' کیلومتر · '+number(t.energy_kwh)+' کیلووات‌ساعت</div>'+
-        '<div class="trip-meta">مصرف این سفر: '+rate+' kWh/100 km</div></article>';
-    }).join(''):'<div class="empty">هنوز سفری در حساب شما ثبت نشده است.<br>برای شروع، پروفایل راننده را باز و اولین سفر را ثبت کن.</div>';
   }catch(e){
     $('status').textContent=e.message||'دریافت اطلاعات ممکن نشد.';
-    $('recentTrips').innerHTML='<div class="empty">برای مشاهده تاریخچه شخصی، وارد حساب REV شو. اگر وارد حساب هستی، اتصال سرویس سفر را بررسی کن.<br><a style="color:var(--teal);font-weight:800" href="https://mojtabaalimi64-cloud.github.io/rev/account.html">ورود به حساب کاربری</a></div>';
+    if($('recentTrips').querySelector('.empty')&&$('tripCount').textContent==='—'){
+      $('recentTrips').innerHTML='<div class="empty">برای مشاهده تاریخچه شخصی، وارد حساب REV شو. اگر وارد حساب هستی، اتصال سرویس سفر را بررسی کن.<br><a style="color:var(--teal);font-weight:800" href="https://mojtabaalimi64-cloud.github.io/rev/account.html">ورود به حساب کاربری</a></div>';
+    }
   }
 }
+/* اول دیتای قبلی از کش، بعد تازه‌سازی از دیتابیس */
+try{var cd=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');if(cd&&cd.profile){renderAll(cd.profile,cd.trips||[]);$('status').textContent='در حال به‌روزرسانی از حساب شما…';}}catch(e){}
 load();
 })();
 </script>

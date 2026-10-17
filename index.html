@@ -128,6 +128,19 @@
     <p>مبدأ و مقصد را مشخص کن؛ مسیرت را با توقف‌های شارژ برنامه‌ریزی کن.</p>
     <a class="btn-light" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html"><span>شروع برنامه‌ریزی سفر</span><span aria-hidden="true">←</span></a>
   </section>
+  <section class="section" id="installSection" hidden style="margin-top:14px">
+    <div class="card" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(140deg,#0a5f78,#0887a7);border:0">
+      <span style="font-size:26px" aria-hidden="true">📲</span>
+      <span class="copy" style="flex:1"><b style="color:#fff">نصب REV روی گوشی</b><small style="color:#d3ecf4">مثل یه اپ واقعی، با آیکون از صفحه اصلی بازش کن</small></span>
+      <button class="btn-light" id="installBtn" style="padding:9px 18px;font-size:13px;white-space:nowrap">نصب</button>
+      <button id="installClose" aria-label="بستن" style="border:0;background:rgba(255,255,255,.18);color:#fff;width:30px;height:30px;border-radius:50%;font-size:15px;line-height:1">×</button>
+    </div>
+    <div class="card" id="installHelp" hidden style="margin-top:10px;font-size:12.5px;line-height:2.1">
+      <b>نصب دستی:</b><br>
+      • <b>آیفون (سافاری):</b> دکمه اشتراک‌گذاری پایین صفحه را بزن، بعد «Add to Home Screen» (افزودن به صفحه اصلی) را انتخاب کن.<br>
+      • <b>اندروید:</b> منوی سه‌نقطه ⋮ کروم را بزن و «Install app» یا «افزودن به صفحه اصلی» را انتخاب کن.
+    </div>
+  </section>
 
   <section class="section" aria-labelledby="quickTitle">
     <div class="section-head"><h2 id="quickTitle">دسترسی سریع</h2></div>
@@ -149,11 +162,13 @@
 
   <section class="section" aria-labelledby="myTripsTitle">
     <div class="section-head"><h2 id="myTripsTitle">سفرهای من</h2><a href="./trips.html">مشاهده همه</a></div>
-    <a class="card row-item" href="./trips.html" style="display:flex">
-      <span class="ico">🧭</span>
-      <span class="copy"><b>خلاصه رانندگی</b><small>آمار سفرها و میانگین مصرف واقعی خودرویت</small></span>
-      <span class="chev" aria-hidden="true">‹</span>
-    </a>
+    <div class="metrics" id="homeMetrics">
+      <div class="metric"><small>سفرهای ثبت‌شده</small><strong id="hmTrips">—</strong></div>
+      <div class="metric"><small>مسافت کل</small><strong><span id="hmDist">—</span> <span class="unit">km</span></strong></div>
+      <div class="metric"><small>انرژی مصرفی</small><strong><span id="hmEnergy">—</span> <span class="unit">kWh</span></strong></div>
+      <div class="metric"><small>میانگین مصرف</small><strong><span id="hmCons">—</span> <span class="unit">kWh/100km</span></strong></div>
+    </div>
+    <div class="list-card" id="homeRecent" style="margin-top:12px"><div class="empty">در حال بارگذاری سفرهای قبلی…</div></div>
   </section>
 
   <footer class="app-foot">REV · همراه سفر برقی تو</footer>
@@ -226,6 +241,7 @@ var motionP=new Promise(function(res){setTimeout(res,MOTION_MS)});
 var capP=new Promise(function(res){setTimeout(function(){res('cap')},8000)});
 Promise.race([Promise.all([authP,motionP]),capP]).then(function(v){
   var loggedIn=(v==='cap')?(hasFlag()):(v[0]===null?hasFlag():v[0]);
+  try{document.dispatchEvent(new CustomEvent('rev:auth',{detail:{loggedIn:!!loggedIn}}))}catch(e){}
   s.classList.add('hide');
   setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},FADE_MS+80);
   if(!loggedIn&&window.revShowLogin){setTimeout(window.revShowLogin,Math.round(FADE_MS*0.55))}
@@ -285,6 +301,72 @@ $('obVerify').addEventListener('click',async function(){
 window.revShowLogin=function(){
   var ob=$('onboard');ob.classList.add('show');ob.setAttribute('aria-hidden','false');
 };
+})();
+</script>
+<script>
+/* بازیابی اطلاعات قبلی کاربر از دیتابیس: بعد از ورود (اول یا مجدد)، آمار و سفرها از سرور خوانده و کش می‌شود */
+(function(){
+var API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
+var K='rev_db_driver_v1';
+function $(id){return document.getElementById(id)}
+function num(v){return v==null||v===''?'—':new Intl.NumberFormat('fa-IR',{maximumFractionDigits:1}).format(Number(v))}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function fmtDate(v){try{return new Date(v).toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'})}catch(e){return ''}}
+function render(p,trips){
+  trips=Array.isArray(trips)?trips:[];
+  if($('hmTrips'))$('hmTrips').textContent=num(p.tripCount!=null?p.tripCount:trips.length);
+  if($('hmDist'))$('hmDist').textContent=num(p.totalDistanceKm);
+  if($('hmEnergy'))$('hmEnergy').textContent=num(p.totalEnergyKwh);
+  if($('hmCons'))$('hmCons').textContent=p.averageKwhPer100Km==null?'—':num(p.averageKwhPer100Km);
+  if($('homeRecent'))$('homeRecent').innerHTML=trips.length?trips.slice(0,3).map(function(t){
+    return '<a class="trip" href="./trips.html" style="display:block;text-decoration:none;color:inherit"><div class="trip-title"><span>'+esc(t.vehicle_name||'سفر با خودرو')+'</span></div><div class="trip-meta">'+esc(fmtDate(t.started_at))+' · '+num(t.distance_km)+' کیلومتر · '+num(t.energy_kwh)+' کیلووات‌ساعت</div></a>';
+  }).join(''):'<div class="empty">هنوز سفری ثبت نشده است.</div>';
+}
+function loadCache(){try{var d=JSON.parse(localStorage.getItem(K)||'null');if(d&&d.profile)render(d.profile,d.trips||[])}catch(e){}}
+async function restore(){
+  try{
+    var r=await fetch(API+'/api/driver/profile',{credentials:'include',cache:'no-store'});
+    if(r.status===401)return;
+    var j=await r.json().catch(function(){return null});
+    if(!j||!j.success)return;
+    try{localStorage.setItem(K,JSON.stringify({profile:j.profile||{},trips:j.trips||[],ts:Date.now()}))}catch(e){}
+    render(j.profile||{},j.trips||[]);
+  }catch(e){}
+}
+window.revRestoreData=function(){loadCache();restore();return true};
+document.addEventListener('rev:auth',function(e){if(e&&e.detail&&e.detail.loggedIn)restore()});
+document.addEventListener('rev:onboarded',function(){restore()});
+loadCache();
+})();
+</script>
+<script>
+/* نصب PWA: دکمه نصب REV روی صفحه اصلی گوشی */
+(function(){
+var sec=document.getElementById('installSection');if(!sec)return;
+var btn=document.getElementById('installBtn'),help=document.getElementById('installHelp'),close=document.getElementById('installClose');
+function isStandalone(){try{return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true}catch(e){return false}}
+function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+var done=false;try{done=localStorage.getItem('rev_install_done')==='1'}catch(e){}
+if(isStandalone()||done)return;
+var deferred=null,shown=false;
+function show(label){if(shown)return;shown=true;sec.hidden=false;if(label)btn.textContent=label}
+function markDone(){try{localStorage.setItem('rev_install_done','1')}catch(e){}sec.hidden=true}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;show()});
+window.addEventListener('appinstalled',markDone);
+if(isIOS())show('راهنمای نصب');
+btn.addEventListener('click',function(){
+  if(deferred){
+    var d=deferred;deferred=null;btn.disabled=true;
+    try{
+      Promise.resolve(d.prompt()).then(function(){return d.userChoice}).then(function(choice){
+        if(choice&&choice.outcome==='accepted')markDone();else btn.disabled=false;
+      }).catch(function(){btn.disabled=false});
+    }catch(e){btn.disabled=false}
+    return;
+  }
+  help.hidden=!help.hidden;
+});
+close.addEventListener('click',markDone);
 })();
 </script>
 </body>
