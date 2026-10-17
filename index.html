@@ -45,6 +45,10 @@
 #obStatus.err{color:var(--red)}
 #obStatus.ok{color:var(--green)}
 </style>
+<style>
+.invite-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #cfe0e8;border-radius:999px;background:#fff;color:#0a5f78;font-size:12.5px;font-weight:800;text-decoration:none}
+.invite-chip:active{background:#e5f3f8}
+</style>
 </head>
 <body class="has-bottom-nav">
 <div id="onboard" aria-hidden="true">
@@ -145,6 +149,27 @@
       <b>نصب دستی:</b><br>
       • <b>آیفون (سافاری):</b> دکمه اشتراک‌گذاری پایین صفحه را بزن، بعد «Add to Home Screen» (افزودن به صفحه اصلی) را انتخاب کن.<br>
       • <b>اندروید:</b> منوی سه‌نقطه ⋮ کروم را بزن و «Install app» یا «افزودن به صفحه اصلی» را انتخاب کن.
+    </div>
+  </section>
+
+  <section class="section" id="inviteSection" style="margin-top:14px">
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:28px" aria-hidden="true">🎁</span>
+        <span class="copy" style="flex:1"><b>دوستانت رو به REV دعوت کن</b><small>هرکی برقی داره یا می‌خواد بخره، این آپ به دردش می‌خوره</small></span>
+      </div>
+      <div id="inviteMsg" dir="rtl" style="white-space:pre-line;background:#f5f8fa;border:1px dashed #cfe0e8;border-radius:14px;padding:12px 14px;margin-top:12px;font-size:12.5px;line-height:2;color:#14293b"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn-primary" id="inviteShare" style="flex:1;min-width:150px">اشتراک‌گذاری</button>
+        <button class="btn-primary" id="inviteCopy" style="background:#fff;color:#0887a7;border:1.5px solid #0887a7;box-shadow:none">کپی متن دعوت</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px" id="inviteChannels">
+        <a class="invite-chip" data-ch="whatsapp" target="_blank" rel="noopener">واتس‌اپ</a>
+        <a class="invite-chip" data-ch="telegram" target="_blank" rel="noopener">تلگرام</a>
+        <a class="invite-chip" data-ch="x" target="_blank" rel="noopener">ایکس</a>
+        <a class="invite-chip" data-ch="sms">پیامک</a>
+      </div>
+      <div id="inviteStatus" role="status" aria-live="polite" style="min-height:20px;font-size:12px;margin-top:6px;color:#1ea56c"></div>
     </div>
   </section>
 
@@ -373,6 +398,31 @@ btn.addEventListener('click',function(){
   help.hidden=!help.hidden;
 });
 close.addEventListener('click',markDone);
+})();
+</script>
+<script>
+/* دعوت دوستان: پیام آماده + اشتراک‌گذاری در پیام‌رسان‌ها و شبکه‌های اجتماعی */
+(function(){
+var APP_URL='https://mojtabaalimi64-cloud.github.io/rev-mobile/';
+var MSG='⚡ REV — دستیار سفر با خودروی برقی\n\n🗺️ مسیریابی فارسی قدم‌به‌قدم\n⚡ پیدا کردن نزدیک‌ترین شارژر\n🔋 محاسبه مصرف و هزینه سفر\n\nرایگانه، از اینجا نصبش کن:\n'+APP_URL;
+var sec=document.getElementById('inviteSection');if(!sec)return;
+var statusEl=document.getElementById('inviteStatus');
+document.getElementById('inviteMsg').textContent=MSG;
+function say(m){statusEl.textContent=m;setTimeout(function(){if(statusEl.textContent===m)statusEl.textContent=''},3500)}
+function copyText(t,okMsg){
+  function done(){say(okMsg||'کپی شد ✅')}
+  function fallback(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){say('کپی نشد؛ متن را دستی انتخاب کن')}document.body.removeChild(ta)}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(fallback)}else{fallback()}
+}
+document.getElementById('inviteShare').addEventListener('click',function(){
+  if(navigator.share){navigator.share({title:'REV',text:MSG,url:APP_URL}).catch(function(){})}
+  else{copyText(MSG,'متن دعوت کپی شد — بفرستش برای دوستات ✅')}
+});
+document.getElementById('inviteCopy').addEventListener('click',function(){copyText(MSG,'متن دعوت کپی شد ✅')});
+var enc=encodeURIComponent(MSG),encUrl=encodeURIComponent(APP_URL),encText=encodeURIComponent(MSG.replace(APP_URL,''));
+var links={whatsapp:'https://wa.me/?text='+enc,telegram:'https://t.me/share/url?url='+encUrl+'&text='+encText,x:'https://twitter.com/intent/tweet?text='+enc,sms:'sms:?body='+enc};
+var chips=sec.querySelectorAll('#inviteChannels .invite-chip');
+for(var i=0;i<chips.length;i++){var u=links[chips[i].getAttribute('data-ch')];if(u)chips[i].setAttribute('href',u)}
 })();
 </script>
 </body>
