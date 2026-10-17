@@ -417,5 +417,13 @@ document.getElementById('inviteShare').addEventListener('click',function(){
 document.getElementById('inviteCopy').addEventListener('click',function(){copyText(MSG,'متن دعوت کپی شد ✅')});
 })();
 </script>
+<script>
+/* ثبت سرویس‌ورکر: پیش‌نیاز نصب تک‌کلیکی PWA */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    try{navigator.serviceWorker.register('./sw.js').catch(function(){})}catch(e){}
+  });
+}
+</script>
 </body>
 </html>

@@ -241,5 +241,13 @@ load();
 (function(){var s=document.getElementById('revSplash');if(!s)return;
 setTimeout(function(){s.classList.add('hide');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},630)},2450)})();
 </script>
+<script>
+/* ثبت سرویس‌ورکر: پیش‌نیاز نصب تک‌کلیکی PWA */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    try{navigator.serviceWorker.register('./sw.js').catch(function(){})}catch(e){}
+  });
+}
+</script>
 </body>
 </html>
