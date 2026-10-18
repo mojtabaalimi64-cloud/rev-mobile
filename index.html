@@ -299,7 +299,7 @@ if(window.requestAnimationFrame)requestAnimationFrame(frame);else{render(1);car.
 var s=document.getElementById('revSplash');if(!s)return;
 var API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
 var FLAG='rev_onboarded_v1';
-var MOTION_MS=2450,FADE_MS=550;
+var MOTION_MS=6000,FADE_MS=550;
 function hasFlag(){try{return !!localStorage.getItem(FLAG)}catch(e){return false}}
 function clearFlag(){try{localStorage.removeItem(FLAG)}catch(e){}}
 var authP=fetch(API+'/api/portal/me',{credentials:'include',cache:'no-store'}).then(function(r){
