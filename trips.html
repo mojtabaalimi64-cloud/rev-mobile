@@ -117,6 +117,11 @@
     </a>
   </section>
 
+  <section class="section" id="savedPlansSection" hidden aria-labelledby="savedPlansTitle">
+    <div class="section-head"><h2 id="savedPlansTitle">برنامه‌های ذخیره‌شده</h2></div>
+    <div id="savedPlansList"></div>
+  </section>
+
   <section class="section" aria-labelledby="recentTitle">
     <div class="section-head"><h2 id="recentTitle">سفرهای قبلی</h2><a href="https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html">تاریخچه کامل</a></div>
     <div class="list-card" id="recentTrips"><div class="empty">در حال بارگذاری سفرهای ثبت‌شده…</div></div>
@@ -202,6 +207,22 @@ try{
     if(pr.createdAt)meta.push(new Date(pr.createdAt).toLocaleDateString('fa-IR'));
     $('resumeMeta').textContent=meta.join(' · ')||'برنامه ذخیره‌شده';
     $('resumeSection').hidden=false;
+  }
+}catch(e){}
+
+/* برنامه‌های ذخیره‌شده (از دکمه ذخیره در trip.html) */
+try{
+  var _sp=JSON.parse(localStorage.getItem('rev_saved_trip_plans_v1')||'[]');
+  if(Array.isArray(_sp)&&_sp.length){
+    var _html=_sp.slice(0,10).map(function(p){
+      var _pr=p.params||{};
+      var _o=_pr.origin||p.origin||'مبدأ',_d=_pr.destination||p.destination||'مقصد';
+      var _km=_pr.routeKm||(p.distance?Math.round(p.distance/100)/10:null);
+      var _meta=[];if(_km)_meta.push(_km+' کیلومتر');if(p.createdAt)_meta.push(new Date(p.createdAt).toLocaleDateString('fa-IR'));
+      return '<a class="card row-item" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html" style="display:flex;margin-bottom:8px"><span class="ico">💾</span><span class="copy"><b>'+_o+' ← '+_d+'</b><small>'+_meta.join(' · ')+'</small></span><span class="chev" aria-hidden="true">‹</span></a>';
+    }).join('');
+    document.getElementById('savedPlansList').innerHTML=_html;
+    document.getElementById('savedPlansSection').hidden=false;
   }
 }catch(e){}
 
