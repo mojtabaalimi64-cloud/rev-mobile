@@ -18,6 +18,7 @@
 .trip:last-child{border-bottom:0}
 .trip-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:850;font-size:13px}
 .trip-meta{font-size:11px;color:var(--muted);margin-top:4px}
+.trip-input{width:100%;min-width:0;box-sizing:border-box;border:1px solid rgba(255,255,255,.35);border-radius:12px;background:rgba(255,255,255,.96);color:#14293b;padding:12px 13px;min-height:46px;font:inherit;font-size:14px;outline:none}.trip-input:focus{border-color:#70d5f3;box-shadow:0 0 0 3px rgba(112,213,243,.2)}.trip-field-label{display:block;color:#d3ecf4;font-size:12px;font-weight:800;margin:0 0 6px}.trip-date-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px}.trip-date-grid>div{min-width:0}@media(max-width:380px){.trip-date-grid{grid-template-columns:1fr}}
 @media(min-width:480px){.metrics{grid-template-columns:repeat(4,1fr)}}
 </style>
 <style>
@@ -98,8 +99,9 @@
   <section class="hero-card" aria-labelledby="planTitle" style="margin-top:18px">
     <div class="eyebrow" style="color:#bfe3ee">سفر بعدی‌ات را بچین</div>
     <h1 id="planTitle" style="font-size:19px">از کجا به کجا؟</h1>
-    <div class="field" style="margin-top:12px"><label for="planOrigin" style="color:#d3ecf4">مبدأ</label><input id="planOrigin" placeholder="مثلاً تهران، میدان ونک" autocomplete="off"></div>
-    <div class="field"><label for="planDest" style="color:#d3ecf4">مقصد</label><input id="planDest" placeholder="مثلاً اصفهان" autocomplete="off"></div>
+    <div class="field" style="margin-top:12px"><label for="planOrigin" style="color:#d3ecf4">مبدأ</label><input id="planOrigin" placeholder="مثلاً تهران، میدان ونک" autocomplete="off" class="trip-input"></div>
+    <div class="field"><label for="planDest" style="color:#d3ecf4">مقصد</label><input id="planDest" placeholder="مثلاً اصفهان" autocomplete="off" class="trip-input"></div>
+    <div class="trip-date-grid"><div><label class="trip-field-label" for="planDate">تاریخ حرکت</label><input class="trip-input" id="planDate" type="date" required></div><div><label class="trip-field-label" for="planTime">ساعت حرکت</label><input class="trip-input" id="planTime" type="time" required></div></div>
     <div id="recentDests" style="display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px"></div>
     <div style="display:grid;gap:10px;position:relative;z-index:1">
       <button class="btn-light" id="planGo" style="border:0;cursor:pointer;font:inherit;font-weight:800">🗺️ برنامه‌ریزی سفر</button>
@@ -189,11 +191,14 @@ function saveRecent(o,d){
   }catch(e){}
 }
 $('planGo').addEventListener('click',function(){
-  var o=$('planOrigin').value.trim(),d=$('planDest').value.trim();
+  var o=$('planOrigin').value.trim(),d=$('planDest').value.trim(),dt=$('planDate').value,tm=$('planTime').value;
   if(!o||!d){$('planStatus').textContent='مبدأ و مقصد را وارد کن.';return}
-  $('planStatus').textContent='در حال باز کردن برنامه‌ریز سفر…';
+  if(!dt||!tm){$('planStatus').textContent='تاریخ و ساعت حرکت را هم انتخاب کن.';return}
+  var departureAt=new Date(dt+'T'+tm+'');
+  if(!Number.isFinite(departureAt.getTime())||departureAt.getTime()<Date.now()-5*60*1000){$('planStatus').textContent='تاریخ و ساعت حرکت باید در زمان حال یا آینده باشد.';return}
+  $('planStatus').textContent='در حال آماده‌سازی نتیجه برنامه‌ریزی…';
   saveRecent(o,d);
-  location.href=SITE+'/trip.html?origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d);
+  location.href=SITE+'/trip.html?origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+'&date='+encodeURIComponent(dt)+'&time='+encodeURIComponent(tm)+'&resultOnly=1';
 });
 renderRecent();
 
