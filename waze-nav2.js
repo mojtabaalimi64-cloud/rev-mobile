@@ -1,14 +1,3 @@
-
-(function(){
-  var s=document.createElement('style');
-  s.textContent='#wazeCompass{position:absolute !important;top:200px !important;right:12px !important;left:auto !important;} #btn3dToggle{position:absolute !important;top:264px !important;right:12px !important;left:auto !important;bottom:auto !important;} .leaflet-control-zoom{display:none !important;}';
-  document.head.appendChild(s);
-  // حذف کنترل زوم لیفلت
-  setTimeout(function(){
-    var zc=document.querySelector('.leaflet-control-zoom');
-    if(zc) zc.style.display='none';
-  },1000);
-})();
 // === حالت ناوبری به سبک ویز (نسخه ساده) ===
 var wazeMode = { active:true, is3d:false };
 // همیشه نمایش بده برای تست
@@ -60,3 +49,60 @@ document.addEventListener('DOMContentLoaded',function(){
     hideCenterPin();
   });
 });
+
+// چرخش نقشه با دو انگشت
+(function(){
+  var mapEl = document.getElementById('map');
+  if(!mapEl) return;
+  var startAngle = 0, startRot = 0, rotating = false;
+  var touches = {};
+  function getAngle(t1, t2){
+    return Math.atan2(t2.clientY - t1.clientY, t2.clientX - t1.clientX) * 180 / Math.PI;
+  }
+  function getRot(){
+    var mc = document.querySelector('.leaflet-container');
+    if(!mc) return 0;
+    var m = mc.style.getPropertyValue('--rev-rot') || getComputedStyle(mc).getPropertyValue('--rev-rot');
+    return parseFloat(m) || 0;
+  }
+  function setRot(deg){
+    var mc = document.querySelector('.leaflet-container');
+    if(mc) mc.style.setProperty('--rev-rot', deg + 'deg');
+    wazeUpdateCompass(deg);
+  }
+  mapEl.addEventListener('touchstart', function(e){
+    for(var i=0; i<e.touches.length; i++){
+      var t = e.touches[i];
+      touches[t.identifier] = {x:t.clientX, y:t.clientY};
+    }
+    var ids = Object.keys(touches);
+    if(ids.length === 2){
+      rotating = true;
+      var t1 = touches[ids[0]], t2 = touches[ids[1]];
+      startAngle = getAngle(t1, t2);
+      startRot = getRot();
+    }
+  }, {passive:true});
+  mapEl.addEventListener('touchmove', function(e){
+    if(!rotating) return;
+    for(var i=0; i<e.touches.length; i++){
+      var t = e.touches[i];
+      if(touches[t.identifier]) touches[t.identifier] = {x:t.clientX, y:t.clientY};
+    }
+    var ids = Object.keys(touches);
+    if(ids.length === 2){
+      var t1 = touches[ids[0]], t2 = touches[ids[1]];
+      var ang = getAngle(t1, t2);
+      var delta = ang - startAngle;
+      setRot(startRot + delta);
+    }
+  }, {passive:true});
+  function endTouch(e){
+    for(var i=0; i<e.changedTouches.length; i++){
+      delete touches[e.changedTouches[i].identifier];
+    }
+    if(Object.keys(touches).length < 2) rotating = false;
+  }
+  mapEl.addEventListener('touchend', endTouch, {passive:true});
+  mapEl.addEventListener('touchcancel', endTouch, {passive:true});
+})();
