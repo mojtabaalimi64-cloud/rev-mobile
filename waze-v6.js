@@ -1,4 +1,39 @@
 
+// فیکس نمایش پنل جزئیات شارژر
+(function(){
+  var style = document.createElement('style');
+  style.textContent = `
+    #details-panel:not([hidden]) {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // ناظر برای وقتی که hidden برداشته می‌شه
+  var obs = new MutationObserver(function(mutations){
+    mutations.forEach(function(m){
+      if(m.attributeName === 'hidden'){
+        var p = document.getElementById('details-panel');
+        if(p && !p.hasAttribute('hidden')){
+          p.style.display = 'block';
+          p.style.visibility = 'visible';
+          p.style.opacity = '1';
+        }
+      }
+    });
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    var p = document.getElementById('details-panel');
+    if(p) obs.observe(p, {attributes: true});
+  });
+  // اگه DOM آماده‌ست
+  var p2 = document.getElementById('details-panel');
+  if(p2) obs.observe(p2, {attributes: true});
+})();
+
 // دکمه تست ساده
 (function(){
   var t = document.createElement('button');
