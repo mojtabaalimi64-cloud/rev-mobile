@@ -420,3 +420,76 @@ document.addEventListener('DOMContentLoaded', function(){
     return p;
   };
 })();
+
+
+// REV Waze-style navigation UI: live speed, next maneuver, distance and directional vehicle marker.
+(function(){
+  if (window.__revWazeUiEnhancement) return;
+  window.__revWazeUiEnhancement = true;
+  var css = document.createElement('style');
+  css.textContent = `
+    #revWazeTurnCard{position:fixed;z-index:1800;top:calc(12px + env(safe-area-inset-top));left:12px;right:12px;max-width:560px;margin-inline:auto;display:none;direction:rtl;align-items:center;gap:12px;padding:12px 14px;background:#087eb5;color:#fff;border-radius:16px;box-shadow:0 8px 28px #082d4560;font-family:Tahoma,Vazirmatn,sans-serif}
+    body.rev-navigating #revWazeTurnCard{display:flex}
+    #revWazeTurnIcon{width:54px;height:54px;flex:0 0 54px;display:grid;place-items:center;background:#fff;color:#087eb5;border-radius:13px}
+    #revWazeTurnIcon svg{width:39px;height:39px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+    #revWazeTurnText{min-width:0;flex:1}
+    #revWazeTurnDistance{font-size:24px;font-weight:900;line-height:1.25;white-space:nowrap}
+    #revWazeTurnInstruction{font-size:13px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+    #revWazeSpeedCard{position:fixed;z-index:1800;left:12px;bottom:calc(92px + env(safe-area-inset-bottom));width:82px;min-height:78px;display:none;flex-direction:column;align-items:center;justify-content:center;background:#fff;color:#23394a;border:1px solid #dfe8ee;border-radius:17px;box-shadow:0 5px 22px #122b3d30;font-family:Tahoma,Vazirmatn,sans-serif}
+    body.rev-navigating #revWazeSpeedCard{display:flex}
+    #revWazeSpeedValue{font-size:32px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;color:#087eb5}
+    #revWazeSpeedUnit{font-size:11px;font-weight:800;color:#6e8292;margin-top:4px}
+    #revWazeVehicleMarker{position:relative;width:46px;height:46px;display:grid;place-items:center;border:3px solid #fff;border-radius:50%;background:#087eb5;box-shadow:0 2px 10px #102b3e66,0 0 0 2px #087eb5;transition:transform .18s linear}
+    #revWazeVehicleMarker svg{width:30px;height:30px;filter:drop-shadow(0 1px 1px #004a70)}
+    #revWazeVehicleMarker:after{content:"";position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid #087eb5}
+    @media(max-width:380px){#revWazeTurnCard{padding:9px 10px;gap:8px}#revWazeTurnIcon{width:46px;height:46px;flex-basis:46px}#revWazeTurnDistance{font-size:21px}#revWazeTurnInstruction{font-size:12px}#revWazeSpeedCard{width:70px;min-height:70px;left:8px;bottom:calc(88px + env(safe-area-inset-bottom))}#revWazeSpeedValue{font-size:28px}}
+    body:not(.rev-navigating) #revWazeTurnCard,body:not(.rev-navigating) #revWazeSpeedCard{display:none!important}
+  `;
+  document.head.appendChild(css);
+  var turn = document.createElement('section');
+  turn.id = 'revWazeTurnCard';
+  turn.setAttribute('aria-live','polite');
+  turn.innerHTML = '<div id="revWazeTurnIcon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 33V8M10 18L20 8l10 10"/></svg></div><div id="revWazeTurnText"><div id="revWazeTurnDistance">—</div><div id="revWazeTurnInstruction">در حال آماده‌سازی مسیر…</div></div>';
+  document.body.appendChild(turn);
+  var speed = document.createElement('section');
+  speed.id = 'revWazeSpeedCard';
+  speed.setAttribute('aria-label','سرعت فعلی');
+  speed.innerHTML = '<div id="revWazeSpeedValue">0</div><div id="revWazeSpeedUnit">کیلومتر/ساعت</div>';
+  document.body.appendChild(speed);
+  var lastSpeed = '';
+  function txt(id){var el=document.getElementById(id);return el?(el.textContent||'').trim():'';}
+  function turnSvg(instr){
+    var s=(instr||'').toLowerCase();
+    if(s.indexOf('چپ')>=0)return '<svg viewBox="0 0 40 40"><path d="M32 31V22a8 8 0 0 0-8-8H9M18 5l-9 9 9 9"/></svg>';
+    if(s.indexOf('راست')>=0)return '<svg viewBox="0 0 40 40"><path d="M8 31V22a8 8 0 0 1 8-8h15M22 5l9 9-9 9"/></svg>';
+    if(s.indexOf('میدان')>=0)return '<svg viewBox="0 0 40 40"><path d="M31 16a13 13 0 1 0 1 10M25 9l7 7 5-8"/></svg>';
+    if(s.indexOf('مقصد')>=0||s.indexOf('رسید')>=0)return '<svg viewBox="0 0 40 40"><path d="M8 8h24v24H8zM14 20l4 4 9-10"/></svg>';
+    return '<svg viewBox="0 0 40 40"><path d="M20 34V7M10 17L20 7l10 10"/></svg>';
+  }
+  function update(){
+    var active=document.body.classList.contains('rev-navigating');
+    if(!active)return;
+    var raw=txt('ndSpeed').replace(/[^0-9۰-۹٠-٩.,]/g,'').replace(/[۰-۹]/g,function(c){return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(c));}).replace(/[٠-٩]/g,function(c){return String('٠١٢٣٤٥٦٧٨٩'.indexOf(c));}).replace(',','.');
+    var n=parseFloat(raw);
+    if(Number.isFinite(n)){var shown=String(Math.round(n));if(shown!==lastSpeed){document.getElementById('revWazeSpeedValue').textContent=shown;lastSpeed=shown;}}
+    var instr=txt('navInstr')||'در مسیر بمانید';
+    var dist=txt('navDist')||'';
+    document.getElementById('revWazeTurnInstruction').textContent=instr;
+    document.getElementById('revWazeTurnDistance').textContent=dist;
+    document.getElementById('revWazeTurnIcon').innerHTML=turnSvg(instr);
+    var old=document.getElementById('navArrow');
+    if(old){
+      var wrap=old.parentElement;
+      if(wrap&&!wrap.dataset.revWazeStyled){
+        wrap.dataset.revWazeStyled='1';
+        wrap.style.width='54px';wrap.style.height='54px';wrap.style.background='transparent';wrap.style.boxShadow='none';wrap.style.borderRadius='0';wrap.style.display='grid';wrap.style.placeItems='center';
+        old.style.width='46px';old.style.height='46px';old.style.background='transparent';old.style.borderRadius='50%';
+        old.innerHTML='<svg viewBox="0 0 48 48" style="width:46px;height:46px"><path d="M24 3 L43 43 L24 33 L5 43 Z" fill="#087eb5" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>';
+      }
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',update);
+  var mo=new MutationObserver(update);
+  mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
+  setInterval(update,700);
+})();
