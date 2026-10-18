@@ -23,7 +23,7 @@
 .splash-label{animation:splashFade .5s ease-out backwards}
 .splash-brand{display:flex;flex-direction:column;align-items:center;gap:9px;animation:splashUp .7s ease-out .1s backwards}
 @keyframes splashUp{from{transform:translateY(16px);opacity:0}}
-.splash-logo{width:66px;height:66px;border-radius:21px;background:linear-gradient(140deg,#0a5f78,#0887a7 60%,#0b93b8);display:grid;place-items:center;box-shadow:0 10px 26px rgba(8,135,167,.30)}
+.splash-logo{transition:all .5s ease;width:66px;height:66px;border-radius:21px;background:linear-gradient(140deg,#0a5f78,#0887a7 60%,#0b93b8);display:grid;place-items:center;box-shadow:0 10px 26px rgba(8,135,167,.30)}
 .splash-logo svg{width:34px;height:34px}
 .splash-brand b{font-size:27px;font-weight:900;letter-spacing:7px;color:#14293b;margin-right:-7px}
 .splash-brand small{font-size:12px;color:#7e93a6}
@@ -115,19 +115,19 @@
     </g>
     <text class="splash-label" style="animation-delay:.3s" x="48" y="234" text-anchor="middle" font-size="12.5" font-weight="800" fill="#066d88">مبدأ</text>
     <g class="splash-pop" style="animation-delay:1.95s">
-      <path d="M322,2 c-9,0 -15,6 -15,14 0,10 15,24 15,24 s15,-14 15,-24 c0,-8 -6,-14 -15,-14z" fill="#df5454"/>
-      <circle cx="322" cy="16" r="5.5" fill="#ffffff"/>
+      <path d="M340,2 c-9,0 -15,6 -15,14 0,10 15,24 15,24 s15,-14 15,-24 c0,-8 -6,-14 -15,-14z" fill="#df5454"/>
+      <circle cx="340" cy="16" r="5.5" fill="#ffffff"/>
     </g>
     <g class="splash-pop" style="animation-delay:2.15s">
-      <circle cx="322" cy="58" r="18" fill="#0d9488" opacity=".12"/>
-      <text x="322" y="69" text-anchor="middle" font-size="30">🔌</text>
+      <circle cx="340" cy="62" r="18" fill="#0d9488" opacity=".12"/>
+      <text x="340" y="73" text-anchor="middle" font-size="30">🔌</text>
     </g>
-    <text class="splash-label" style="animation-delay:2.1s" x="322" y="77" text-anchor="middle" font-size="12.5" font-weight="800" fill="#b3372f">مقصد</text>
+    <text class="splash-label" style="animation-delay:2.1s" x="340" y="95" text-anchor="middle" font-size="12.5" font-weight="800" fill="#b3372f">مقصد</text>
     <g id="splashCar" opacity="0">
       <circle r="18" fill="#0887a7" opacity=".14"/>
       <g>
-        <rect x="-20" y="-8" width="40" height="13" rx="6.5" fill="#0887a7" stroke="#ffffff" stroke-width="2.5"/>
-        <path d="M-10,-8 L-6,-15 Q-5.5,-16.5 -4,-16.5 L6,-16.5 Q7.5,-16.5 8.5,-15 L12,-8 Z" fill="#0a5f78" stroke="#ffffff" stroke-width="2"/>
+        <rect id="splashCarBody" x="-20" y="-8" width="40" height="13" rx="6.5" fill="#22c55e" stroke="#ffffff" stroke-width="2.5"/>
+        <path id="splashCarRoof" d="M-10,-8 L-6,-15 Q-5.5,-16.5 -4,-16.5 L6,-16.5 Q7.5,-16.5 8.5,-15 L12,-8 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/>
         <rect x="-12" y="-27" width="24" height="11" rx="3" fill="#f0a02c" stroke="#ffffff" stroke-width="2"/>
         <line x1="-12" y1="-21.5" x2="12" y2="-21.5" stroke="#d98a1f" stroke-width="1.4"/>
         <path d="M-5,-27 V-15 M5,-27 V-15" stroke="#7a4a1e" stroke-width="2" stroke-linecap="round"/>
@@ -267,6 +267,12 @@
 (function(){
 var route=document.getElementById('splashRoute'),car=document.getElementById('splashCar');
 if(!route||!car)return;
+function lerpColor(c1,c2,t){
+  var r=Math.round(c1[0]+(c2[0]-c1[0])*t),g=Math.round(c1[1]+(c2[1]-c1[1])*t),b=Math.round(c1[2]+(c2[2]-c1[2])*t);
+  return 'rgb('+r+','+g+','+b+')';
+}
+var GREEN=[34,197,94],YELLOW=[234,179,8],RED=[239,68,68],DARKG=[22,163,74];
+
 var L=route.getTotalLength();
 route.style.strokeDasharray=String(L);
 route.style.strokeDashoffset=String(L);
@@ -276,6 +282,7 @@ function render(t){
   route.style.strokeDashoffset=String(L*(1-t));
   var pt=route.getPointAtLength(Math.max(0,Math.min(L,L*t)));
   car.setAttribute('transform','translate('+pt.x.toFixed(1)+' '+pt.y.toFixed(1)+')');
+  var body=document.getElementById('splashCarBody'),roof=document.getElementById('splashCarRoof');var bc,rc;if(t>=0.98){bc='rgb(34,197,94)';rc='rgb(22,163,74)';}else if(t<0.5){bc=lerpColor(GREEN,YELLOW,t*2);rc=lerpColor(DARKG,[202,138,4],t*2);}else{bc=lerpColor(YELLOW,RED,(t-0.5)*2);rc=lerpColor([202,138,4],[185,28,28],(t-0.5)*2);}if(body)body.setAttribute('fill',bc);if(roof)roof.setAttribute('fill',rc);var logo=document.querySelector('.splash-logo');if(logo){if(t>=0.98){logo.style.filter='drop-shadow(0 0 18px #22c55e)';logo.style.transform='scale(1.15)';}else{logo.style.filter='';logo.style.transform='';}}
 }
 if(reduce){render(1);car.setAttribute('opacity','1');return}
 var DUR=2200,DELAY=150,t0=null;
