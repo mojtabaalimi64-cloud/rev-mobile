@@ -1,9 +1,13 @@
 
-// تزریق استایل (دور زدن کش)
 (function(){
   var s=document.createElement('style');
-  s.textContent='#wazeCompass{position:absolute !important;top:140px !important;right:12px !important;left:auto !important;} #btn3dToggle{position:absolute !important;top:204px !important;right:12px !important;left:auto !important;bottom:auto !important;}';
+  s.textContent='#wazeCompass{position:absolute !important;top:200px !important;right:12px !important;left:auto !important;} #btn3dToggle{position:absolute !important;top:264px !important;right:12px !important;left:auto !important;bottom:auto !important;} .leaflet-control-zoom{display:none !important;}';
   document.head.appendChild(s);
+  // حذف کنترل زوم لیفلت
+  setTimeout(function(){
+    var zc=document.querySelector('.leaflet-control-zoom');
+    if(zc) zc.style.display='none';
+  },1000);
 })();
 // === حالت ناوبری به سبک ویز (نسخه ساده) ===
 var wazeMode = { active:true, is3d:false };
