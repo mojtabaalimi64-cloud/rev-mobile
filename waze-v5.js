@@ -277,3 +277,29 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 });
+
+// بازنویسی interceptor برای دریافت خودکار
+(function(){
+  if(window.__altInterceptorDone) return;
+  window.__altInterceptorDone = true;
+  var origFetch2 = window.fetch;
+  var busy = false;
+  window.fetch = function(url, opts){
+    var p = origFetch2.apply(this, arguments);
+    if(typeof url === 'string' && url.indexOf('router.project-osrm.org') !== -1 && url.indexOf('/route/v1/driving/') !== -1 && url.indexOf('alternatives=') === -1 && !busy){
+      var m = url.match(/driving\/([-\d.]+),([-\d.]+);([-\d.]+),([-\d.]+)/);
+      if(m){
+        busy = true;
+        var slng=m[1], slat=m[2], elng=m[3], elat=m[4];
+        lastRouteStart = [parseFloat(slng), parseFloat(slat)];
+        lastRouteEnd = [parseFloat(elng), parseFloat(elat)];
+        setTimeout(function(){
+          try{
+            fetchRouteAlternatives(slng, slat, elng, elat).then(function(){ busy = false; }).catch(function(){ busy = false; });
+          }catch(e){ busy = false; }
+        }, 2000);
+      }
+    }
+    return p;
+  };
+})();
