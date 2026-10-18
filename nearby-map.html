@@ -276,11 +276,12 @@ buildTypes();
 })();
 </script>
 
-/* Keep station information as a viewport modal, independent of map panning. */
+/* Compact station modal: fixed to viewport center, not map coordinates. */
 <style>
 body.rev-modal-open{overflow:hidden!important}
-.leaflet-popup.rev-centered-popup{position:fixed!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;margin:0!important;z-index:3000!important;width:max-content!important;max-width:calc(100vw - 28px)!important;pointer-events:auto!important}
-.leaflet-popup.rev-centered-popup .leaflet-popup-content-wrapper{max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 64px)!important;overflow:auto!important;border-radius:18px!important}
-.leaflet-popup.rev-centered-popup .leaflet-popup-content{max-width:calc(100vw - 64px)!important;max-height:calc(100dvh - 112px)!important;overflow:auto!important}
+.leaflet-popup.rev-centered-popup{position:fixed!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;margin:0!important;z-index:3000!important;width: min(280px, calc(100vw - 40px))!important;max-width:calc(100vw - 40px)!important;pointer-events:auto!important}
+.leaflet-popup.rev-centered-popup .leaflet-popup-content-wrapper{box-sizing:border-box!important;width:100%!important;max-width:280px!important;max-height:calc(100dvh - 100px)!important;overflow:auto!important;border-radius:14px!important;padding:2px!important}
+.leaflet-popup.rev-centered-popup .leaflet-popup-content{box-sizing:border-box!important;width:auto!important;max-width:236px!important;max-height:calc(100dvh - 150px)!important;overflow:auto!important;margin:10px!important}
+.leaflet-popup.rev-centered-popup .leaflet-popup-tip-container{display:none!important}
 </style>
 </body></html>
