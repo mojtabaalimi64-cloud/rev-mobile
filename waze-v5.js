@@ -12,10 +12,8 @@
         clone.json().then(function(data){
           if(data.routes && data.routes.length > 1){
             routeAlternatives = data.routes;
-            setTimeout(function(){
-              showRouteChoices();
-              drawAllAlternatives();
-            }, 500);
+            showRouteChoices();
+            drawAllAlternatives();
           }
         }).catch(function(){});
       }).catch(function(){});
@@ -318,8 +316,7 @@ document.addEventListener('DOMContentLoaded', function(){
         var slng=m[1], slat=m[2], elng=m[3], elat=m[4];
         lastRouteStart = [parseFloat(slng), parseFloat(slat)];
         lastRouteEnd = [parseFloat(elng), parseFloat(elat)];
-        setTimeout(function(){
-          try{
+        try{
             fetchRouteAlternatives(slng, slat, elng, elat).then(function(){ busy = false; }).catch(function(){ busy = false; });
           }catch(e){ busy = false; }
         }, 2000);
