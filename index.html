@@ -118,11 +118,12 @@
       <path d="M340,2 c-9,0 -15,6 -15,14 0,10 15,24 15,24 s15,-14 15,-24 c0,-8 -6,-14 -15,-14z" fill="#df5454"/>
       <circle cx="340" cy="16" r="5.5" fill="#ffffff"/>
     </g>
-    <g class="splash-pop" style="animation-delay:3.4s">
-      <circle cx="340" cy="62" r="18" fill="#0d9488" opacity=".12"/>
-      <text x="340" y="73" text-anchor="middle" font-size="30">🔌</text>
-    </g>
+    
     <text class="splash-label" style="animation-delay:3.2s" x="340" y="95" text-anchor="middle" font-size="12.5" font-weight="800" fill="#b3372f">مقصد</text>
+    <g id="splashCharge" opacity="0">
+      <circle r="22" fill="#0d9488" opacity=".15"/>
+      <text x="0" y="10" text-anchor="middle" font-size="28">🔌</text>
+    </g>
     <g id="splashCar" opacity="0">
       <circle r="18" fill="#0887a7" opacity=".14"/>
       <g>
@@ -279,10 +280,37 @@ route.style.strokeDashoffset=String(L);
 var reduce=false;
 try{reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
 function render(t){
-  route.style.strokeDashoffset=String(L*(1-t));
-  var pt=route.getPointAtLength(Math.max(0,Math.min(L,L*t)));
+  var jt, bc, rc, charging=false;
+  var body=document.getElementById('splashCarBody'),roof=document.getElementById('splashCarRoof');
+  var charge=document.getElementById('splashCharge');
+  var logo=document.querySelector('.splash-logo');
+  if(t<0.4){
+    // فاز ۱: حرکت تا وسط راه، شارژ تموم میشه
+    var p1=t/0.4; jt=p1*0.45;
+    bc=lerpColor(GREEN,RED,p1); rc=lerpColor(DARKG,[185,28,28],p1);
+  } else if(t<0.62){
+    // فاز ۲: توقف و شارژ
+    jt=0.45; charging=true;
+    var p2=(t-0.4)/0.22; bc=lerpColor(RED,GREEN,p2); rc=lerpColor([185,28,28],DARKG,p2);
+  } else {
+    // فاز ۳: ادامه تا مقصد با شارژ کامل
+    var p3=(t-0.62)/0.38; jt=0.45+p3*0.55;
+    bc='rgb(34,197,94)'; rc='rgb(22,163,74)';
+  }
+  route.style.strokeDashoffset=String(L*(1-jt));
+  var pt=route.getPointAtLength(Math.max(0,Math.min(L,L*jt)));
   car.setAttribute('transform','translate('+pt.x.toFixed(1)+' '+pt.y.toFixed(1)+')');
-  var body=document.getElementById('splashCarBody'),roof=document.getElementById('splashCarRoof');var bc,rc;if(t>=0.88){bc='rgb(34,197,94)';rc='rgb(22,163,74)';}else if(t<0.5){bc=lerpColor(GREEN,YELLOW,t*2);rc=lerpColor(DARKG,[202,138,4],t*2);}else{bc=lerpColor(YELLOW,RED,(t-0.5)*2);rc=lerpColor([202,138,4],[185,28,28],(t-0.5)*2);}if(body)body.setAttribute('fill',bc);if(roof)roof.setAttribute('fill',rc);var logo=document.querySelector('.splash-logo');if(logo){if(t>=0.88){logo.style.filter='drop-shadow(0 0 18px #22c55e)';logo.style.transform='scale(1.15)';}else{logo.style.filter='';logo.style.transform='';}}
+  if(body)body.setAttribute('fill',bc); if(roof)roof.setAttribute('fill',rc);
+  if(charge){
+    if(charging){
+      charge.setAttribute('opacity','1');
+      charge.setAttribute('transform','translate('+(pt.x+38).toFixed(1)+' '+(pt.y-10).toFixed(1)+')');
+    } else charge.setAttribute('opacity','0');
+  }
+  if(logo){
+    if(t>=0.92){logo.style.filter='drop-shadow(0 0 18px #22c55e)';logo.style.transform='scale(1.15)';}
+    else{logo.style.filter='';logo.style.transform='';}
+  }
 }
 if(reduce){render(1);car.setAttribute('opacity','1');return}
 var DUR=4500,DELAY=300,t0=null;
@@ -299,7 +327,7 @@ if(window.requestAnimationFrame)requestAnimationFrame(frame);else{render(1);car.
 var s=document.getElementById('revSplash');if(!s)return;
 var API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
 var FLAG='rev_onboarded_v1';
-var MOTION_MS=6000,FADE_MS=550;
+var MOTION_MS=2450,FADE_MS=550;
 function hasFlag(){try{return !!localStorage.getItem(FLAG)}catch(e){return false}}
 function clearFlag(){try{localStorage.removeItem(FLAG)}catch(e){}}
 var authP=fetch(API+'/api/portal/me',{credentials:'include',cache:'no-store'}).then(function(r){
