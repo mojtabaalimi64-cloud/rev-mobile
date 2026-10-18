@@ -11,6 +11,25 @@
 <title>برنامه‌ریزی سفر | REV</title>
 <link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
 <style>
+/* یکدست‌سازی کارت‌های برنامه با تم teal آپ */
+#resumeSection .card.row-item,
+#savedPlansSection .card.row-item{
+  background:linear-gradient(135deg,#0d7d8a,#1495a3)!important;
+  color:#fff!important;
+  border:none!important;
+  border-radius:20px!important;
+  box-shadow:0 4px 16px rgba(13,125,138,.3)!important;
+}
+#resumeSection .card.row-item .copy b,
+#savedPlansSection .card.row-item .copy b{color:#fff!important}
+#resumeSection .card.row-item .copy small,
+#savedPlansSection .card.row-item .copy small{color:rgba(255,255,255,.85)!important}
+#resumeSection .card.row-item .chev,
+#savedPlansSection .card.row-item .chev{color:rgba(255,255,255,.7)!important}
+#resumeSection .card.row-item .ico,
+#savedPlansSection .card.row-item .ico{background:rgba(255,255,255,.2)!important}
+</style>
+<style>
 .eyebrow{font-size:11px;color:var(--teal);font-weight:800;letter-spacing:.3px}
 .page-title{font-size:23px;margin:2px 0 4px;font-weight:900}
 .page-sub{margin:0;color:var(--muted);font-size:12.5px}
