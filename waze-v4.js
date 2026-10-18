@@ -1,3 +1,4 @@
+var lastRouteStart = null, lastRouteEnd = null;
 
 // دکمه شناور مسیرهای جایگزین
 (function(){
