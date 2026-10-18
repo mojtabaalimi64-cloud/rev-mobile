@@ -1,3 +1,4 @@
+(function(){var s=document.createElement('style');s.textContent='#wazeCompass{top:240px!important;right:12px!important;left:auto!important}#btn3dToggle{top:304px!important;right:12px!important;left:auto!important;bottom:auto!important}.leaflet-container.waze3d{transform:perspective(900px) rotateX(32deg) scale(1.4)!important;transform-origin:50% 90%!important}';document.head.appendChild(s);})();
 // === حالت ناوبری به سبک ویز (نسخه ساده) ===
 var wazeMode = { active:true, is3d:false };
 // همیشه نمایش بده برای تست
