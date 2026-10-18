@@ -1,4 +1,36 @@
 
+// مرتب‌سازی آیکون‌ها و مخفی کردن سابقه جستجو در 3D
+(function(){
+  var s=document.createElement('style');
+  s.textContent=`
+    /* آیکون‌های سمت راست با فاصله یکسان */
+    #wazeCompass{top:280px!important;right:12px!important;left:auto!important;}
+    #btn3dToggle{top:344px!important;right:12px!important;left:auto!important;bottom:auto!important;}
+    /* مخفی کردن سابقه جستجو در حالت سه‌بعدی */
+    .leaflet-container.waze3d ~ #recentSearches,
+    body.waze3d-active #recentSearches,
+    body.waze3d-active .recent-searches {display:none!important;}
+  `;
+  document.head.appendChild(s);
+  // وقتی 3D فعال میشه، کلاس به body اضافه کن
+  var origToggle = null;
+  setTimeout(function(){
+    var btn = document.getElementById('btn3dToggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        setTimeout(function(){
+          var mc = document.querySelector('.leaflet-container');
+          if(mc && mc.classList.contains('waze3d')){
+            document.body.classList.add('waze3d-active');
+          } else {
+            document.body.classList.remove('waze3d-active');
+          }
+        }, 100);
+      });
+    }
+  }, 1500);
+})();
+
 // حذف دکمه‌های زوم + جابه‌جایی قطب‌نما + مودال وسط
 (function(){
   var s=document.createElement('style');
