@@ -134,8 +134,21 @@ function selectRoute(i){
 }
 function drawAllAlternatives(){
   if(!window.map || typeof L === 'undefined' || routeAlternatives.length===0) return;
+  // پاک کردن همه پلی‌لاین‌های مسیر (اصلی + قبلی) تا همه با هم رسم بشن
   altLayers.forEach(function(l){ try{ map.removeLayer(l); }catch(e){} });
   altLayers = [];
+  // پیدا و حذف کردن مسیر اصلی که کد اصلی رسم کرده
+  try{
+    map.eachLayer(function(layer){
+      if(layer instanceof L.Polyline && !(layer instanceof L.Polygon)){
+        var opts = layer.options || {};
+        // مسیر اصلی معمولاً آبی یا ضخیمه
+        if(opts.color === '#0866ff' || opts.color === '#3388ff' || (opts.weight >= 5 && !opts.dashArray)){
+          try{ map.removeLayer(layer); }catch(e){}
+        }
+      }
+    });
+  }catch(e){}
   var colors = ['#0d9488', '#ff9800', '#9e9e9e'];
   routeAlternatives.forEach(function(route, i){
     var coords = route.geometry.coordinates.map(function(c){ return [c[1], c[0]]; });
