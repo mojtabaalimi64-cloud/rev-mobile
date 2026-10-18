@@ -1,11 +1,28 @@
 
+// ذخیره خودکار مبدأ/مقصد از فراخوانی OSRM
+var lastRouteStart = null, lastRouteEnd = null;
+(function(){
+  var origFetch = window.fetch;
+  window.fetch = function(url, opts){
+    if(typeof url === 'string' && url.includes('router.project-osrm.org')){
+      var m = url.match(/driving\/([-\d.]+),([-\d.]+);([-\d.]+),([-\d.]+)/);
+      if(m){
+        lastRouteStart = [parseFloat(m[1]), parseFloat(m[2])];
+        lastRouteEnd = [parseFloat(m[3]), parseFloat(m[4])];
+      }
+    }
+    return origFetch.apply(this, arguments);
+  };
+})();
+
 // دکمه شناور مسیرهای جایگزین
 (function(){
   var btn = document.createElement('button');
   btn.id = 'btnAltRoutes';
-  btn.textContent = '🛣️';
+  
   btn.title = 'مسیرهای جایگزین';
-  btn.style.cssText = 'position:fixed;bottom:170px;right:12px;z-index:2000;width:52px;height:52px;border:none;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:22px;cursor:pointer;';
+  btn.style.cssText = 'position:fixed;bottom:170px;right:12px;z-index:2000;min-width:52px;height:52px;padding:0 12px;border:none;border-radius:26px;background:linear-gradient(135deg,#0d9488,#0a7a70);color:#fff;box-shadow:0 4px 12px rgba(13,148,136,.4);font-size:14px;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Tahoma;';
+  btn.innerHTML = '<span style="font-size:20px">🛣️</span><span>مسیرها</span>';
   btn.onclick = function(){
     // پیدا کردن مبدأ و مقصد از مارکرهای نقشه
     if(!window.map) { alert('نقشه لود نشده'); return; }
@@ -18,9 +35,11 @@
     if(re && re.value && re.value.includes(',')){
       var p2 = re.value.split(','); e = [parseFloat(p2[1]), parseFloat(p2[0])];
     }
+    if((!s || !e) && lastRouteStart && lastRouteEnd){
+      s = lastRouteStart; e = lastRouteEnd;
+    }
     if(!s || !e){
-      // تلاش برای پیدا کردن از آخرین مسیر رسم‌شده
-      alert('اول مبدأ و مقصد رو با مختصات وارد کن (مثل: 35.7,51.4)');
+      alert('اول یه مسیریابی انجام بده، بعد این دکمه رو بزن');
       return;
     }
     fetchRouteAlternatives(s[0], s[1], e[0], e[1]);
