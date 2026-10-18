@@ -6,6 +6,7 @@
 <title>نقشه REV - سه‌بعدی</title>
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-rtl-text@0.5.2/dist/maplibre-gl-rtl-text.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden;font-family:Tahoma}
@@ -48,6 +49,12 @@ html,body{height:100%;overflow:hidden;font-family:Tahoma}
 var map, userMarker, is3d=false, navActive=false;
 init();
 function init(){
+
+  // فعال‌سازی متن راست‌به‌چپ
+  if(typeof maplibregl.setRTLTextPlugin === 'function'){
+    maplibregl.setRTLTextPlugin('https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-rtl-text@0.5.2/dist/maplibre-gl-rtl-text.min.js');
+  }
+
   map = new maplibregl.Map({
     container:'map',
     style:'https://tiles.versatiles.org/assets/styles/colorful/style.json',
@@ -59,8 +66,8 @@ function init(){
     try{
       map.addLayer({
         'id':'3d-buildings',
-        'source':'versatiles-shortbread',
-        'source-layer':'buildings',
+        'source':'versatiles',
+        'source-layer':'building',
         'type':'fill-extrusion',
         'minzoom':14,
         'paint':{
