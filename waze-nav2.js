@@ -32,3 +32,20 @@ function wazeDynamicZoom(speedKmh){
   var z=speedKmh<20?17:speedKmh<50?16:speedKmh<90?15:14;
   try{ if(Math.abs(map.getZoom()-z)>=1) map.setZoom(z,{animate:true}); }catch(e){}
 }
+
+var centerPinMode=null;
+function showCenterPin(mode){centerPinMode=mode;var p=document.getElementById('centerPin');if(p){p.style.display='block';p.style.pointerEvents='auto';}var rp=document.getElementById('routePanel');if(rp)rp.setAttribute('hidden','');}
+function hideCenterPin(){var p=document.getElementById('centerPin');if(p)p.style.display='none';centerPinMode=null;var rp=document.getElementById('routePanel');if(rp)rp.removeAttribute('hidden');}
+document.addEventListener('DOMContentLoaded',function(){
+  var ps=document.getElementById('routePickStart'),pe=document.getElementById('routePickEnd');
+  if(ps)ps.addEventListener('click',function(){showCenterPin('start');});
+  if(pe)pe.addEventListener('click',function(){showCenterPin('end');});
+  var cp=document.getElementById('centerPin');
+  if(cp)cp.addEventListener('click',function(){
+    if(!centerPinMode||!window.map)return;
+    var c=map.getCenter();
+    var input=document.getElementById(centerPinMode==='start'?'routeStart':'routeEnd');
+    if(input)input.value=c.lat.toFixed(5)+','+c.lng.toFixed(5);
+    hideCenterPin();
+  });
+});
