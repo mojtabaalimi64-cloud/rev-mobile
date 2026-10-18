@@ -184,3 +184,32 @@ document.addEventListener('DOMContentLoaded',function(){
   mapEl.addEventListener('touchend', endTouch, {passive:true});
   mapEl.addEventListener('touchcancel', endTouch, {passive:true});
 })();
+
+// اتصال چندمسیر به دکمه مسیریابی
+document.addEventListener('DOMContentLoaded', function(){
+  var rb = document.getElementById('routeBuild');
+  if(rb){
+    rb.addEventListener('click', function(){
+      setTimeout(function(){
+        var rs = document.getElementById('routeStart');
+        var re = document.getElementById('routeEnd');
+        if(!rs || !re) return;
+        // پارس مختصات (فرمت: lat,lng)
+        function parseLL(v){
+          var p = v.split(',');
+          if(p.length===2) return [parseFloat(p[1]), parseFloat(p[0])];
+          return null;
+        }
+        var s = parseLL(rs.value), e = parseLL(re.value);
+        // اگه مختصات نبود، از مرکز نقشه و مکان کاربر استفاده کن
+        if(!s && window.map) { var c = map.getCenter(); s = [c.lng, c.lat]; }
+        if(s && e){
+          fetchRouteAlternatives(s[0], s[1], e[0], e[1]);
+        } else if(s && window.userMarker){
+          var u = userMarker.getLatLng();
+          fetchRouteAlternatives(s[0], s[1], u.lng, u.lat);
+        }
+      }, 800);
+    });
+  }
+});
