@@ -7,7 +7,7 @@ async function fetchRouteAlternatives(startLng, startLat, endLng, endLat){
     var r = await fetch(url);
     var d = await r.json();
     routeAlternatives = d.routes || [];
-    showRouteChoices();
+    showRouteChoices(); drawAllAlternatives();
     return routeAlternatives;
   }catch(e){ console.error('خطا در مسیریابی:', e); return []; }
 }
@@ -30,14 +30,37 @@ function showRouteChoices(){
   div.innerHTML = html;
   document.body.appendChild(div);
 }
+var altLayers = [];
 function selectRoute(i){
   var route = routeAlternatives[i];
-  if(!route || !window.map) return;
-  // نمایش مسیر انتخاب‌شده
-  // (این بخش باید با کد اصلی نقشه هماهنگ بشه)
+  if(!route || !window.map || typeof L === 'undefined') return;
+  // پاک کردن مسیرهای قبلی
+  altLayers.forEach(function(l){ try{ map.removeLayer(l); }catch(e){} });
+  altLayers = [];
+  // رسم مسیر انتخاب‌شده (پررنگ)
+  var coords = route.geometry.coordinates.map(function(c){ return [c[1], c[0]]; });
+  var main = L.polyline(coords, {color:'#0d9488', weight:6, opacity:1}).addTo(map);
+  altLayers.push(main);
+  map.fitBounds(main.getBounds(), {padding:[50,50]});
   var panel = document.getElementById('routeChoices');
   if(panel) panel.remove();
-  alert('مسیر '+(i+1)+' انتخاب شد: '+(route.distance/1000).toFixed(1)+' کیلومتر');
+}
+function drawAllAlternatives(){
+  if(!window.map || typeof L === 'undefined' || routeAlternatives.length===0) return;
+  altLayers.forEach(function(l){ try{ map.removeLayer(l); }catch(e){} });
+  altLayers = [];
+  var colors = ['#0d9488', '#ff9800', '#9e9e9e'];
+  routeAlternatives.forEach(function(route, i){
+    var coords = route.geometry.coordinates.map(function(c){ return [c[1], c[0]]; });
+    var line = L.polyline(coords, {
+      color: colors[i] || '#9e9e9e',
+      weight: i===0 ? 6 : 4,
+      opacity: i===0 ? 1 : 0.6
+    }).addTo(map);
+    line.on('click', function(){ selectRoute(i); });
+    altLayers.push(line);
+  });
+  if(altLayers[0]) map.fitBounds(altLayers[0].getBounds(), {padding:[50,50]});
 }
 
 // حذف دکمه‌های زوم + جابه‌جایی قطب‌نما + مودال وسط
