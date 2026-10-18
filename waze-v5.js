@@ -1,3 +1,28 @@
+
+// گرفتن مسیرها از پاسخ اصلی
+(function(){
+  if(window.__respHookDone) return;
+  window.__respHookDone = true;
+  var of = window.fetch;
+  window.fetch = function(url, opts){
+    var promise = of.apply(this, arguments);
+    if(typeof url === 'string' && url.indexOf('router.project-osrm.org') !== -1 && url.indexOf('alternatives=3') !== -1){
+      promise.then(function(resp){
+        var clone = resp.clone();
+        clone.json().then(function(data){
+          if(data.routes && data.routes.length > 1){
+            routeAlternatives = data.routes;
+            setTimeout(function(){
+              showRouteChoices();
+              drawAllAlternatives();
+            }, 500);
+          }
+        }).catch(function(){});
+      }).catch(function(){});
+    }
+    return promise;
+  };
+})();
 var lastRouteStart = null, lastRouteEnd = null;
 
 // دکمه شناور مسیرهای جایگزین
