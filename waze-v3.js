@@ -1,4 +1,33 @@
 
+// دکمه شناور مسیرهای جایگزین
+(function(){
+  var btn = document.createElement('button');
+  btn.id = 'btnAltRoutes';
+  btn.textContent = '🛣️';
+  btn.title = 'مسیرهای جایگزین';
+  btn.style.cssText = 'position:fixed;bottom:170px;right:12px;z-index:2000;width:52px;height:52px;border:none;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:22px;cursor:pointer;';
+  btn.onclick = function(){
+    // پیدا کردن مبدأ و مقصد از مارکرهای نقشه
+    if(!window.map) { alert('نقشه لود نشده'); return; }
+    var rs = document.getElementById('routeStart');
+    var re = document.getElementById('routeEnd');
+    var s = null, e = null;
+    if(rs && rs.value && rs.value.includes(',')){
+      var p = rs.value.split(','); s = [parseFloat(p[1]), parseFloat(p[0])];
+    }
+    if(re && re.value && re.value.includes(',')){
+      var p2 = re.value.split(','); e = [parseFloat(p2[1]), parseFloat(p2[0])];
+    }
+    if(!s || !e){
+      // تلاش برای پیدا کردن از آخرین مسیر رسم‌شده
+      alert('اول مبدأ و مقصد رو با مختصات وارد کن (مثل: 35.7,51.4)');
+      return;
+    }
+    fetchRouteAlternatives(s[0], s[1], e[0], e[1]);
+  };
+  document.body.appendChild(btn);
+})();
+
 // === انتخاب از چند مسیر ===
 var routeAlternatives = [];
 async function fetchRouteAlternatives(startLng, startLat, endLng, endLat){
