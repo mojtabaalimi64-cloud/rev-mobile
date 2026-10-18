@@ -1,4 +1,28 @@
 
+// دکمه تست ساده
+(function(){
+  var t = document.createElement('button');
+  t.textContent = '🧪 تست';
+  t.style.cssText = 'position:fixed;bottom:230px;right:12px;z-index:2000;padding:10px;background:#ff5722;color:#fff;border:none;border-radius:8px;font-family:Tahoma;';
+  t.onclick = function(){
+    alert('تست شروع شد');
+    // مختصات ثابت تهران
+    fetch('https://router.project-osrm.org/route/v1/driving/51.3890,35.6892;51.5000,35.8000?overview=full&geometries=geojson&alternatives=3')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var n = d.routes ? d.routes.length : 0;
+        alert('تعداد مسیرهای دریافتی: ' + n);
+        if(n > 0){
+          routeAlternatives = d.routes;
+          showRouteChoices();
+          drawAllAlternatives();
+        }
+      })
+      .catch(function(e){ alert('خطا: ' + e.message); });
+  };
+  document.body.appendChild(t);
+})();
+
 // گرفتن مسیرها از پاسخ اصلی
 (function(){
   if(window.__respHookDone) return;
