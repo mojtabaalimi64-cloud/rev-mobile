@@ -1,4 +1,4 @@
-const CACHE_NAME = "rev-mobile-shell-v10";
+const CACHE_NAME = "rev-mobile-shell-v11";
 const SHELL = ["./", "./index.html", "./trips.html", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
@@ -24,20 +24,36 @@ self.addEventListener("fetch", event => {
   const request = event.request;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin || url.pathname.includes("/api/") || url.search) return;
+  if (url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
 
   if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request).then(response => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put("./index.html", copy));
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      try {
+        const response = await fetch(request, { cache: "no-store" });
+        if (response && response.ok) {
+          // Cache each document at its own URL; never overwrite index.html with trips.html.
+          await cache.put(request, response.clone());
         }
         return response;
-      }).catch(async () => {
-        const cache = await caches.open(CACHE_NAME);
-        return (await cache.match("./index.html")) || Response.error();
-      })
-    );
+      } catch (error) {
+        const cached = await cache.match(request, { ignoreSearch: true });
+        if (cached) return cached;
+        const path = url.pathname.endsWith("/trips.html") ? "./trips.html" : "./index.html";
+        return (await cache.match(path)) || Response.error();
+      }
+    })());
+    return;
   }
+
+  if (url.search) return;
+  event.respondWith(
+    caches.match(request).then(cached => cached || fetch(request).then(response => {
+      if (response && response.ok) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+      }
+      return response;
+    }))
+  );
 });
