@@ -7,20 +7,40 @@
   btn.title = 'مسیرهای جایگزین';
   btn.style.cssText = 'position:fixed;bottom:170px;right:12px;z-index:2000;height:52px;padding:0 14px;border:none;border-radius:26px;background:linear-gradient(135deg,#0d9488,#0a7a70);color:#fff;box-shadow:0 4px 12px rgba(13,148,136,.4);cursor:pointer;display:flex;align-items:center;gap:8px;font-family:Tahoma;';
   btn.onclick = function(){
-    // پیدا کردن مبدأ و مقصد از مارکرهای نقشه
-    if(!window.map) { alert('نقشه لود نشده'); return; }
-    var rs = document.getElementById('routeStart');
-    var re = document.getElementById('routeEnd');
+    if(!window.map || typeof L === 'undefined') { alert('نقشه لود نشده'); return; }
     var s = null, e = null;
-    if(rs && rs.value && rs.value.includes(',')){
-      var p = rs.value.split(','); s = [parseFloat(p[1]), parseFloat(p[0])];
+    // ۱. از interceptor
+    if(lastRouteStart && lastRouteEnd){ s = lastRouteStart; e = lastRouteEnd; }
+    // ۲. از اینپوت‌ها
+    if(!s || !e){
+      var rs = document.getElementById('routeStart'), re = document.getElementById('routeEnd');
+      if(rs && rs.value && rs.value.includes(',')){
+        var p = rs.value.split(','); s = [parseFloat(p[1]), parseFloat(p[0])];
+      }
+      if(re && re.value && re.value.includes(',')){
+        var p2 = re.value.split(','); e = [parseFloat(p2[1]), parseFloat(p2[0])];
+      }
     }
-    if(re && re.value && re.value.includes(',')){
-      var p2 = re.value.split(','); e = [parseFloat(p2[1]), parseFloat(p2[0])];
+    // ۳. از پلی‌لاین‌های روی نقشه (مسیر رسم‌شده)
+    if(!s || !e){
+      map.eachLayer(function(layer){
+        if(layer instanceof L.Polyline && !s){
+          var latlngs = layer.getLatLngs();
+          if(latlngs && latlngs.length > 1){
+            var first = latlngs[0], last = latlngs[latlngs.length-1];
+            // اگه آرایه تودرتو بود
+            if(Array.isArray(first)) first = first[0];
+            if(Array.isArray(last)) last = last[last.length-1];
+            if(first && first.lng !== undefined){
+              s = [first.lng, first.lat];
+              e = [last.lng, last.lat];
+            }
+          }
+        }
+      });
     }
     if(!s || !e){
-      // تلاش برای پیدا کردن از آخرین مسیر رسم‌شده
-      alert('اول مبدأ و مقصد رو با مختصات وارد کن (مثل: 35.7,51.4)');
+      alert('اول یه مسیریابی انجام بده، بعد این دکمه رو بزن');
       return;
     }
     fetchRouteAlternatives(s[0], s[1], e[0], e[1]);
