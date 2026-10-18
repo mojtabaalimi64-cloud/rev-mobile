@@ -233,4 +233,46 @@ $('rmSubmit').addEventListener('click',async function(){
 buildTypes();
 })();
 </script><script src="./rev-app-mode.js?v=20261018-1"></script><script src="./waze-v6.js"></script>
+
+<style>
+#revModalBackdrop{position:fixed;inset:0;z-index:2990;background:rgba(9,24,38,.48);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);display:none;touch-action:manipulation}
+#revModalBackdrop.is-open{display:block}
+#tripLivePanel:not([hidden]),.leaflet-popup.rev-centered-popup{z-index:3000!important}
+</style>
+<script>
+(function(){
+  var backdrop=document.getElementById('revModalBackdrop');
+  if(!backdrop){backdrop=document.createElement('div');backdrop.id='revModalBackdrop';backdrop.setAttribute('aria-hidden','true');document.body.appendChild(backdrop);}
+  function visible(el){return !!el && !el.hidden && getComputedStyle(el).display!=='none' && getComputedStyle(el).visibility!=='hidden';}
+  function sync(){
+    var panel=document.getElementById('tripLivePanel');
+    var popup=document.querySelector('.leaflet-popup.rev-centered-popup');
+    var open=visible(panel)||visible(popup);
+    backdrop.classList.toggle('is-open',open);
+    document.body.classList.toggle('rev-modal-open',open);
+  }
+  function closeOpen(){
+    var panel=document.getElementById('tripLivePanel');
+    if(visible(panel))panel.hidden=true;
+    var popups=document.querySelectorAll('.leaflet-popup.rev-centered-popup');
+    popups.forEach(function(el){
+      var mapRoot=el.closest('.leaflet-container');
+      if(mapRoot && mapRoot._leaflet_id){
+        // Leaflet owns popup lifecycle; close through its marker when available.
+        var close=el.querySelector('.leaflet-popup-close-button');
+        if(close)close.click();
+      }else{
+        var close=el.querySelector('.leaflet-popup-close-button');
+        if(close)close.click();else el.remove();
+      }
+    });
+    sync();
+  }
+  backdrop.addEventListener('click',closeOpen);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeOpen();});
+  var observer=new MutationObserver(sync);
+  observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','class','style']});
+  sync();
+})();
+</script>
 </body></html>
