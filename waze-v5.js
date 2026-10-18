@@ -52,14 +52,28 @@ var lastRouteStart = null, lastRouteEnd = null;
 // === انتخاب از چند مسیر ===
 var routeAlternatives = [];
 async function fetchRouteAlternatives(startLng, startLat, endLng, endLat){
+  var loading = document.createElement('div');
+  loading.id = 'altLoading';
+  loading.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3000;background:rgba(0,0,0,.7);color:#fff;padding:16px 24px;border-radius:12px;font-family:Tahoma;';
+  loading.textContent = '⏳ در حال یافتن مسیرها...';
+  document.body.appendChild(loading);
   var url = 'https://router.project-osrm.org/route/v1/driving/'+startLng+','+startLat+';'+endLng+','+endLat+'?overview=full&geometries=geojson&steps=true&alternatives=3';
   try{
     var r = await fetch(url);
     var d = await r.json();
     routeAlternatives = d.routes || [];
-    showRouteChoices(); drawAllAlternatives();
+    var l = document.getElementById('altLoading');
+    if(l) l.remove();
+    if(routeAlternatives.length === 0){ alert('مسیری پیدا نشد'); return []; }
+    showRouteChoices();
+    drawAllAlternatives();
     return routeAlternatives;
-  }catch(e){ console.error('خطا در مسیریابی:', e); return []; }
+  }catch(e){
+    var l2 = document.getElementById('altLoading');
+    if(l2) l2.remove();
+    alert('خطا: ' + e.message);
+    return [];
+  }
 }
 function showRouteChoices(){
   // حذف پنل قبلی
