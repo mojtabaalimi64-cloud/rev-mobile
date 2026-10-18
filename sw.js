@@ -33,7 +33,7 @@ self.addEventListener("fetch", event => {
         const response = await fetch(request, { cache: "no-store" });
         if (response && response.ok) {
           // Cache each document at its own URL; never overwrite index.html with trips.html.
-          await cache.put(request, response.clone());
+          const req1 = request; await cache.put(req1, response.clone());
         }
         return response;
       } catch (error) {
@@ -50,8 +50,8 @@ self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(request).then(cached => cached || fetch(request).then(response => {
       if (response && response.ok) {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+        const copy = response.clone(); const req2 = request;
+        caches.open(CACHE_NAME).then(cache => cache.put(req2, copy));
       }
       return response;
     }))
