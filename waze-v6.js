@@ -102,7 +102,7 @@ function showRouteChoices(){
   // حذف پنل قبلی
   var old = document.getElementById('routeChoices');
   if(old) old.remove();
-  if(routeAlternatives.length < 2) return;
+  if(routeAlternatives.length < 1) return;
   var div = document.createElement('div');
   div.id = 'routeChoices';
   div.style.cssText = 'position:fixed;bottom:90px;right:12px;left:12px;z-index:2000;background:#fff;border-radius:16px;box-shadow:0 -4px 20px rgba(0,0,0,.25);padding:12px;max-height:40vh;overflow-y:auto;';
