@@ -43,10 +43,18 @@ html,body{height:100%;overflow:hidden;font-family:Tahoma}
     <button id="btnBack" onclick="location.href='./index.html'">خانه</button>
   </div>
 </div>
-<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-loader.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p1.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p2.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p3.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p4.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p5.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p6.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p7.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p8.js"></script>
+<script src="https://mojtabaalimi64-cloud.github.io/rev/maplibre-gl.p9.js"></script>
 <script>
 var map, userMarker, is3d=false, navActive=false;
-window.addEventListener('maplibre-ready', init);
+init();
 function init(){
   map = new maplibregl.Map({
     container:'map',
