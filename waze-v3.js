@@ -1,4 +1,45 @@
 
+// === انتخاب از چند مسیر ===
+var routeAlternatives = [];
+async function fetchRouteAlternatives(startLng, startLat, endLng, endLat){
+  var url = 'https://router.project-osrm.org/route/v1/driving/'+startLng+','+startLat+';'+endLng+','+endLat+'?overview=full&geometries=geojson&steps=true&alternatives=3';
+  try{
+    var r = await fetch(url);
+    var d = await r.json();
+    routeAlternatives = d.routes || [];
+    showRouteChoices();
+    return routeAlternatives;
+  }catch(e){ console.error('خطا در مسیریابی:', e); return []; }
+}
+function showRouteChoices(){
+  // حذف پنل قبلی
+  var old = document.getElementById('routeChoices');
+  if(old) old.remove();
+  if(routeAlternatives.length < 2) return;
+  var div = document.createElement('div');
+  div.id = 'routeChoices';
+  div.style.cssText = 'position:fixed;bottom:90px;right:12px;left:12px;z-index:2000;background:#fff;border-radius:16px;box-shadow:0 -4px 20px rgba(0,0,0,.25);padding:12px;max-height:40vh;overflow-y:auto;';
+  var html = '<div style="font-weight:bold;margin-bottom:8px">🛣️ مسیر رو انتخاب کن:</div>';
+  routeAlternatives.forEach(function(route, i){
+    var km = (route.distance/1000).toFixed(1);
+    var min = Math.round(route.duration/60);
+    var label = i===0 ? ' (پیشنهادی)' : '';
+    html += '<button onclick="selectRoute('+i+')" style="display:block;width:100%;text-align:right;padding:10px;margin:4px 0;border:1px solid #ddd;border-radius:10px;background:'+(i===0?'#e8f5f3':'#fff')+';font-family:Tahoma;cursor:pointer">'
+      + 'مسیر '+(i+1)+label+' — '+km+' کیلومتر، '+min+' دقیقه</button>';
+  });
+  div.innerHTML = html;
+  document.body.appendChild(div);
+}
+function selectRoute(i){
+  var route = routeAlternatives[i];
+  if(!route || !window.map) return;
+  // نمایش مسیر انتخاب‌شده
+  // (این بخش باید با کد اصلی نقشه هماهنگ بشه)
+  var panel = document.getElementById('routeChoices');
+  if(panel) panel.remove();
+  alert('مسیر '+(i+1)+' انتخاب شد: '+(route.distance/1000).toFixed(1)+' کیلومتر');
+}
+
 // حذف دکمه‌های زوم + جابه‌جایی قطب‌نما + مودال وسط
 (function(){
   var s=document.createElement('style');
