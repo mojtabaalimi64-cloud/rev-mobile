@@ -1,3 +1,17 @@
+
+// حذف دکمه‌های زوم + جابه‌جایی قطب‌نما + مودال وسط
+(function(){
+  var s=document.createElement('style');
+  s.textContent='#wazeCompass{top:280px!important;right:12px!important;left:auto!important}#btn3dToggle{top:344px!important;right:12px!important;left:auto!important;bottom:auto!important}.leaflet-control-zoom,.leaflet-control-zoom-in,.leaflet-control-zoom-out{display:none!important;visibility:hidden!important}#routePanel{position:fixed!important;top:50%!important;bottom:auto!important;right:50%!important;left:auto!important;transform:translate(50%,-50%)!important;width:90%!important;max-width:380px!important;max-height:70vh!important;border-radius:16px!important;}';
+  document.head.appendChild(s);
+  // حذف فیزیکی دکمه‌های زوم
+  function removeZoom(){
+    document.querySelectorAll('.leaflet-control-zoom').forEach(function(el){el.remove();});
+  }
+  removeZoom();
+  setTimeout(removeZoom, 2000);
+  setInterval(removeZoom, 5000);
+})();
 // === حالت ناوبری به سبک ویز (نسخه ساده) ===
 var wazeMode = { active:true, is3d:false };
 // همیشه نمایش بده برای تست
