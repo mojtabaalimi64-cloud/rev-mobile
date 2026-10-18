@@ -1,4 +1,27 @@
 
+// دیباگ کلیک مارکر
+document.addEventListener('click', function(e){
+  var marker = e.target.closest('.leaflet-marker-icon');
+  if(marker){
+    console.log('مارکر کلیک شد');
+    // بعد از ۱ ثانیه چک کن پنل اومده یا نه
+    setTimeout(function(){
+      var p = document.getElementById('details-panel');
+      if(p){
+        var isHidden = p.hasAttribute('hidden');
+        var display = window.getComputedStyle(p).display;
+        var vis = window.getComputedStyle(p).visibility;
+        console.log('پنل - hidden:' + isHidden + ' display:' + display + ' visibility:' + vis);
+        // اگه مخفیه، زوری نشونش بده
+        if(isHidden || display === 'none'){
+          p.removeAttribute('hidden');
+          p.style.cssText += ';display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;bottom:20px!important;left:12px!important;right:12px!important;z-index:9999!important;background:#fff!important;border-radius:16px!important;padding:16px!important;box-shadow:0 8px 32px rgba(0,0,0,.3)!important;max-height:50vh!important;overflow-y:auto!important;';
+        }
+      }
+    }, 800);
+  }
+}, true);
+
 // فیکس نمایش پنل جزئیات شارژر
 (function(){
   var style = document.createElement('style');
