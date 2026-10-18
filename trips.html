@@ -187,7 +187,7 @@ var SITE='https://mojtabaalimi64-cloud.github.io/rev';
 function $(id){return document.getElementById(id);}
 function number(v){return v==null||v==='?'?'—':new Intl.NumberFormat('fa-IR',{maximumFractionDigits:1}).format(Number(v));}
 function safe(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function date(v){try{return new Date(v).toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'});}catch(e){return 'تاریخ نامشخص';}}
+function date(v){try{return new Date(v).toLocaleString('fa-IR-u-ca-persian',{dateStyle:'medium',timeStyle:'short'});}catch(e){return 'تاریخ نامشخص';}}
 
 /* فرم برنامه‌ریزی سفر */
 var RECENT_KEY='rev_plan_recent_v1';
