@@ -3,9 +3,9 @@
 (function(){
   var btn = document.createElement('button');
   btn.id = 'btnAltRoutes';
-  btn.textContent = '🛣️';
+  btn.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 C4 14, 6 12, 10 12"/><path d="M10 12 L10 4"/><path d="M7 7 L10 4 L13 7"/><path d="M10 12 C14 12, 16 14, 18 18"/><path d="M15 16 L18 18 L16 21"/><path d="M10 12 L20 12"/><path d="M17 9 L20 12 L17 15"/></svg><span style="font-size:13px;font-weight:bold">مسیرها</span>';
   btn.title = 'مسیرهای جایگزین';
-  btn.style.cssText = 'position:fixed;bottom:170px;right:12px;z-index:2000;width:52px;height:52px;border:none;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:22px;cursor:pointer;';
+  btn.style.cssText = 'position:fixed;bottom:170px;right:12px;z-index:2000;height:52px;padding:0 14px;border:none;border-radius:26px;background:linear-gradient(135deg,#0d9488,#0a7a70);color:#fff;box-shadow:0 4px 12px rgba(13,148,136,.4);cursor:pointer;display:flex;align-items:center;gap:8px;font-family:Tahoma;';
   btn.onclick = function(){
     // پیدا کردن مبدأ و مقصد از مارکرهای نقشه
     if(!window.map) { alert('نقشه لود نشده'); return; }
