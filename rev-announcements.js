@@ -1,0 +1,69 @@
+(function(){
+'use strict';
+const API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function sessionId(){try{let v=localStorage.getItem('rev_live_session_id');if(v&&/^[a-zA-Z0-9_-]{16,100}$/.test(v))return v;v=(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):Math.random().toString(36).slice(2)+Date.now().toString(36));localStorage.setItem('rev_live_session_id',v);return v}catch(e){return Math.random().toString(36).slice(2)+Date.now().toString(36)}}
+const sid=sessionId();
+function pageViewId(){const key='rev_page_view_id:'+location.pathname+location.hash;try{let id=sessionStorage.getItem(key);if(id&&/^[a-zA-Z0-9_-]{16,100}$/.test(id))return id;id=(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):Math.random().toString(36).slice(2)+Date.now().toString(36));sessionStorage.setItem(key,id);return id}catch(e){return (crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):Math.random().toString(36).slice(2)+Date.now().toString(36))}}
+const canShowAnnouncements=location.pathname.endsWith("/nearby-map.html");
+let lastItems=[];let announcementItems=[];let groupNoticeItems=[];let lastShownAnnId=null;
+try{if(!document.getElementById('revAnnouncementMotion')){var __st=document.createElement('style');__st.id='revAnnouncementMotion';__st.textContent='@keyframes revAnnIn{from{opacity:0;transform:translateY(-20px) scale(.96)}to{opacity:1;transform:none}}#revAnnouncementBanner.rev-ann-in{animation:revAnnIn .6s cubic-bezier(.2,1.15,.35,1)}#revAnnouncementBanner::after{content:"";display:block;width:38px;height:4px;border-radius:4px;background:rgba(255,255,255,.35);margin:7px auto 0}@media(prefers-reduced-motion:reduce){#revAnnouncementBanner.rev-ann-in}';document.head.appendChild(__st)}}catch(e){}let seenGroupNoticeIds=[];try{seenGroupNoticeIds=JSON.parse(localStorage.getItem('rev_seen_group_banner_ids')||'[]')}catch(e){}
+function bannerHost(){return document.fullscreenElement||document.body}
+async function heartbeat(){if(document.visibilityState==='hidden')return;try{const isAdminPage=location.pathname.toLowerCase().endsWith('/admin.html')||location.pathname.toLowerCase()==='/admin';const trackView=!isAdminPage&&!window.__revPageViewTracked;if(trackView)window.__revPageViewTracked=true;await fetch(API+'/api/engagement/heartbeat',{method:'POST',credentials:'include',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:sid,...(trackView?{viewId:pageViewId()}:{}),page:location.pathname+location.hash})})}catch(e){}}
+function showBanner(items){
+ lastItems=Array.isArray(items)?items:[];
+ let banner=document.getElementById('revAnnouncementBanner');
+ if(!lastItems.length){if(banner)banner.remove();return}
+ let seen={};try{seen=JSON.parse(sessionStorage.getItem('rev_dismissed_announcements')||'{}')||{}}catch(e){}
+ const item=lastItems.find(x=>!seen[x.id]);
+ if(item&&/^[0-9a-f-]{36}$/i.test(String(item.id||''))){try{const k='rev_announcement_viewed:'+item.id;if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');fetch(API+'/api/announcements/view',{method:'POST',credentials:'include',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({announcementId:item.id,sessionId:sid})}).catch(()=>{})}}catch(e){}}
+ if(!item){if(banner)banner.remove();return}
+ const host=bannerHost();
+ if(!banner){banner=document.createElement('aside');banner.id='revAnnouncementBanner';banner.setAttribute('role','region');banner.setAttribute('aria-label','اعلان‌های REV')}
+ if(banner.parentElement!==host)host.appendChild(banner);
+ const colors={info:'#1769d2',success:'#087fbd',warning:'#1b63b5',offer:'#1558b0'};
+ const accent=colors[item.kind]||colors.info;
+ Object.assign(banner.style,{position:'fixed',top:'max(8px, env(safe-area-inset-top))',left:'12px',right:'12px',zIndex:'2147483647',maxWidth:'760px',margin:'0 auto',padding:'7px 40px 7px 10px',border:'1px solid rgba(190,225,255,.42)',borderRight:'3px solid '+accent,borderRadius:'12px',background:'rgba(8,28,52,.38)',color:'#ffffff',backdropFilter:'blur(18px) saturate(150%)',WebkitBackdropFilter:'blur(18px) saturate(150%)',boxShadow:'0 8px 22px rgba(0,0,0,.2)',font:'12px/1.45 Vazirmatn,Vazir,Tahoma,sans-serif',direction:'rtl',textAlign:'right',pointerEvents:'auto'});
+ banner.innerHTML='<div style="display:flex;align-items:center;gap:5px;margin-bottom:1px"><span style="font-size:10px;font-weight:900;letter-spacing:.5px;color:#ffffff">REV</span><span style="font-size:9px;font-weight:800;color:#ffffff;background:rgba(83,157,255,.22);border:1px solid rgba(190,225,255,.28);border-radius:20px;padding:1px 6px">'+esc(item.bannerLabel||'اعلان')+'</span></div><button type="button" aria-label="بستن اعلان" style="position:absolute;left:6px;top:6px;width:24px;height:24px;border:0;border-radius:9px;background:rgba(91,158,255,.18);color:#ffffff;font-size:19px;line-height:1;cursor:pointer">×</button><strong style="display:block;color:#ffffff;font-size:13px;font-weight:900">'+esc(item.title)+'</strong><span style="display:block;margin-top:1px;color:rgba(255,255,255,.94)">'+esc(item.body)+'</span>'+(item.link_url?'<a data-rev-announcement-link="'+esc(item.id)+'" href="'+esc(item.link_url)+'" style="display:inline-flex;align-items:center;gap:5px;margin-top:4px;padding:3px 8px;border-radius:8px;background:'+accent+';color:#fff;font-weight:800;text-decoration:none">'+esc(item.link_label||'مشاهده')+' ←</a>':'');
+ if(item.id!==lastShownAnnId){lastShownAnnId=item.id;banner.classList.remove('rev-ann-in','rev-ann-open');banner.style.maxHeight='';banner.style.overflowY='';banner.style.touchAction='none';void banner.offsetWidth;banner.classList.add('rev-ann-in')}
+ /* درگ عمودی: کشیدن بنر به پایین آن را بازتر می‌کند */
+(function(){
+ if(banner.__revDragInit)return;banner.__revDragInit=true;
+ var startY=0,curY=0,dragging=false;
+ banner.style.touchAction='none';
+ function setOpen(open){
+   banner.classList.toggle('rev-ann-open',!!open);
+   banner.style.maxHeight=open?'70vh':'';
+   banner.style.overflowY=open?'auto':'';
+   banner.style.touchAction=open?'pan-y':'none';
+ }
+ banner.addEventListener('pointerdown',function(e){
+   if(e.target.closest('button,a'))return;
+   dragging=true;startY=e.clientY;curY=0;
+   try{banner.setPointerCapture(e.pointerId)}catch(_){}
+ });
+ banner.addEventListener('pointermove',function(e){
+   if(!dragging)return;
+   curY=e.clientY-startY;
+   if(curY>0){banner.style.transform='translateY('+Math.min(curY,120)+'px)'}
+ });
+ function endDrag(){
+   if(!dragging)return;dragging=false;
+   banner.style.transform='';
+   if(curY>48)setOpen(true);
+   else if(curY<-32)setOpen(false);
+   curY=0;
+ }
+ banner.addEventListener('pointerup',endDrag);
+ banner.addEventListener('pointercancel',endDrag);
+})();
+banner.querySelector('button').onclick=()=>{seen[item.id]=1;try{sessionStorage.setItem('rev_dismissed_announcements',JSON.stringify(seen))}catch(e){}showBanner(lastItems)};
+ const link=banner.querySelector('[data-rev-announcement-link]');if(link)link.onclick=async ev=>{ev.preventDefault();const href=link.href;try{await fetch(API+'/api/announcements/click',{method:'POST',credentials:'include',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({announcementId:item.id,sessionId:sid})})}catch(e){}location.href=href};
+}
+async function announcements(){if(!canShowAnnouncements)return;try{const r=await fetch(API+'/api/announcements',{credentials:'include',cache:'no-store'});const j=await r.json();if(r.ok&&j.success){announcementItems=j.announcements||[];showBanner([...groupNoticeItems,...announcementItems])}}catch(e){}}
+async function groupTravelNotifications(){if(!canShowAnnouncements)return;try{const r=await fetch(API+'/api/driver/notifications',{credentials:'include',cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.success)return;const fresh=(j.notifications||[]).filter(n=>['group_accepted','group_declined'].includes(n.type)&&!seenGroupNoticeIds.includes(n.id));if(!fresh.length)return;const notices=fresh.map(n=>({id:'group-notice-'+n.id,title:n.title||'به‌روزرسانی سفر گروهی REV',body:n.body||'',kind:n.type==='group_accepted'?'success':'warning',bannerLabel:'سفر گروهی',link_url:'./nearby-map.html#groupTripPanel',link_label:'مشاهده سفر'}));groupNoticeItems=[...notices,...groupNoticeItems].slice(0,10);seenGroupNoticeIds=[...new Set([...seenGroupNoticeIds,...fresh.map(n=>n.id)])].slice(-100);try{localStorage.setItem('rev_seen_group_banner_ids',JSON.stringify(seenGroupNoticeIds))}catch(e){}showBanner([...groupNoticeItems,...announcementItems])}catch(e){}}
+window.addEventListener('rev:group-notice',e=>{const d=e.detail||{},accepted=d.accepted===true;groupNoticeItems=[{id:'group-local-'+Date.now(),title:accepted?'سفر گروهی پذیرفته شد':'دعوت سفر گروهی رد شد',body:accepted?'دعوت را پذیرفتید؛ برای اشتراک موقعیت، اجازه GPS را فعال کنید.':'دعوت سفر گروهی را رد کردید.',kind:accepted?'success':'warning',bannerLabel:'سفر گروهی',link_url:'./nearby-map.html#groupTripPanel',link_label:'مشاهده سفر'},...groupNoticeItems].slice(0,10);showBanner([...groupNoticeItems,...announcementItems])});
+heartbeat();announcements();groupTravelNotifications();setInterval(heartbeat,30000);setInterval(announcements,15000);setInterval(groupTravelNotifications,12000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){heartbeat();announcements()}});
+document.addEventListener('fullscreenchange',()=>showBanner(lastItems));
+})();
