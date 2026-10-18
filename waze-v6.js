@@ -472,8 +472,8 @@ document.addEventListener('DOMContentLoaded', function(){
     var raw=txt('ndSpeed').replace(/[^0-9۰-۹٠-٩.,]/g,'').replace(/[۰-۹]/g,function(c){return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(c));}).replace(/[٠-٩]/g,function(c){return String('٠١٢٣٤٥٦٧٨٩'.indexOf(c));}).replace(',','.');
     var n=parseFloat(raw);
     if(Number.isFinite(n)){var shown=String(Math.round(n));if(shown!==lastSpeed){document.getElementById('revWazeSpeedValue').textContent=shown;lastSpeed=shown;}}
-    var instr=txt('navInstr')||'در مسیر بمانید';
-    var dist=txt('navDist')||'';
+    var instr=txt('navDist')||'در مسیر بمانید';
+    var dist=txt('navInstr')||'';
     document.getElementById('revWazeTurnInstruction').textContent=instr;
     document.getElementById('revWazeTurnDistance').textContent=dist;
     document.getElementById('revWazeTurnIcon').innerHTML=turnSvg(instr);
