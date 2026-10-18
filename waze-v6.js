@@ -205,15 +205,15 @@ var wazeMode = { active:true, is3d:false };
 // همیشه نمایش بده برای تست
 function wazeSetNav(on){
   wazeMode.active = true; // همیشه فعال برای تست
-  var c=document.getElementById('wazeCompass'), b=document.getElementById('btn3dToggle');
+  var c=(document.getElementById('wazeCompass')||{style:{}}), b=(document.getElementById('btn3dToggle')||{style:{},addEventListener:function(){}});
   if(c) c.style.display = 'flex';
   if(b) b.style.display = 'block';
 }
 (function(){
   function init(){
     wazeSetNav(true); // مستقیم روشن کن
-    var cBtn=document.getElementById('btn3dToggle');
-    var comp=document.getElementById('wazeCompass');
+    var cBtn=(document.getElementById('btn3dToggle')||{style:{},addEventListener:function(){}});
+    var comp=(document.getElementById('wazeCompass')||{style:{}});
     if(cBtn) cBtn.onclick=function(){
       wazeMode.is3d=!wazeMode.is3d;
       var mc=document.querySelector('.leaflet-container');
@@ -226,7 +226,7 @@ function wazeSetNav(on){
   else init();
 })();
 function wazeUpdateCompass(bearing){
-  var n=document.getElementById('compassNeedle');
+  var n=(document.getElementById('compassNeedle')||{style:{}});
   if(n) n.style.transform='rotate('+(-bearing)+'deg)';
 }
 function wazeDynamicZoom(speedKmh){
