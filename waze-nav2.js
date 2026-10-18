@@ -1,3 +1,10 @@
+
+// تزریق استایل (دور زدن کش)
+(function(){
+  var s=document.createElement('style');
+  s.textContent='#wazeCompass{position:absolute !important;top:140px !important;right:12px !important;left:auto !important;} #btn3dToggle{position:absolute !important;top:204px !important;right:12px !important;left:auto !important;bottom:auto !important;}';
+  document.head.appendChild(s);
+})();
 // === حالت ناوبری به سبک ویز (نسخه ساده) ===
 var wazeMode = { active:true, is3d:false };
 // همیشه نمایش بده برای تست
