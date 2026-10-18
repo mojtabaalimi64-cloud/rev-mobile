@@ -233,7 +233,7 @@ async function load(){
     renderTrips(trips);
   }catch(e){
     if($('recentTrips').querySelector('.empty')){
-      $('recentTrips').innerHTML='<div class="empty">برای مشاهده سفرهای قبلی، وارد حساب REV شو.<br><a style="color:var(--teal);font-weight:800" href="'#'">ورود به حساب کاربری</a></div>';
+      $('recentTrips').innerHTML='<div class="empty">برای مشاهده سفرهای قبلی، وارد حساب REV شو.<br><a style="color:var(--teal);font-weight:800" href="#">ورود به حساب کاربری</a></div>';
     }
   }
 }
