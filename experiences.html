@@ -64,172 +64,52 @@ body[data-view=create] .wrap{max-width:620px}
 }
 @media(max-width:600px){.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero h1{font-size:21px}.photos img{height:112px}.wrap{padding:12px 10px 45px}.top{padding:12px}.card{padding:13px}}
 </style><style>
-/* === استایل اینستاگرامی فید تجربه‌ها (تم REV) === */
-#feedCard {
-  background: #f3fbfc;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  max-width: 600px;
-  margin: 0 auto;
-}
-.feed-head {
-  padding: 14px 16px 8px;
-}
-.feed-head h2 {
-  font-size: 18px;
-  font-weight: 800;
-  color: #16313b;
-}
-/* کارت پست اینستاگرامی */
-.ig-post {
-  background: #fff;
-  border: 1px solid #e4edf3;
-  border-radius: 0;
-  margin-bottom: 12px;
-  overflow: hidden;
-}
-.ig-post-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-}
-.ig-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0d9488, #14b8a6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 16px;
-  flex-shrink: 0;
-  border: 2px solid #0d9488;
-  padding: 1px;
-}
-.ig-user-info {
-  flex: 1;
-  min-width: 0;
-}
-.ig-username {
-  font-weight: 700;
-  font-size: 13px;
-  color: #16313b;
-}
-.ig-location {
-  font-size: 11px;
-  color: #607780;
-}
-.ig-menu {
-  font-size: 18px;
-  color: #607780;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-.ig-photo {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  display: block;
-  background: #eef4f5;
-}
+/* === آیکون‌های اکشن اینستاگرامی (طراحی جدید) === */
 .ig-actions {
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 8px 10px 4px;
+  gap: 4px;
+  padding: 10px 12px 6px;
 }
 .ig-action-btn {
   background: none;
   border: none;
-  font-size: 24px;
-  padding: 6px 8px;
+  padding: 6px;
   cursor: pointer;
-  color: #16313b;
-}
-.ig-action-btn.liked {
-  color: #e0245e;
-}
-.ig-bookmark {
-  margin-inline-start: auto;
-}
-.ig-likes {
-  padding: 0 14px 4px;
-  font-weight: 700;
-  font-size: 13px;
-  color: #16313b;
-}
-.ig-caption {
-  padding: 0 14px 6px;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #16313b;
-}
-.ig-caption-user {
-  font-weight: 700;
-  margin-inline-end: 6px;
-}
-.ig-comments-link {
-  padding: 0 14px 4px;
-  font-size: 12px;
-  color: #8a9ba3;
-  cursor: pointer;
-}
-.ig-time {
-  padding: 0 14px 12px;
-  font-size: 10px;
-  color: #8a9ba3;
-}
-/* استوری‌ها بالای فید */
-.ig-stories {
-  display: flex;
-  gap: 12px;
-  padding: 12px 14px;
-  overflow-x: auto;
-  background: #fff;
-  border-bottom: 1px solid #e4edf3;
-  margin-bottom: 8px;
-}
-.ig-story {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-.ig-story-ring {
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  padding: 2px;
-  background: linear-gradient(135deg, #0d9488, #14b8a6, #0f9fb5);
-}
-.ig-story-ring.seen {
-  background: #dce5e7;
-}
-.ig-story-avatar {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  color: #0d9488;
-  border: 2px solid #fff;
+  border-radius: 50%;
+  transition: transform 0.15s, background 0.15s;
 }
-.ig-story-name {
-  font-size: 10px;
-  color: #607780;
-  max-width: 64px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.ig-action-btn:active {
+  transform: scale(0.85);
+}
+.ig-action-btn svg {
+  width: 26px;
+  height: 26px;
+  stroke: #16313b;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ig-action-btn.liked svg {
+  fill: #e0245e;
+  stroke: #e0245e;
+  animation: likePop 0.3s ease;
+}
+@keyframes likePop {
+  0% { transform: scale(0.6); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.ig-action-btn.saved svg {
+  fill: #0d9488;
+  stroke: #0d9488;
+}
+.ig-bookmark {
+  margin-inline-start: auto;
 }
 </style></head><body>
 <header class="top"><a href="./index.html?app=1" style="text-decoration:none;color:inherit"><span class="brand">REV</span></a><span id="pageTitle">اکسپلور</span><span style="margin-right:auto;color:var(--muted);font-size:12px">سفرهای واقعی</span></header>
@@ -248,30 +128,7 @@ body[data-view=create] .wrap{max-width:620px}
 <div class="field full"><label for="photos">عکس‌های سفر (حداکثر ۵ عکس)</label><input id="photos" type="file" accept="image/*" multiple><div class="hint">عکس‌ها در مرورگر کوچک‌سازی می‌شوند. هر عکس حداکثر 1200 پیکسل و حجم نهایی محدود می‌شود.</div><div id="photoPreview" class="photo-preview"></div></div>
 </div><div class="wizard-navigation"><button class="btn outline" id="wizardPrev" type="button" disabled>مرحله قبل</button><button class="btn" id="wizardNext" type="button">مرحله بعد</button></div><div class="actions" id="createFinalActions" style="display:none"><button class="btn" id="showPreview">پیش‌نمایش قبل از انتشار</button><button class="btn outline" id="draft">ذخیره پیش‌نویس خصوصی</button></div><section class="card" id="previewCard"><h2>پیش‌نمایش نهایی</h2><div id="previewContent"></div><div class="actions"><button class="btn" id="publish" disabled>تأیید و انتشار در اکسپلور</button><button class="btn outline" id="editPreview">بازگشت و ویرایش</button></div></section><div id="createStatus" class="status" role="status"></div></section>
 <section class="card" id="motionCard"><h2>ساخت محتوای متحرک قابل دانلود</h2><p class="hint">ویدیو در همین دستگاه ساخته می‌شود تا نیازی به سرویس تدوین پولی نداشته باشد. کیفیت و فرمت ویدیو به پشتیبانی مرورگر وابسته است. اگر ضبط ویدیو پشتیبانی نشود، کارت تصویری سفر را می‌توان دانلود کرد.</p><div class="field"><label for="motionTrip">سفر برای ساخت انیمیشن</label><select id="motionTrip"><option value="">انتخاب سفر ذخیره‌شده</option></select></div><canvas id="motionCanvas" width="720" height="1280"></canvas><div class="tools actions"><button class="btn" id="previewMotion">پیش‌نمایش انیمیشن</button><button class="btn" id="downloadVideo">ساخت و دانلود ویدیو</button><button class="btn outline" id="downloadCard">دانلود کارت تصویری PNG</button><button class="btn outline" id="shareMotion">اشتراک‌گذاری</button></div><div id="motionStatus" class="status" role="status"></div></section>
-<section class="card" id="feedCard">
-<div class="ig-stories" id="igStories">
-  <div class="ig-story" onclick="alert('استوری شما')">
-    <div class="ig-story-ring"><div class="ig-story-avatar">+</div></div>
-    <div class="ig-story-name">استوری شما</div>
-  </div>
-  <div class="ig-story">
-    <div class="ig-story-ring"><div class="ig-story-avatar">م</div></div>
-    <div class="ig-story-name">مومن</div>
-  </div>
-  <div class="ig-story">
-    <div class="ig-story-ring seen"><div class="ig-story-avatar">س</div></div>
-    <div class="ig-story-name">سارا</div>
-  </div>
-  <div class="ig-story">
-    <div class="ig-story-ring"><div class="ig-story-avatar">ا</div></div>
-    <div class="ig-story-name">امیر</div>
-  </div>
-  <div class="ig-story">
-    <div class="ig-story-ring seen"><div class="ig-story-avatar">ن</div></div>
-    <div class="ig-story-name">نگار</div>
-  </div>
-</div>
-<div class="feed-head"><h2 style="margin:0">اکسپلور · تجربه‌های سفر</h2><button class="btn outline" id="refreshFeed">به‌روزرسانی</button></div><p class="hint">تجربه‌های عمومی از سرور بارگیری می‌شوند؛ پیش‌نویس‌های شما خصوصی و فقط روی همین دستگاه ذخیره می‌شوند.</p><div id="feed" class="feed"><div class="empty">در حال بارگیری تجربه‌ها…</div></div></section>
+<section class="card" id="feedCard"><div class="feed-head"><h2 style="margin:0">اکسپلور · تجربه‌های سفر</h2><button class="btn outline" id="refreshFeed">به‌روزرسانی</button></div><p class="hint">تجربه‌های عمومی از سرور بارگیری می‌شوند؛ پیش‌نویس‌های شما خصوصی و فقط روی همین دستگاه ذخیره می‌شوند.</p><div id="feed" class="feed"><div class="empty">در حال بارگیری تجربه‌ها…</div></div></section>
 <div class="footer">REV · سفرهای واقعی، تجربه‌های قابل استفاده</div></main>
 <script>
 (function(){
