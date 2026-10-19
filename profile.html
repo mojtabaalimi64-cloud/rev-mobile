@@ -139,6 +139,8 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 .da-events b{display:block;font-size:17px}
 .da-events small{font-size:9px;color:var(--muted)}
 
+
+.driver-post-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.driver-post-tile{position:relative;display:block;min-width:0;aspect-ratio:1/1;border:1px solid var(--line,#dbe7f2);border-radius:12px;overflow:hidden;background:#f2f7f9;padding:0;text-align:inherit;cursor:pointer;color:inherit;text-decoration:none}.driver-post-tile img{width:100%;height:100%;object-fit:cover;display:block}.driver-post-tile .driver-post-fallback{display:flex;width:100%;height:100%;align-items:center;justify-content:center;text-align:center;padding:8px;box-sizing:border-box;font-size:12px;overflow:hidden}.driver-post-tile .driver-post-caption{position:absolute;inset:auto 0 0;background:linear-gradient(transparent,rgba(0,0,0,.72));color:white;padding:18px 7px 7px;font-size:11px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.driver-post-empty{grid-column:1/-1;padding:14px;border:1px dashed var(--line,#dbe7f2);border-radius:12px;color:var(--muted,#718096);font-size:13px;line-height:1.8}@media(max-width:480px){.driver-post-grid{gap:5px}.driver-post-tile{border-radius:8px}}
 </style>
 
 <style id="navigationGateStyle">#navigationGate{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#080b0d,#102126);color:#f5f7f8;font:16px/1.9 Vazirmatn,Vazir,Tahoma,sans-serif}#navigationGate[hidden]{display:none!important}.gate-card{width:min(100%,600px);padding:26px;border:1px solid #2a343a;border-radius:18px;background:#121a1f;box-shadow:0 20px 70px #0008}.gate-card h1{font-size:26px;line-height:1.5}.gate-card p{color:#aab6bc}.gate-card a,.gate-card button{display:inline-block;margin:6px 5px 0 0;border-radius:10px;padding:10px 14px;text-decoration:none;font:inherit;font-weight:800;cursor:pointer}.gate-primary{background:#39ff88;color:#07100b;border:1px solid #39ff88}.gate-secondary{background:transparent;color:#39ff88;border:1px solid #395648}#navigationGateStatus{margin-top:12px;color:#ffdda0;white-space:pre-wrap;font-size:13px}</style>
@@ -186,6 +188,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 <button type="button" role="tab" data-tab-btn="car" aria-selected="false"><span class="ico">🔋</span>خودرو</button>
 <button type="button" role="tab" data-tab-btn="group" aria-selected="false"><span class="ico">👥</span>گروهی</button>
 <button type="button" role="tab" data-tab-btn="history" aria-selected="false"><span class="ico">🕘</span>تاریخچه</button>
+<button type="button" role="tab" data-tab-btn="posts" aria-selected="false"><span class="ico">▦</span>پست‌ها</button>
 </div>
 <section data-tab="group" class="panel" id="revGroupCodePanel">
       <div class="section-title"><h2>کد اختصاصی سفر گروهی</h2><span class="pill">REV Group</span></div>
@@ -234,6 +237,15 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   <main class="workspace">
     
     
+<section data-tab="posts" class="panel" id="driverPostsSection">
+ <div class="section-title"><h2>پست‌های من</h2><span class="pill">REV Experiences</span></div>
+ <p class="note">پست‌های منتشرشده و پست‌هایی که ذخیره کرده‌ای، از این بخش قابل دسترسی هستند.</p>
+ <div class="section-title" style="margin-top:14px"><h2>پست‌های ایجادشده</h2><button class="secondary" type="button" id="refreshDriverMinePosts">به‌روزرسانی</button></div>
+ <div id="driverMinePosts" class="driver-post-grid"><div class="muted">در حال بارگذاری پست‌ها…</div></div>
+ <div class="section-title" style="margin-top:20px"><h2>پست‌های ذخیره‌شده</h2><button class="secondary" type="button" id="refreshDriverSavedPosts">به‌روزرسانی</button></div>
+ <div id="driverSavedPosts" class="driver-post-grid"><div class="muted">در حال بارگذاری پست‌های ذخیره‌شده…</div></div>
+ <a class="secondary" href="./experiences.html?create=1&app=1" style="display:inline-flex;margin-top:14px;text-decoration:none">مدیریت و انتشار تجربه‌های سفر</a>
+</section>
 <section data-tab="trip" class="panel" id="tripHistorySection">
       <div class="trip-heading"><h2 style="font-size:16px;margin:0">سفرهای اخیر</h2><span class="pill">History</span></div>
       <p class="note">مسیر، زمان شروع، مسافت و انرژی از سفرهای ثبت‌شده حساب شما نمایش داده می‌شوند.</p>
@@ -530,7 +542,7 @@ var SEC2TAB={revGroupCodePanel:'group',revGroupTravelSettings:'group',driverStat
 var bar=document.getElementById('dpTabs');
 if(!bar)return;
 function setTab(name,scroll){
-  if(!/^(trip|car|group|history)$/.test(name))name='trip';
+  if(!/^(trip|car|group|history|posts)$/.test(name))name='trip';
   var secs=document.querySelectorAll('[data-tab]');
   for(var i=0;i<secs.length;i++){secs[i].classList.toggle('tab-hidden',secs[i].getAttribute('data-tab')!==name);}
   var btns=bar.querySelectorAll('button');
@@ -766,4 +778,19 @@ try{
 </nav>
 
 <script src="./rev-app-mode.js?v=20261019-11"></script>
+
+<script>
+(function(){
+ const API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
+ const mine=document.getElementById('driverMinePosts'),saved=document.getElementById('driverSavedPosts');
+ if(!mine||!saved)return;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ function render(root,list,empty){if(!list.length){root.innerHTML='<div class="driver-post-empty">'+empty+'</div>';return}root.innerHTML=list.map(p=>{const photos=Array.isArray(p.photos)?p.photos:[];const src=photos[0]||'';const title=p.title||((p.origin||'')+' ← '+(p.destination||''))||'تجربه سفر';return '<a class="driver-post-tile" href="./experiences.html?app=1&experience='+encodeURIComponent(p.id)+'" aria-label="باز کردن '+esc(title)+'">'+(src?'<img loading="lazy" src="'+esc(src)+'" alt="'+esc(title)+'">':'<span class="driver-post-fallback">'+esc(title)+'</span>')+'<span class="driver-post-caption">'+esc(title)+'</span></a>'}).join('')}
+ async function load(kind){const root=kind==='mine'?mine:saved;root.innerHTML='<div class="driver-post-empty">در حال بارگذاری…</div>';try{const r=await fetch(API+'/api/experiences/'+kind,{credentials:'include',cache:'no-store'}),j=await r.json();if(!r.ok||!j.success)throw Error(j.error||'برای مشاهده پست‌ها وارد حساب REV شوید.');render(root,j.experiences||[],kind==='mine'?'هنوز پستی با این حساب منتشر نکرده‌ای.':'هنوز پستی ذخیره نکرده‌ای.')}catch(e){root.innerHTML='<div class="driver-post-empty">'+esc(e.message||'دریافت فهرست پست‌ها ناموفق بود.')+'</div>'}}
+ document.getElementById('refreshDriverMinePosts')?.addEventListener('click',()=>load('mine'));
+ document.getElementById('refreshDriverSavedPosts')?.addEventListener('click',()=>load('saved'));
+ load('mine');load('saved');
+ if(location.hash==='#dp-posts'){const b=document.querySelector('[data-tab-btn="posts"]');if(b)b.click()}
+})();
+</script>
 </body></html>
