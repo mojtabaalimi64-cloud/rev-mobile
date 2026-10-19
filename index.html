@@ -381,7 +381,17 @@ Promise.race([Promise.all([authP,motionP]),capP]).then(function(v){
   try{document.dispatchEvent(new CustomEvent('rev:auth',{detail:{loggedIn:!!loggedIn}}))}catch(e){}
   s.classList.add('hide');
   setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},FADE_MS+80);
-  /* نمایش صفحه خانه بدون اجبار به ورود؛ ورود از پروفایل/اقدام‌های نیازمند حساب انجام می‌شود. */
+  /* ورود با شماره موبایل اجباری است؛ تا تأیید نشست سمت سرور، هیچ بخش اپ نمایش داده نمی‌شود. */
+  if(!loggedIn){
+    try{
+      var next=new URLSearchParams(window.location.search).get('next');
+      if(next && /^(index\.html|profile\.html|trips\.html|nearby-map\.html|nearby-map-ml\.html|businesses\.html|experiences\.html)(\?.*)?$/.test(next)){
+        window.__revPostLoginNext=next;
+      }
+    }catch(e){}
+    if(window.revShowLogin) window.revShowLogin();
+    else document.addEventListener('rev:login-ui-ready',function(){if(window.revShowLogin)window.revShowLogin()},{once:true});
+  }
 });
 })();
 </script>
@@ -442,6 +452,11 @@ $('obVerify').addEventListener('click',async function(){
     try{localStorage.setItem(FLAG,'1')}catch(e){}
     $('onboard').classList.remove('show');$('onboard').setAttribute('aria-hidden','true');
     document.dispatchEvent(new CustomEvent('rev:onboarded'));
+    if(window.__revPostLoginNext){
+      var target=window.__revPostLoginNext;
+      window.location.replace('./'+target);
+      return;
+    }
   }catch(e){say(e.message||'کد اشتباه است. دوباره تلاش کن.','err',2)}
   finally{btn.disabled=false}
 });
