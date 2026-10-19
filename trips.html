@@ -401,5 +401,199 @@ $('meetupSave').addEventListener('click',async()=>{if(!plan)return;$('meetupSave
 })();
 </script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
+<script>
+
+// === قرار زنده گروهی ===
+const MEETUP_API = 'https://rev-meetup-api.mojtaba-alimi64.workers.dev';
+let lmCode = null, lmMemberId = null, lmMap = null, lmMarkers = {}, lmTimer = null, lmMyPos = null;
+
+function lmShowTab(t){
+  document.querySelectorAll('.lm-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.lm-panel').forEach(p=>p.classList.remove('active'));
+  if(t==='create'){
+    document.querySelector('.lm-tab:first-child').classList.add('active');
+    document.getElementById('lmCreatePanel').classList.add('active');
+  }else{
+    document.querySelectorAll('.lm-tab')[1].classList.add('active');
+    document.getElementById('lmJoinPanel').classList.add('active');
+  }
+}
+
+async function lmCreate(){
+  const name = document.getElementById('lmName').value.trim();
+  const dest = document.getElementById('lmDest').value.trim();
+  const time = document.getElementById('lmTime').value;
+  const creator = document.getElementById('lmCreatorName').value.trim();
+  const st = document.getElementById('lmCreateStatus');
+  if(!dest || !creator){ st.textContent = 'مقصد و نام شما الزامی است'; return; }
+  st.textContent = 'در حال ساخت...'; st.style.color = '#0d9488';
+  try{
+    const r = await fetch(MEETUP_API + '/api/meetup/create', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name: name, destination: dest, meetTime: time, creatorName: creator})
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    lmCode = d.code; lmMemberId = d.memberId;
+    localStorage.setItem('lm_code', lmCode);
+    localStorage.setItem('lm_memberId', lmMemberId);
+    document.getElementById('lmCodeDisplay').textContent = lmCode;
+    document.getElementById('lmTabs').style.display = 'none';
+    document.getElementById('lmCodeView').style.display = 'block';
+    document.getElementById('liveDot').style.display = 'inline-block';
+    st.textContent = '';
+  }catch(e){ st.textContent = e.message; st.style.color = '#dc2626'; }
+}
+
+async function lmJoin(){
+  const code = document.getElementById('lmCode').value.replace(/\D/g,'');
+  const name = document.getElementById('lmJoinName').value.trim();
+  const st = document.getElementById('lmJoinStatus');
+  if(code.length !== 6){ st.textContent = 'کد باید ۶ رقم باشد'; return; }
+  if(!name){ st.textContent = 'نام شما الزامی است'; return; }
+  st.textContent = 'در حال ورود...'; st.style.color = '#0d9488';
+  try{
+    const r = await fetch(MEETUP_API + '/api/meetup/join', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({code: code, name: name})
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    lmCode = code; lmMemberId = d.memberId;
+    localStorage.setItem('lm_code', lmCode);
+    localStorage.setItem('lm_memberId', lmMemberId);
+    st.textContent = '';
+    lmEnterLive();
+  }catch(e){ st.textContent = e.message; st.style.color = '#dc2626'; }
+}
+
+function lmShareCode(){
+  const meetName = document.getElementById('lmName').value || 'گروهی';
+  const txt = 'به قرار "' + meetName + '" در REV بپیوند! کد: ' + lmCode;
+  if(navigator.share){ navigator.share({text: txt}); }
+  else { lmCopyCode(); }
+}
+function lmCopyCode(){
+  navigator.clipboard.writeText(lmCode).then(function(){ alert('کد کپی شد: ' + lmCode); });
+}
+
+function lmEnterLive(){
+  document.getElementById('lmTabs').style.display = 'none';
+  document.getElementById('lmCodeView').style.display = 'none';
+  document.getElementById('lmLiveView').style.display = 'block';
+  document.getElementById('liveDot').style.display = 'inline-block';
+  lmInitMap();
+  lmStartTracking();
+}
+
+function lmInitMap(){
+  if(lmMap) return;
+  if(typeof L === 'undefined'){
+    const s = document.createElement('script');
+    s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    s.onload = function(){ lmInitMap(); };
+    document.head.appendChild(s);
+    const l = document.createElement('link');
+    l.rel = 'stylesheet'; l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(l);
+    return;
+  }
+  lmMap = L.map('lmMap').setView([35.6892, 51.3890], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(lmMap);
+  setTimeout(function(){ lmMap.invalidateSize(); }, 300);
+}
+
+function lmStartTracking(){
+  if(navigator.geolocation){
+    navigator.geolocation.watchPosition(
+      function(p){
+        lmMyPos = [p.coords.latitude, p.coords.longitude];
+        fetch(MEETUP_API + '/api/meetup/location', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({code: lmCode, memberId: lmMemberId, lat: lmMyPos[0], lng: lmMyPos[1]})
+        }).catch(function(){});
+      },
+      function(){}, {enableHighAccuracy:true}
+    );
+  }
+  lmRefresh();
+  lmTimer = setInterval(lmRefresh, 15000);
+}
+
+async function lmRefresh(){
+  try{
+    const r = await fetch(MEETUP_API + '/api/meetup/' + lmCode);
+    const d = await r.json();
+    if(d.error) return;
+    document.getElementById('lmLiveName').textContent = d.meetup.name || 'قرار گروهی';
+    document.getElementById('lmLiveDest').textContent = '📍 ' + d.meetup.destination;
+    lmDrawMembers(d.members);
+  }catch(e){}
+}
+
+function lmDistKm(lat1, lng1, lat2, lng2){
+  const R = 6371, t = Math.PI/180;
+  const h = Math.sin((lat2-lat1)*t/2)**2 + Math.cos(lat1*t)*Math.cos(lat2*t)*Math.sin((lng2-lng1)*t/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+
+function lmDrawMembers(members){
+  if(!lmMap) return;
+  const listEl = document.getElementById('lmMembers');
+  let html = '';
+  const bounds = [];
+  members.forEach(function(m){
+    if(m.lat == null) return;
+    bounds.push([m.lat, m.lng]);
+    const isMe = m.memberId === lmMemberId;
+    const color = isMe ? '#0d9488' : '#3b82f6';
+    if(lmMarkers[m.memberId]){
+      lmMarkers[m.memberId].setLatLng([m.lat, m.lng]);
+    }else{
+      const label = m.name + (isMe ? ' (شما)' : '');
+      lmMarkers[m.memberId] = L.circleMarker([m.lat, m.lng], {
+        radius: 10, fillColor: color, color:'#fff', weight:2, fillOpacity:1
+      }).addTo(lmMap).bindTooltip(label, {permanent:false});
+    }
+    let distTxt = '';
+    if(lmMyPos && !isMe){
+      const km = lmDistKm(lmMyPos[0], lmMyPos[1], m.lat, m.lng);
+      distTxt = km < 1 ? Math.round(km*1000) + ' متر' : km.toFixed(1) + ' کیلومتر';
+    } else if(isMe){ distTxt = 'شما'; }
+    const staleCls = m.stale ? ' stale' : '';
+    const firstChar = (m.name||'?').charAt(0);
+    const meTag = isMe ? ' (شما)' : '';
+    const offlineTag = m.stale ? ' • آفلاین' : '';
+    html += '<div class="lm-member' + staleCls + '">'
+      + '<div class="lm-avatar">' + firstChar + '</div>'
+      + '<div class="lm-member-info"><div class="lm-member-name">' + m.name + meTag + '</div>'
+      + '<div class="lm-member-dist">' + (distTxt || 'در حال اتصال...') + offlineTag + '</div></div></div>';
+  });
+  listEl.innerHTML = html || '<div style="text-align:center;color:#94a3b8">هنوز کسی موقعیت نفرستاده</div>';
+  if(bounds.length > 1) lmMap.fitBounds(bounds, {padding:[30,30]});
+  else if(bounds.length === 1) lmMap.setView(bounds[0], 14);
+}
+
+function lmLeave(){
+  if(!confirm('از قرار خارج می‌شوی؟')) return;
+  fetch(MEETUP_API + '/api/meetup/leave', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({code: lmCode, memberId: lmMemberId})
+  }).catch(function(){});
+  clearInterval(lmTimer);
+  localStorage.removeItem('lm_code');
+  localStorage.removeItem('lm_memberId');
+  location.reload();
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  const c = localStorage.getItem('lm_code'), mid = localStorage.getItem('lm_memberId');
+  if(c && mid){
+    lmCode = c; lmMemberId = mid;
+    setTimeout(function(){ lmEnterLive(); }, 500);
+  }
+});
+
+</script>
 </body>
 </html>
