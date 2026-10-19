@@ -155,6 +155,54 @@ html body .ig-actions .ig-action-btn {
   border: none !important;
 }
 </style>
+
+<style id="rev-social-icons-fix">
+/* REV experiences: compact Instagram-style actions, no colored button backgrounds */
+html body .post-social-actions .social-icon,
+html body .post-social-actions button.social-icon,
+html body .post-social-actions .social-icon:hover,
+html body .post-social-actions .social-icon:focus,
+html body .post-social-actions .social-icon:active {
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  width:27px !important;
+  height:27px !important;
+  min-width:27px !important;
+  min-height:27px !important;
+  padding:2px !important;
+  margin:0 !important;
+  color:#262626 !important;
+  line-height:1 !important;
+  display:grid !important;
+  place-items:center !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+html body .post-social-actions .social-icon svg {
+  width:20px !important;
+  height:20px !important;
+  max-width:20px !important;
+  max-height:20px !important;
+  display:block !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:1.8 !important;
+}
+html body .post-social-actions .like-icon svg {width:21px !important;height:21px !important}
+html body .post-social-actions .bookmark-icon svg {width:19px !important;height:21px !important}
+html body .post-social-actions .social-icon:hover {color:#262626 !important}
+html body .post-social-actions .social-icon:active {opacity:.65 !important;transform:scale(.94) !important}
+html body .post-social-actions .like-icon.liked svg {fill:#e1306c !important;stroke:#e1306c !important}
+html body .post-social-actions .bookmark-icon.saved svg {fill:#0f9fb5 !important;stroke:#0f9fb5 !important}
+html body .post-social-actions .social-left {gap:7px !important}
+html body .post-social-actions {padding:5px 12px 2px !important}
+</style>
 </head><body>
 <header class="top"><a href="./index.html?app=1" style="text-decoration:none;color:inherit"><span class="brand">REV</span></a><span id="pageTitle">اکسپلور</span><span style="margin-right:auto;color:var(--muted);font-size:12px">سفرهای واقعی</span></header>
 <main class="wrap">
