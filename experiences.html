@@ -203,7 +203,16 @@ html body .post-social-actions .bookmark-icon.saved svg {fill:#0f9fb5 !important
 html body .post-social-actions .social-left {gap:7px !important}
 html body .post-social-actions {padding:5px 12px 2px !important}
 </style>
-</head><body>
+
+<style id="rev-instagram-heart-burst">
+/* قلب بزرگ اینستاگرامی که از مرکز عکس به آیکون لایک می‌رود */
+body[data-view="explore"] .photos{position:relative;isolation:isolate;overflow:hidden;touch-action:pan-y}
+.rev-heart-burst{position:absolute;z-index:8;left:50%;top:50%;width:clamp(76px,19vw,112px);height:clamp(76px,19vw,112px);transform:translate(-50%,-50%) scale(.35) rotate(-16deg);opacity:0;pointer-events:none;filter:drop-shadow(0 5px 12px #0003);will-change:transform,opacity}
+.rev-heart-burst svg{width:100%;height:100%;display:block;fill:#ff3040;stroke:#fff;stroke-width:1.2}
+.rev-heart-burst.is-visible{animation:revHeartPop .82s cubic-bezier(.2,.75,.25,1) forwards}
+@keyframes revHeartPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(-18deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.18) rotate(5deg)}35%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}68%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}100%{opacity:0;transform:translate(-50%,-50%) scale(.72) rotate(0)}}
+body[data-view="explore"] .photos img{user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+</style>\n</head><body>
 <header class="top"><a href="./index.html?app=1" style="text-decoration:none;color:inherit"><span class="brand">REV</span></a><span id="pageTitle">اکسپلور</span><span style="margin-right:auto;color:var(--muted);font-size:12px">سفرهای واقعی</span></header>
 <main class="wrap">
 <section class="hero"><h1>هر سفر، یک داستان برای گفتن</h1><p>مسیرت را متحرک کن، عکس‌هایت را اضافه کن، و یک خاطره قابل دانلود بساز. اگر خواستی تجربه‌ات را با جامعه REV به اشتراک بگذار.</p><div class="actions"><button class="btn light" id="startCreate">＋ ثبت تجربه سفر</button><button class="btn" id="makeMotion">▶ ساخت مسیر متحرک</button></div></section>
@@ -318,4 +327,58 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 });
 </script>
-</body></html>
+
+<script id="rev-instagram-heart-interaction">
+(function(){
+  const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+  function burst(photoArea, button){
+    if(!photoArea) return;
+    const old=photoArea.querySelector('.rev-heart-burst');
+    if(old) old.remove();
+    const heart=document.createElement('span');
+    heart.className='rev-heart-burst';
+    heart.innerHTML=HEART;
+    photoArea.appendChild(heart);
+    void heart.offsetWidth;
+    heart.classList.add('is-visible');
+    if(button){
+      button.classList.add('liked');
+      const svg=button.querySelector('svg');
+      if(svg){svg.style.fill='#ff3040';svg.style.stroke='#ff3040';}
+    }
+    heart.addEventListener('animationend',()=>heart.remove(),{once:true});
+  }
+  function likeFromPhoto(photoArea){
+    const post=photoArea.closest('[data-post]');
+    if(!post) return;
+    const like=post.querySelector('[data-like]');
+    if(!like) return;
+    const wasLiked=like.classList.contains('liked');
+    burst(photoArea,like);
+    if(!wasLiked) like.click();
+  }
+  document.addEventListener('click',function(e){
+    const like=e.target.closest('#feed [data-like]');
+    if(like){
+      const post=like.closest('[data-post]');
+      const photos=post&&post.querySelector('.photos');
+      if(photos) burst(photos,like);
+      return;
+    }
+    const photo=e.target.closest('#feed .photos img');
+    if(photo){
+      const area=photo.closest('.photos');
+      const now=Date.now(),last=Number(area.dataset.revTapAt||0);
+      area.dataset.revTapAt=String(now);
+      if(now-last<330){
+        area.dataset.revTapAt='0';
+        likeFromPhoto(area);
+      }
+    }
+  },true);
+  document.addEventListener('dblclick',function(e){
+    const photo=e.target.closest('#feed .photos img');
+    if(photo){e.preventDefault();likeFromPhoto(photo.closest('.photos'));}
+  });
+})();
+</script>\n</body></html>
