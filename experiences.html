@@ -230,6 +230,8 @@ body[data-view="explore"] #feed article.comments-open .comment-form{display:flex
 @keyframes revCommentIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 </style>
 <style id="rev-comment-thread-style">
+.comments{max-height:260px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d5e4e7 transparent}.comments .comment-list{min-height:0}.comments .comment{overflow-wrap:anywhere}.comments .rev-comment-replies{max-width:100%}
+
 body[data-view="explore"] .comment{border-top:1px solid #f1f1f1;padding:10px 0;font-size:12px;line-height:1.8}
 body[data-view="explore"] .comment-list:not(.comments-expanded)>.comment{display:none}
 .rev-comments-expand{display:block;border:0!important;background:transparent!important;color:#737373!important;padding:7px 0!important;font-size:12px!important;text-align:right!important;min-height:0!important}
