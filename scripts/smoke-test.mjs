@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import vm from "node:vm";
 const root = process.cwd();
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const required = ["index.html", "experiences.html", "trips.html", "nearby-map.html", "manifest.webmanifest", "sw.js", "register-sw.js", "rev-app-icon.svg"];
@@ -15,7 +16,6 @@ for (const href of hrefs) {
 if (!html.includes('dir="rtl"')) failures.push("Missing RTL direction");
 if (!html.includes('name="viewport"')) failures.push("Missing viewport");
 if (!html.includes('src="./register-sw.js"')) failures.push("Service worker registration script missing");
-const vm = require("node:vm");
 for (const file of ["experiences.html", "trips.html", "nearby-map.html"]) {
   const source = fs.readFileSync(path.join(root, file), "utf8");
   const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
