@@ -44,8 +44,8 @@
     {href:'./nearby-map.html',label:'نقشه',icon:'⌖',match:/\/nearby-map\.html$/},
     {href:'./experiences.html?create=1',label:'ایجاد تجربه',icon:'＋',match:/__never_create_active__/},
     {href:'./experiences.html?explore=1',label:'اکسپلور',icon:'⌕',match:/\/experiences\.html$/},
-    {href:'./trips.html',label:'سفرها',icon:'🧭',match:/\/trips\.html$/},
-    {href:'./businesses.html',label:'خدمات',icon:'🔧',match:/\/businesses\.html$/}
+    {href:'./trips.html',label:'سفرها',icon:'↗',match:/\/trips\.html$/},
+    {href:'./businesses.html',label:'خدمات',icon:'⚒',match:/\/businesses\.html$/}
   ];
   document.querySelectorAll('.bottom-nav').forEach(function(oldNav){ oldNav.remove(); });
   var nav = document.createElement('nav');
@@ -54,7 +54,7 @@
   items.forEach(function (item) {
     var a = document.createElement('a');
     a.href = item.href + (item.href.indexOf('?') >= 0 ? '&app=1' : '?app=1');
-    a.innerHTML = '<span aria-hidden="true">' + item.icon + '</span><span>' + item.label + '</span>';
+    a.innerHTML = '<span aria-hidden="true">' + item.icon + '</span>'; a.setAttribute('aria-label', item.label); a.setAttribute('title', item.label);
     if (item.match.test(current) && item.label !== 'ایجاد تجربه' && item.label !== 'اکسپلور') a.setAttribute('aria-current','page');
     if (item.label === 'اکسپلور' && /\/experiences\.html$/.test(current) && new URLSearchParams(location.search).get('create') !== '1') a.setAttribute('aria-current','page');
     nav.appendChild(a);
