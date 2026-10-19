@@ -86,6 +86,9 @@
 
 <header class="app-header"><div class="wrap top">
   <div class="greet">
+    <a class="avatar" id="servicesAvatarLink" href="./profile.html?from=rev-app" aria-label="حساب کاربری">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.4 3.1-5.2 7-5.2s6.4 1.8 7 5.2"/></svg>
+    </a>
     <div><div class="hello">خدمات REV</div><div class="sub">یدک‌کش مجاز، قطعات ضروری و خدمات تخصصی برقی</div></div>
   </div>
   <button class="icon-btn" id="cartTopBtn" aria-label="سبد سفارش" style="display:none">
@@ -437,6 +440,21 @@ function renderSvcReqs(){
   })});
 }
 renderServices();renderSvcReqs();
+})();
+</script>
+<script>
+/* همگام‌سازی تصویر حساب با آواتار صفحه خانه */
+(function(){
+  var link=document.getElementById('servicesAvatarLink');
+  if(!link)return;
+  var key='rev_home_avatar_v1';
+  function valid(v){return typeof v==='string'&&/^data:image\/(?:jpeg|png|webp);base64,/i.test(v);}
+  function show(v){if(!valid(v))return;var img=document.createElement('img');img.src=v;img.alt='';img.decoding='async';img.onload=function(){link.replaceChildren(img);};}
+  try{show(localStorage.getItem(key));}catch(e){}
+  fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'})
+    .then(function(r){if(!r.ok)throw Error('profile unavailable');return r.json();})
+    .then(function(j){var v=j&&j.success&&j.user&&j.user.avatar_data;if(valid(v)){try{localStorage.setItem(key,v);}catch(e){}show(v);}})
+    .catch(function(){});
 })();
 </script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
