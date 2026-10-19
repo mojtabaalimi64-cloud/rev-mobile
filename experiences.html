@@ -331,49 +331,57 @@ document.addEventListener('DOMContentLoaded', function(){
 <script id="rev-instagram-heart-interaction">
 (function(){
   const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+  let lastBurstAt=0;
   function burst(photoArea, button){
-    if(!photoArea) return;
-    const old=photoArea.querySelector('.rev-heart-burst');
-    if(old) old.remove();
+    if(!photoArea || !button) return;
+    const now=performance.now();
+    if(now-lastBurstAt<120) return;
+    lastBurstAt=now;
+    const from=photoArea.getBoundingClientRect(), to=button.getBoundingClientRect();
     const heart=document.createElement('span');
     heart.className='rev-heart-burst';
     heart.innerHTML=HEART;
-    photoArea.appendChild(heart);
-    void heart.offsetWidth;
-    heart.classList.add('is-visible');
-    if(button){
-      button.classList.add('liked');
-      const svg=button.querySelector('svg');
-      if(svg){svg.style.fill='#ff3040';svg.style.stroke='#ff3040';}
-    }
-    heart.addEventListener('animationend',()=>heart.remove(),{once:true});
+    Object.assign(heart.style,{
+      position:'fixed',left:'0',top:'0',width:'clamp(76px,19vw,112px)',
+      height:'clamp(76px,19vw,112px)',zIndex:'99999',margin:'0',
+      pointerEvents:'none',opacity:'1',transformOrigin:'center center',
+      filter:'drop-shadow(0 5px 12px #0003)',willChange:'transform,opacity'
+    });
+    heart.style.setProperty('animation','none','important');
+    document.body.appendChild(heart);
+    const size=heart.getBoundingClientRect().width;
+    const x1=from.left+from.width/2-size/2, y1=from.top+from.height/2-size/2;
+    const x2=to.left+to.width/2-size/2, y2=to.top+to.height/2-size/2;
+    heart.animate([
+      {transform:'translate('+x1+'px,'+y1+'px) scale(.28) rotate(-18deg)',opacity:0,offset:0},
+      {transform:'translate('+x1+'px,'+y1+'px) scale(1.12) rotate(5deg)',opacity:1,offset:.2},
+      {transform:'translate('+x1+'px,'+y1+'px) scale(1) rotate(0)',opacity:1,offset:.43},
+      {transform:'translate('+x2+'px,'+y2+'px) scale(.22) rotate(12deg)',opacity:.95,offset:1}
+    ],{duration:720,easing:'cubic-bezier(.2,.7,.25,1)',fill:'forwards'}).onfinish=()=>heart.remove();
+    button.classList.add('liked');
+    const svg=button.querySelector('svg');
+    if(svg){svg.style.fill='#ff3040';svg.style.stroke='#ff3040';}
+    button.animate([{transform:'scale(1)'},{transform:'scale(1.28)'},{transform:'scale(1)'}],{duration:260,easing:'ease-out'});
   }
   function likeFromPhoto(photoArea){
-    const post=photoArea.closest('[data-post]');
-    if(!post) return;
-    const like=post.querySelector('[data-like]');
-    if(!like) return;
-    const wasLiked=like.classList.contains('liked');
+    const post=photoArea&&photoArea.closest('[data-post]');
+    const like=post&&post.querySelector('[data-like]');
+    if(!like)return;
     burst(photoArea,like);
-    if(!wasLiked) like.click();
+    if(!like.classList.contains('liked')) like.click();
   }
   document.addEventListener('click',function(e){
     const like=e.target.closest('#feed [data-like]');
     if(like){
-      const post=like.closest('[data-post]');
-      const photos=post&&post.querySelector('.photos');
+      const post=like.closest('[data-post]'), photos=post&&post.querySelector('.photos');
       if(photos) burst(photos,like);
       return;
     }
     const photo=e.target.closest('#feed .photos img');
     if(photo){
-      const area=photo.closest('.photos');
-      const now=Date.now(),last=Number(area.dataset.revTapAt||0);
+      const area=photo.closest('.photos'), now=Date.now(), last=Number(area.dataset.revTapAt||0);
       area.dataset.revTapAt=String(now);
-      if(now-last<330){
-        area.dataset.revTapAt='0';
-        likeFromPhoto(area);
-      }
+      if(now-last<330){area.dataset.revTapAt='0';likeFromPhoto(area);}
     }
   },true);
   document.addEventListener('dblclick',function(e){
