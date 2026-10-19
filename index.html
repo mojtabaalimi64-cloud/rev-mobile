@@ -218,7 +218,7 @@
 
 </div>
 <script>
-/* نام و عکس کاربر از حساب REV؛ در صورت قطع شبکه، کش محلی نمایش داده می‌شود */
+/* نمایش هویت فقط پس از تأیید نشست از سرور؛ کش قدیمی به‌تنهایی نباید کاربر را شناسایی کند */
 (function(){
   var avatarLink=document.getElementById('avatarLink');
   var greetName=document.getElementById('greetName');
@@ -229,22 +229,22 @@
     var img=document.createElement('img');img.src=data;img.alt='';img.decoding='async';
     img.onload=function(){avatarLink.replaceChildren(img);};
   }
-  try{
-    var c=localStorage.getItem(cacheKey);if(validAvatar(c))showAvatar(c);
-    var n=localStorage.getItem(nameKey);if(n)greetName.textContent='سلام، '+n+' 👋';
-  }catch(e){}
+  function clearIdentity(){
+    try{localStorage.removeItem(cacheKey);localStorage.removeItem(nameKey);}catch(e){}
+    avatarLink.replaceChildren();
+    greetName.textContent='سلام 👋';
+  }
   fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'})
-    .then(function(r){if(!r.ok)throw new Error('profile unavailable');return r.json();})
+    .then(function(r){if(!r.ok)throw new Error('not signed in');return r.json();})
     .then(function(res){
-      if(!res||!res.success)return;
-      var u=res.user||{};
-      var av=u.avatar_data;
+      if(!res||!res.success||!res.user){clearIdentity();return;}
+      var u=res.user||{},av=u.avatar_data,nm=u.display_name||u.name||u.full_name||u.first_name;
       if(validAvatar(av)){try{localStorage.setItem(cacheKey,av);}catch(e){}showAvatar(av);}
       else{try{localStorage.removeItem(cacheKey);}catch(e){}}
-      var nm=u.name||u.full_name||u.first_name;
       if(nm){try{localStorage.setItem(nameKey,nm);}catch(e){}greetName.textContent='سلام، '+nm+' 👋';}
+      else{try{localStorage.removeItem(nameKey);}catch(e){}greetName.textContent='سلام 👋';}
     })
-    .catch(function(){});
+    .catch(function(){clearIdentity();});
 })();
 </script>
 <style>
