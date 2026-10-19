@@ -214,13 +214,21 @@ try{
 var CACHE_KEY='rev_db_driver_v1';
 function renderTrips(trips){
   trips=Array.isArray(trips)?trips:[];
-  $('recentTrips').innerHTML=trips.length?trips.slice(0,5).map(function(t){
+  var local=[];try{var z=JSON.parse(localStorage.getItem('rev_driver_trip_analysis_local_v1')||'[]');if(Array.isArray(z))local=z;}catch(e){}
+  var all=trips.concat(local).filter(function(t,i,a){var key=String(t.started_at||'')+'|'+String(t.vehicle_name||'');return a.findIndex(function(x){return String(x.started_at||'')+'|'+String(x.vehicle_name||'')===key;})===i;});
+  all.sort(function(a,b){return new Date(b.started_at||0)-new Date(a.started_at||0)});
+  $('recentTrips').innerHTML=all.length?all.slice(0,10).map(function(t){
     var d=Number(t.distance_km),e=Number(t.energy_kwh);
-    var rate=(d>0&&e>0)?number(e/d*100):'—';
+    var rate=(d>0&&e>0)?number(e/d*100):'—',stats=t.driving_stats||{};
+    if(typeof stats==='string'){try{stats=JSON.parse(stats)}catch(err){stats={}}}
+    var pct=Number(t.battery_consumption_percent||stats.battery_consumption_percent),cap=Number(t.battery_capacity_kwh||stats.battery_capacity_kwh);
+    var max=Number(stats.max_speed_kmh),avg=Number(stats.average_speed_kmh),extra='';
+    if(Number.isFinite(pct)&&pct>=0)extra+='<div class="trip-meta">مصرف باتری ثبت‌شده توسط کاربر: '+number(pct)+'٪'+(Number.isFinite(cap)&&cap>0?' از ظرفیت '+number(cap)+' کیلووات‌ساعت':'')+'</div>';
+    if(Number.isFinite(max)&&max>0)extra+='<div class="trip-meta">بیشترین سرعت GPS: '+number(max)+' کیلومتر بر ساعت'+(Number.isFinite(avg)&&avg>0?' · میانگین: '+number(avg):'')+'</div>';
     return '<article class="trip"><div class="trip-title"><span>'+safe(t.vehicle_name||'سفر با خودرو')+'</span>'+
       '<span class="pill teal">'+safe(t.energy_source||'ثبت‌شده')+'</span></div>'+
       '<div class="trip-meta">'+safe(date(t.started_at))+' · '+number(t.distance_km)+' کیلومتر · '+number(t.energy_kwh)+' کیلووات‌ساعت</div>'+
-      '<div class="trip-meta">مصرف این سفر: '+rate+' kWh/100 km</div></article>';
+      '<div class="trip-meta">مصرف این سفر: '+rate+' kWh/100 km</div>'+extra+'</article>';
   }).join(''):'<div class="empty">هنوز سفری ثبت نشده است.</div>';
 }
 async function load(){
