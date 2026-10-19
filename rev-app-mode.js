@@ -47,7 +47,7 @@
     {href:'./trips.html',label:'سفرها',icon:'🧭',match:/\/trips\.html$/},
     {href:'./businesses.html',label:'خدمات',icon:'🔧',match:/\/businesses\.html$/}
   ];
-  if (isAppHome) { var oldNav = document.querySelector('.bottom-nav'); if (oldNav) oldNav.remove(); }
+  document.querySelectorAll('.bottom-nav').forEach(function(oldNav){ oldNav.remove(); });
   var nav = document.createElement('nav');
   nav.id = 'rev-app-bottom-nav';
   nav.setAttribute('aria-label','ناوبری اصلی اپ REV');
