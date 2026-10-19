@@ -292,6 +292,11 @@ body.rev-modal-open{overflow:hidden!important}
 #navRecenterFloat span{font-size:11px}
 @media(max-width:420px){#navRecenterFloat{right:10px;min-height:44px;padding:0 11px}#navRecenterFloat span{display:none}}
 
+/* REV navigation accessibility: keep bottom navigation above station details */
+@media(max-width:700px){
+ .bottom-nav{z-index:6000!important;pointer-events:auto!important}
+ #details-panel:not([hidden]){max-height:calc(100dvh - 150px)!important;bottom:calc(86px + env(safe-area-inset-bottom))!important}
+}
 /* REV station details: suppress the compact Leaflet popup and center the full details panel */
 .leaflet-popup-pane .leaflet-popup{display:none!important}
 #details-panel:not([hidden]){
