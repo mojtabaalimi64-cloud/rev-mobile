@@ -1,4 +1,4 @@
-const CACHE_NAME = "rev-mobile-shell-v52";
+const CACHE_NAME = "rev-mobile-shell-v53";
 const SHELL = ["./", "./index.html", "./trips.html", "./experiences.html", "./rev-app-mode.js", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
@@ -21,6 +21,14 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+  // هدایت CDNهای کند به سریع‌تر
+  const url = event.request.url;
+  if (url.includes("unpkg.com/leaflet")) {
+    const fast = url.replace("https://unpkg.com/leaflet@1.9.4/dist/",
+                              "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/");
+    event.respondWith(fetch(fast));
+    return;
+  }
   const request = event.request;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
