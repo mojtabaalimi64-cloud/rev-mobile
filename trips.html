@@ -9,6 +9,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
 <title>برنامه‌ریزی سفر | REV</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
 <style>
 /* یکدست‌سازی کارت‌های برنامه با تم teal آپ */
@@ -30,6 +31,7 @@
 #savedPlansSection .card.row-item .ico{background:rgba(255,255,255,.2)!important}
 </style>
 <style>
+.meetup-person{border:1px solid #e0eaf1;background:#f8fbfd;border-radius:14px;padding:12px}.meetup-person>b{color:#087fcb;font-size:13px}.meetup-person label{display:block;color:#526a7e;font-size:11px;font-weight:800;margin:8px 0 4px}.meetup-person .trip-input{min-height:42px}.meetup-result{border:1px solid #dce8f1;border-radius:13px;padding:11px;background:#fff}.meetup-result b{display:block;color:#14293b}.meetup-result small{color:#587084;line-height:1.8}
 .eyebrow{font-size:11px;color:var(--teal);font-weight:800;letter-spacing:.3px}
 .page-title{font-size:23px;margin:2px 0 4px;font-weight:900}
 .page-sub{margin:0;color:var(--muted);font-size:12.5px}
@@ -87,6 +89,26 @@
       <a class="btn-light" href="./nearby-map.html" style="background:rgba(255,255,255,.16);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.35)">📍 مسیریابی روی نقشه</a>
     </div>
     <p id="planStatus" role="status" aria-live="polite" style="min-height:20px;font-size:12px;margin:8px 0 0;color:#ffe9a8"></p>
+  </section>
+
+  <section class="section" id="meetupPlanningSection" aria-labelledby="meetupTitle">
+    <div class="section-head"><h2 id="meetupTitle">برنامه‌ریزی گروهی</h2></div>
+    <div class="list-card" style="padding:16px">
+      <p class="page-sub" style="margin-bottom:12px">برای رسیدن هم‌زمان به یک مقصد، مبدأ هر نفر را جدا وارد کن؛ مسیر، کیلومتر و زمان هر نفر و فاصله جاده‌ای بین افراد روی نقشه محاسبه می‌شود.</p>
+      <label for="meetupName" class="trip-field-label">نام برنامه</label><input id="meetupName" class="trip-input" placeholder="مثلاً قرار دوستان">
+      <label for="meetupDestination" class="trip-field-label">نقطه قرار مشترک</label><input id="meetupDestination" class="trip-input" placeholder="مثلاً میدان آزادی تهران" autocomplete="off">
+      <div style="display:grid;gap:10px;margin-top:12px">
+        <div class="meetup-person"><b>نفر اول</b><label>نام</label><input class="trip-input meetup-person-name" value="نفر اول" maxlength="60"><label>مبدأ حرکت</label><input class="trip-input meetup-person-origin" placeholder="آدرس یا نام مکان مبدأ" autocomplete="off"></div>
+        <div class="meetup-person"><b>نفر دوم</b><label>نام</label><input class="trip-input meetup-person-name" value="نفر دوم" maxlength="60"><label>مبدأ حرکت</label><input class="trip-input meetup-person-origin" placeholder="آدرس یا نام مکان مبدأ" autocomplete="off"></div>
+        <div class="meetup-person"><b>نفر سوم</b><label>نام</label><input class="trip-input meetup-person-name" value="نفر سوم" maxlength="60"><label>مبدأ حرکت</label><input class="trip-input meetup-person-origin" placeholder="آدرس یا نام مکان مبدأ" autocomplete="off"></div>
+      </div>
+      <button class="btn-light" id="meetupCalculate" type="button" style="width:100%;margin-top:14px;background:#087fcb;color:#fff;border:0;cursor:pointer">محاسبه مسیرهای هر سه نفر</button>
+      <p id="meetupStatus" role="status" aria-live="polite" class="trip-meta"></p>
+      <div id="meetupMap" style="height:330px;border-radius:16px;overflow:hidden;background:#edf4f8;margin-top:10px;display:none"></div>
+      <div id="meetupResults" style="display:grid;gap:8px;margin-top:10px"></div>
+      <div id="meetupPairs" class="trip-meta" style="margin-top:8px"></div>
+      <button class="btn-light" id="meetupSave" type="button" style="width:100%;margin-top:12px;background:#eaf5ff;color:#087fcb;border:1px solid #cfe3f3;display:none;cursor:pointer">ذخیره برنامه برای نمایش در مدیریت</button>
+    </div>
   </section>
 
   <section class="section" id="resumeSection" hidden aria-labelledby="resumeTitle">
@@ -276,6 +298,20 @@ if('serviceWorker' in navigator){
       avatar.setAttribute('aria-label','رفتن به پروفایل '+(display||'کاربر REV'));
       if(saved){avatar.style.backgroundImage='url("'+saved.replace(/["\\\\]/g,'')+'")';fallback.style.display='none';}
     }).catch(function(){});
+})();
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+const API='https://rev-auth-api.mojtaba-alimi64.workers.dev', $=id=>document.getElementById(id);
+let plan=null,map=null,layers=[];
+const fmt=n=>new Intl.NumberFormat('fa-IR',{maximumFractionDigits:1}).format(n);
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function geo(q){const r=await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q='+encodeURIComponent(q),{headers:{'Accept-Language':'fa,en'}});const j=await r.json();if(!j.length)throw Error('مکان پیدا نشد: '+q);return {lat:+j[0].lat,lon:+j[0].lon};}
+async function route(a,b){const r=await fetch('https://router.project-osrm.org/route/v1/driving/'+a.lon+','+a.lat+';'+b.lon+','+b.lat+'?overview=full&geometries=geojson&steps=false'),j=await r.json();if(!r.ok||j.code!=='Ok'||!j.routes?.length)throw Error('محاسبه یکی از مسیرهای جاده‌ای ناموفق بود.');return {km:j.routes[0].distance/1000,minutes:j.routes[0].duration/60,coords:j.routes[0].geometry.coordinates};}
+function draw(p){$('meetupMap').style.display='block';if(!map){map=L.map('meetupMap');L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);}layers.forEach(x=>map.removeLayer(x));layers=[];let pts=[];p.people.forEach((x,i)=>{let line=L.polyline(x.route.coords.map(c=>[c[1],c[0]]),{color:['#087fcb','#0d9488','#e58b28'][i],weight:5}).addTo(map);layers.push(line);pts.push(...line.getLatLngs());layers.push(L.marker([x.point.lat,x.point.lon]).addTo(map).bindPopup(esc(x.name)+' · مبدأ'));});layers.push(L.marker([p.destination.lat,p.destination.lon]).addTo(map).bindPopup('نقطه قرار مشترک'));pts.push([p.destination.lat,p.destination.lon]);map.fitBounds(pts,{padding:[24,24]});setTimeout(()=>map.invalidateSize(),150);}
+$('meetupCalculate').addEventListener('click',async()=>{const dest=$('meetupDestination').value.trim(),names=[...document.querySelectorAll('.meetup-person-name')].map(x=>x.value.trim()),origins=[...document.querySelectorAll('.meetup-person-origin')].map(x=>x.value.trim());if(!dest||origins.some(x=>!x)){$('meetupStatus').textContent='مقصد مشترک و مبدأ هر سه نفر را وارد کن.';return;}$('meetupCalculate').disabled=true;$('meetupSave').style.display='none';$('meetupStatus').textContent='در حال محاسبه مسیرها…';try{const destination=await geo(dest),people=[];for(let i=0;i<3;i++){$('meetupStatus').textContent='محاسبه مسیر نفر '+fmt(i+1)+' از ۳…';const point=await geo(origins[i]),rt=await route(point,destination);people.push({name:names[i]||('نفر '+(i+1)),origin:origins[i],point,route:rt});}const pairs=[];for(let i=0;i<3;i++)for(let j=i+1;j<3;j++){const r=await route(people[i].point,people[j].point);pairs.push({a:people[i].name,b:people[j].name,km:r.km,minutes:r.minutes});}plan={title:$('meetupName').value.trim()||'برنامه قرار گروهی',destination_label:dest,destination,people,pairs,created_at:new Date().toISOString()};$('meetupResults').innerHTML=people.map(x=>'<div class="meetup-result"><b>'+esc(x.name)+' ← مقصد مشترک</b><small>مسیر جاده‌ای: '+fmt(x.route.km)+' کیلومتر · حدود '+fmt(x.route.minutes)+' دقیقه</small></div>').join('');$('meetupPairs').innerHTML='<b>فاصله و زمان جاده‌ای بین افراد</b><br>'+pairs.map(x=>esc(x.a)+' ↔ '+esc(x.b)+': '+fmt(x.km)+' کیلومتر · '+fmt(x.minutes)+' دقیقه').join('<br>');draw(plan);$('meetupSave').style.display='block';$('meetupStatus').textContent='سه مسیر محاسبه شد؛ برای نمایش در پنل مدیریت، برنامه را ذخیره کن.';}catch(e){$('meetupStatus').textContent=e.message||'محاسبه مسیر انجام نشد؛ نام مکان‌ها را دقیق‌تر وارد کن.';}finally{$('meetupCalculate').disabled=false;}});
+$('meetupSave').addEventListener('click',async()=>{if(!plan)return;$('meetupSave').disabled=true;$('meetupStatus').textContent='در حال ذخیره در دیتابیس REV…';try{const body={title:plan.title,destination_label:plan.destination_label,created_at:plan.created_at,participants:plan.people.map(x=>({name:x.name,origin_label:x.origin,origin_lat:x.point.lat,origin_lon:x.point.lon,distance_km:x.route.km,duration_minutes:x.route.minutes,route_coordinates:x.route.coords.filter((_,i,a)=>i===0||i===a.length-1||i%Math.max(1,Math.floor(a.length/300))===0).slice(0,350)})),pairs:plan.pairs};const r=await fetch(API+'/api/driver/meetup-plans',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),j=await r.json().catch(()=>({}));if(!r.ok||!j.success)throw Error(j.error||'برای ذخیره، ابتدا وارد حساب کاربری REV شو.');$('meetupStatus').textContent='برنامه ذخیره شد و برای مدیریت REV ارسال شد.';}catch(e){$('meetupStatus').textContent=e.message||'ذخیره ناموفق بود.';}finally{$('meetupSave').disabled=false;}});
 })();
 </script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
