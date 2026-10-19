@@ -230,7 +230,14 @@ body[data-view="explore"] #feed article.comments-open .comment-form{display:flex
 @keyframes revCommentIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 </style>
 <style id="rev-comment-thread-style">
-.comments{max-height:260px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d5e4e7 transparent}.comments .comment-list{min-height:0}.comments .comment{overflow-wrap:anywhere}.comments .rev-comment-replies{max-width:100%}
+/* نظرات روی پست به‌صورت لایه‌ای باز می‌شوند و ارتفاع کارت پست را تغییر نمی‌دهند */
+body[data-view="explore"] #feed article{position:relative}
+body[data-view="explore"] #feed article .comments{position:absolute;z-index:8;left:0;right:0;bottom:0;max-height:0;height:auto;overflow:hidden;box-sizing:border-box;padding:0!important;margin:0;background:#fff;border-top:0;border-radius:0 0 14px 14px;box-shadow:none;transition:max-height .18s ease,border-top .18s ease}
+body[data-view="explore"] #feed article.comments-open .comments{max-height:260px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d5e4e7 transparent;border-top:1px solid #edf0f1;padding:8px 12px 12px!important;box-shadow:0 -8px 20px rgba(0,0,0,.07)}
+body[data-view="explore"] #feed article .comments .comment-list{min-height:0}
+body[data-view="explore"] #feed article .comments .comment{overflow-wrap:anywhere}
+body[data-view="explore"] #feed article .comments .rev-comment-replies{max-width:100%}
+body[data-view="explore"] #feed article .comments:not(.comments-expanded) .comment-list>.comment{display:none}
 
 body[data-view="explore"] .comment{border-top:1px solid #f1f1f1;padding:10px 0;font-size:12px;line-height:1.8}
 body[data-view="explore"] .comment-list:not(.comments-expanded)>.comment{display:none}
