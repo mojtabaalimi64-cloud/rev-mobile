@@ -248,7 +248,30 @@ body[data-view=create] .wrap{max-width:620px}
 <div class="field full"><label for="photos">عکس‌های سفر (حداکثر ۵ عکس)</label><input id="photos" type="file" accept="image/*" multiple><div class="hint">عکس‌ها در مرورگر کوچک‌سازی می‌شوند. هر عکس حداکثر 1200 پیکسل و حجم نهایی محدود می‌شود.</div><div id="photoPreview" class="photo-preview"></div></div>
 </div><div class="wizard-navigation"><button class="btn outline" id="wizardPrev" type="button" disabled>مرحله قبل</button><button class="btn" id="wizardNext" type="button">مرحله بعد</button></div><div class="actions" id="createFinalActions" style="display:none"><button class="btn" id="showPreview">پیش‌نمایش قبل از انتشار</button><button class="btn outline" id="draft">ذخیره پیش‌نویس خصوصی</button></div><section class="card" id="previewCard"><h2>پیش‌نمایش نهایی</h2><div id="previewContent"></div><div class="actions"><button class="btn" id="publish" disabled>تأیید و انتشار در اکسپلور</button><button class="btn outline" id="editPreview">بازگشت و ویرایش</button></div></section><div id="createStatus" class="status" role="status"></div></section>
 <section class="card" id="motionCard"><h2>ساخت محتوای متحرک قابل دانلود</h2><p class="hint">ویدیو در همین دستگاه ساخته می‌شود تا نیازی به سرویس تدوین پولی نداشته باشد. کیفیت و فرمت ویدیو به پشتیبانی مرورگر وابسته است. اگر ضبط ویدیو پشتیبانی نشود، کارت تصویری سفر را می‌توان دانلود کرد.</p><div class="field"><label for="motionTrip">سفر برای ساخت انیمیشن</label><select id="motionTrip"><option value="">انتخاب سفر ذخیره‌شده</option></select></div><canvas id="motionCanvas" width="720" height="1280"></canvas><div class="tools actions"><button class="btn" id="previewMotion">پیش‌نمایش انیمیشن</button><button class="btn" id="downloadVideo">ساخت و دانلود ویدیو</button><button class="btn outline" id="downloadCard">دانلود کارت تصویری PNG</button><button class="btn outline" id="shareMotion">اشتراک‌گذاری</button></div><div id="motionStatus" class="status" role="status"></div></section>
-<section class="card" id="feedCard"><div class="feed-head"><h2 style="margin:0">اکسپلور · تجربه‌های سفر</h2><button class="btn outline" id="refreshFeed">به‌روزرسانی</button></div><p class="hint">تجربه‌های عمومی از سرور بارگیری می‌شوند؛ پیش‌نویس‌های شما خصوصی و فقط روی همین دستگاه ذخیره می‌شوند.</p><div id="feed" class="feed"><div class="empty">در حال بارگیری تجربه‌ها…</div></div></section>
+<section class="card" id="feedCard">
+<div class="ig-stories" id="igStories">
+  <div class="ig-story" onclick="alert('استوری شما')">
+    <div class="ig-story-ring"><div class="ig-story-avatar">+</div></div>
+    <div class="ig-story-name">استوری شما</div>
+  </div>
+  <div class="ig-story">
+    <div class="ig-story-ring"><div class="ig-story-avatar">م</div></div>
+    <div class="ig-story-name">مومن</div>
+  </div>
+  <div class="ig-story">
+    <div class="ig-story-ring seen"><div class="ig-story-avatar">س</div></div>
+    <div class="ig-story-name">سارا</div>
+  </div>
+  <div class="ig-story">
+    <div class="ig-story-ring"><div class="ig-story-avatar">ا</div></div>
+    <div class="ig-story-name">امیر</div>
+  </div>
+  <div class="ig-story">
+    <div class="ig-story-ring seen"><div class="ig-story-avatar">ن</div></div>
+    <div class="ig-story-name">نگار</div>
+  </div>
+</div>
+<div class="feed-head"><h2 style="margin:0">اکسپلور · تجربه‌های سفر</h2><button class="btn outline" id="refreshFeed">به‌روزرسانی</button></div><p class="hint">تجربه‌های عمومی از سرور بارگیری می‌شوند؛ پیش‌نویس‌های شما خصوصی و فقط روی همین دستگاه ذخیره می‌شوند.</p><div id="feed" class="feed"><div class="empty">در حال بارگیری تجربه‌ها…</div></div></section>
 <div class="footer">REV · سفرهای واقعی، تجربه‌های قابل استفاده</div></main>
 <script>
 (function(){
