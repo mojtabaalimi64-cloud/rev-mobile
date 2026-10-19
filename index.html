@@ -381,7 +381,7 @@ Promise.race([Promise.all([authP,motionP]),capP]).then(function(v){
   try{document.dispatchEvent(new CustomEvent('rev:auth',{detail:{loggedIn:!!loggedIn}}))}catch(e){}
   s.classList.add('hide');
   setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},FADE_MS+80);
-  if(!loggedIn&&window.revShowLogin){setTimeout(window.revShowLogin,Math.round(FADE_MS*0.55))}
+  /* نمایش صفحه خانه بدون اجبار به ورود؛ ورود از پروفایل/اقدام‌های نیازمند حساب انجام می‌شود. */
 });
 })();
 </script>
