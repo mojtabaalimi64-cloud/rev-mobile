@@ -56,6 +56,38 @@ body[data-view=explore] .comment-form input{border:0;border-radius:0;border-bott
 body[data-view=explore] .comment-form .btn{border-radius:6px;padding:7px 10px;font-size:12px}
 body[data-view=explore] .pill{border-radius:6px}
 body[data-view=explore] .empty{border-radius:4px;border:1px solid #eee}
+/* صفحه «تجربه‌های من»: همان اندازه و ظاهر کارت‌های اکسپلور، بدون واترمارک رعدوبرق */
+body[data-view=create] #savedCard .post,
+body[data-view=create] #myPostsCard .post{border:1px solid #e5e5e5;border-radius:4px;background:#fff;box-shadow:none;overflow:hidden}
+body[data-view=create] #savedCard .post-head,
+body[data-view=create] #myPostsCard .post-head{display:flex;align-items:center;gap:10px;padding:11px 12px}
+body[data-view=create] #savedCard .photos,
+body[data-view=create] #myPostsCard .photos{display:grid;grid-template-columns:1fr;gap:0;position:relative;background:#f4f4f4}
+body[data-view=create] #savedCard .photos img,
+body[data-view=create] #myPostsCard .photos img{width:100%;height:auto;max-height:620px;aspect-ratio:1/1;object-fit:cover;background:#f4f4f4}
+body[data-view=create] #savedCard .photos:not(.single-photo) img:not(:first-child),
+body[data-view=create] #myPostsCard .photos:not(.single-photo) img:not(:first-child){display:none}
+body[data-view=create] #savedCard .rev-photo-brand,
+body[data-view=create] #myPostsCard .rev-photo-brand{display:none!important}
+body[data-view=create] #savedCard .post-social-actions,
+body[data-view=create] #myPostsCard .post-social-actions{display:flex;justify-content:space-between;align-items:center;padding:7px 12px 2px}
+body[data-view=create] #savedCard .post-social-meta,
+body[data-view=create] #myPostsCard .post-social-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:4px 12px 7px;font-size:12px;color:#333}
+body[data-view=create] #savedCard .post-caption,
+body[data-view=create] #myPostsCard .post-caption{padding:0 12px 7px;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+body[data-view=create] #savedCard .post-travel-details,
+body[data-view=create] #myPostsCard .post-travel-details{display:flex;gap:7px;flex-wrap:wrap;padding:3px 12px 8px}
+body[data-view=create] #savedCard .post-date,
+body[data-view=create] #myPostsCard .post-date{padding:0 12px 10px;font-size:10px;color:#999;text-transform:uppercase}
+body[data-view=create] #savedCard .comments,
+body[data-view=create] #myPostsCard .comments{padding:0 12px 12px}
+@media(max-width:600px){
+ body[data-view=create] #savedCard .wrap,
+ body[data-view=create] #myPostsCard .wrap{padding:8px 0 75px}
+ body[data-view=create] #savedCard .photos img,
+ body[data-view=create] #myPostsCard .photos img{max-height:520px}
+}
+
 body[data-view=create] .wrap{max-width:620px}
 @media(max-width:600px){
  body[data-view=explore] .wrap{padding:8px 0 75px}
