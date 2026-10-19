@@ -367,21 +367,27 @@ if(window.requestAnimationFrame)requestAnimationFrame(frame);else{render(1);car.
 var s=document.getElementById('revSplash');if(!s)return;
 var API='https://rev-auth-api.mojtaba-alimi64.workers.dev';
 var FLAG='rev_onboarded_v1';
-var MOTION_MS=2450,FADE_MS=550;
-function hasFlag(){try{return !!localStorage.getItem(FLAG)}catch(e){return false}}
+/* اعتبارسنجی از همان لحظه شروع موشن آغاز می‌شود؛ موشن تا پایان بررسی فرصت دارد. */
+var MOTION_MS=4800,FADE_MS=550,AUTH_TIMEOUT_MS=4200;
 function clearFlag(){try{localStorage.removeItem(FLAG)}catch(e){}}
-var authP=fetch(API+'/api/portal/me',{credentials:'include',cache:'no-store'}).then(function(r){
-  if(r.status===401){clearFlag();return false}
-  return r.ok?true:null;
-}).catch(function(){return null});
+var authP=(function(){
+  var controller=window.AbortController?new AbortController():null;
+  var timeout=controller?setTimeout(function(){controller.abort()},AUTH_TIMEOUT_MS):null;
+  return fetch(API+'/api/portal/me',{credentials:'include',cache:'no-store',signal:controller?controller.signal:undefined})
+    .then(function(r){
+      if(!r.ok){if(r.status===401||r.status===403)clearFlag();return false;}
+      return r.json().then(function(data){return !!(data&&data.success&&data.user);}).catch(function(){return false;});
+    })
+    .catch(function(){return false;})
+    .then(function(ok){if(timeout)clearTimeout(timeout);return !!ok;});
+})();
 var motionP=new Promise(function(res){setTimeout(res,MOTION_MS)});
-var capP=new Promise(function(res){setTimeout(function(){res('cap')},8000)});
-Promise.race([Promise.all([authP,motionP]),capP]).then(function(v){
-  var loggedIn=(v==='cap')?false:(v[0]===true);
-  try{document.dispatchEvent(new CustomEvent('rev:auth',{detail:{loggedIn:!!loggedIn}}))}catch(e){}
+Promise.all([authP,motionP]).then(function(v){
+  var loggedIn=v[0]===true;
+  try{document.dispatchEvent(new CustomEvent('rev:auth',{detail:{loggedIn:loggedIn}}))}catch(e){}
   s.classList.add('hide');
   setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},FADE_MS+80);
-  /* ورود با شماره موبایل اجباری است؛ تا تأیید نشست سمت سرور، هیچ بخش اپ نمایش داده نمی‌شود. */
+  /* فقط نشست معتبر سرور اجازه ورود مستقیم به خانه را دارد؛ در غیر این صورت فرم موبایل نمایش داده می‌شود. */
   if(!loggedIn){
     try{
       var next=new URLSearchParams(window.location.search).get('next');
