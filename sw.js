@@ -1,4 +1,4 @@
-const CACHE_NAME = "rev-mobile-shell-v48";
+const CACHE_NAME = "rev-mobile-shell-v49";
 const SHELL = ["./", "./index.html", "./trips.html", "./experiences.html", "./rev-app-mode.js", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
