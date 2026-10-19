@@ -111,6 +111,92 @@
     </div>
   </section>
 
+    <section class="section" id="liveMeetupSection" aria-labelledby="liveMeetupTitle">
+    <div class="section-head">
+      <h2 id="liveMeetupTitle">📍 قرار زنده گروهی</h2>
+      <span id="liveDot" style="display:none;width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 1.5s infinite"></span>
+    </div>
+    <style>
+      @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+      .lm-tabs{display:flex;gap:8px;margin-bottom:14px}
+      .lm-tab{flex:1;padding:10px;border:1px solid #cfe3f3;background:#fff;border-radius:12px;font-weight:700;cursor:pointer;color:#33475b}
+      .lm-tab.active{background:linear-gradient(135deg,#0d9488,#0a7a70);color:#fff;border-color:#0d9488}
+      .lm-panel{display:none}
+      .lm-panel.active{display:block}
+      .lm-code-box{text-align:center;padding:20px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:16px;color:#fff;margin:12px 0}
+      .lm-code{font-size:42px;font-weight:900;letter-spacing:12px;direction:ltr}
+      .lm-member{display:flex;align-items:center;gap:10px;padding:10px;background:#f8fafc;border-radius:12px;margin-bottom:8px}
+      .lm-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+      .lm-member-info{flex:1}
+      .lm-member-name{font-weight:700;font-size:14px}
+      .lm-member-dist{font-size:12px;color:#64748b}
+      .lm-member.stale{opacity:.5}
+      #lmMap{height:300px;border-radius:16px;z-index:1}
+    </style>
+
+    <!-- تب‌ها -->
+    <div id="lmTabs">
+      <div class="lm-tabs">
+        <button class="lm-tab active" onclick="lmShowTab('create')">＋ ساخت قرار</button>
+        <button class="lm-tab" onclick="lmShowTab('join')">🔑 ورود با کد</button>
+      </div>
+
+      <!-- ساخت -->
+      <div class="lm-panel active" id="lmCreatePanel">
+        <div class="list-card" style="padding:16px">
+          <label class="trip-field-label">نام قرار</label>
+          <input id="lmName" class="trip-input" placeholder="مثلاً قرار جمعه">
+          <label class="trip-field-label" style="margin-top:10px">مقصد مشترک</label>
+          <input id="lmDest" class="trip-input" placeholder="مثلاً دریاچه چیتگر">
+          <label class="trip-field-label" style="margin-top:10px">ساعت قرار</label>
+          <input id="lmTime" class="trip-input" type="time">
+          <label class="trip-field-label" style="margin-top:10px">نام شما</label>
+          <input id="lmCreatorName" class="trip-input" placeholder="نام شما">
+          <button onclick="lmCreate()" style="width:100%;margin-top:14px;padding:12px;background:linear-gradient(135deg,#0d9488,#0a7a70);color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer">ساخت قرار</button>
+          <div id="lmCreateStatus" style="margin-top:8px;font-size:13px;color:#dc2626"></div>
+        </div>
+      </div>
+
+      <!-- ورود -->
+      <div class="lm-panel" id="lmJoinPanel">
+        <div class="list-card" style="padding:16px">
+          <label class="trip-field-label">کد ۶ رقمی قرار</label>
+          <input id="lmCode" class="trip-input" inputmode="numeric" maxlength="6" placeholder="------" style="text-align:center;font-size:24px;letter-spacing:8px;direction:ltr">
+          <label class="trip-field-label" style="margin-top:10px">نام شما</label>
+          <input id="lmJoinName" class="trip-input" placeholder="نام شما">
+          <button onclick="lmJoin()" style="width:100%;margin-top:14px;padding:12px;background:linear-gradient(135deg,#0d9488,#0a7a70);color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer">ورود به قرار</button>
+          <div id="lmJoinStatus" style="margin-top:8px;font-size:13px;color:#dc2626"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- کد قرار (بعد از ساخت) -->
+    <div id="lmCodeView" style="display:none">
+      <div class="lm-code-box">
+        <div style="font-size:14px;margin-bottom:8px">کد قرار رو برای دوستات بفرست:</div>
+        <div class="lm-code" id="lmCodeDisplay">------</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+          <button onclick="lmShareCode()" style="padding:8px 20px;background:#fff;color:#0d9488;border:none;border-radius:10px;font-weight:700;cursor:pointer">📤 اشتراک‌گذاری</button>
+          <button onclick="lmCopyCode()" style="padding:8px 20px;background:rgba(255,255,255,.2);color:#fff;border:1px solid #fff;border-radius:10px;font-weight:700;cursor:pointer">📋 کپی</button>
+        </div>
+      </div>
+      <button onclick="lmEnterLive()" style="width:100%;padding:12px;background:linear-gradient(135deg,#0d9488,#0a7a70);color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer">🗺️ ورود به نقشه زنده</button>
+    </div>
+
+    <!-- نقشه زنده -->
+    <div id="lmLiveView" style="display:none">
+      <div class="list-card" style="padding:12px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><b id="lmLiveName">قرار</b><div style="font-size:12px;color:#64748b" id="lmLiveDest"></div></div>
+          <button onclick="lmLeave()" style="padding:6px 14px;background:#fee2e2;color:#dc2626;border:none;border-radius:8px;cursor:pointer;font-size:13px">خروج</button>
+        </div>
+      </div>
+      <div id="lmMap"></div>
+      <div style="margin-top:10px" id="lmMembers"></div>
+      <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:8px">موقعیت هر ۱۵ ثانیه به‌روز می‌شود</div>
+    </div>
+  </section>
+
   <section class="section" id="resumeSection" hidden aria-labelledby="resumeTitle">
     <div class="section-head"><h2 id="resumeTitle">ادامه برنامه قبلی</h2></div>
     <a class="card row-item" id="resumeLink" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html" style="display:flex">
