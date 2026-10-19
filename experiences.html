@@ -63,6 +63,174 @@ body[data-view=create] .wrap{max-width:620px}
  body[data-view=explore] .photos img{max-height:520px}
 }
 @media(max-width:600px){.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero h1{font-size:21px}.photos img{height:112px}.wrap{padding:12px 10px 45px}.top{padding:12px}.card{padding:13px}}
+</style><style>
+/* === استایل اینستاگرامی فید تجربه‌ها (تم REV) === */
+#feedCard {
+  background: #f3fbfc;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.feed-head {
+  padding: 14px 16px 8px;
+}
+.feed-head h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #16313b;
+}
+/* کارت پست اینستاگرامی */
+.ig-post {
+  background: #fff;
+  border: 1px solid #e4edf3;
+  border-radius: 0;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.ig-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+.ig-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0d9488, #14b8a6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  flex-shrink: 0;
+  border: 2px solid #0d9488;
+  padding: 1px;
+}
+.ig-user-info {
+  flex: 1;
+  min-width: 0;
+}
+.ig-username {
+  font-weight: 700;
+  font-size: 13px;
+  color: #16313b;
+}
+.ig-location {
+  font-size: 11px;
+  color: #607780;
+}
+.ig-menu {
+  font-size: 18px;
+  color: #607780;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.ig-photo {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  background: #eef4f5;
+}
+.ig-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 10px 4px;
+}
+.ig-action-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: #16313b;
+}
+.ig-action-btn.liked {
+  color: #e0245e;
+}
+.ig-bookmark {
+  margin-inline-start: auto;
+}
+.ig-likes {
+  padding: 0 14px 4px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #16313b;
+}
+.ig-caption {
+  padding: 0 14px 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #16313b;
+}
+.ig-caption-user {
+  font-weight: 700;
+  margin-inline-end: 6px;
+}
+.ig-comments-link {
+  padding: 0 14px 4px;
+  font-size: 12px;
+  color: #8a9ba3;
+  cursor: pointer;
+}
+.ig-time {
+  padding: 0 14px 12px;
+  font-size: 10px;
+  color: #8a9ba3;
+}
+/* استوری‌ها بالای فید */
+.ig-stories {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  background: #fff;
+  border-bottom: 1px solid #e4edf3;
+  margin-bottom: 8px;
+}
+.ig-story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.ig-story-ring {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, #0d9488, #14b8a6, #0f9fb5);
+}
+.ig-story-ring.seen {
+  background: #dce5e7;
+}
+.ig-story-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #0d9488;
+  border: 2px solid #fff;
+}
+.ig-story-name {
+  font-size: 10px;
+  color: #607780;
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 </style></head><body>
 <header class="top"><a href="./index.html?app=1" style="text-decoration:none;color:inherit"><span class="brand">REV</span></a><span id="pageTitle">اکسپلور</span><span style="margin-right:auto;color:var(--muted);font-size:12px">سفرهای واقعی</span></header>
 <main class="wrap">
