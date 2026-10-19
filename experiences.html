@@ -76,7 +76,7 @@ function renderWizard(){
  $('wizardStepTitle').textContent=step.title;$('wizardStepHint').textContent=step.hint;
  $('wizardPrev').disabled=wizardIndex===0;
  $('wizardNext').style.display=wizardIndex===wizardSteps.length-1?'none':'inline-flex';
- $('createFinalActions').style.display=wizardIndex===wizardSteps.length-1?'flex':'none';if(wizardIndex===wizardSteps.length-1){$('previewCard').classList.add('visible');$('showPreview').textContent='بازسازی پیش‌نمایش';$('draft').textContent='ذخیره پیش‌نویس خصوصی'}else if(wizardIndex<wizardSteps.length-1){$('showPreview').textContent='پیش‌نمایش قبل از انتشار';$('draft').textContent='ذخیره پیش‌نویس خصوصی'}
+ $('createFinalActions').style.display=wizardIndex===wizardSteps.length-1?'flex':'none';if(wizardIndex!==wizardSteps.length-1)$('previewCard').classList.remove('visible');if(wizardIndex===wizardSteps.length-1){$('previewCard').classList.add('visible');$('showPreview').textContent='بازسازی پیش‌نمایش';$('draft').textContent='ذخیره پیش‌نویس خصوصی'}else if(wizardIndex<wizardSteps.length-1){$('showPreview').textContent='پیش‌نمایش قبل از انتشار';$('draft').textContent='ذخیره پیش‌نویس خصوصی'}
 }
 $('wizardPrev').addEventListener('click',()=>{if(wizardIndex>0){wizardIndex--;renderWizard();$('createCard').scrollIntoView({behavior:'smooth',block:'start'})}});
 $('wizardNext').addEventListener('click',()=>{if(wizardIndex===0&&!$('title').value.trim()&&!$('tripSelect').value){$('createStatus').textContent='یک سفر ذخیره‌شده انتخاب کن یا عنوان تجربه را بنویس.';$('title').focus();return}if(wizardIndex===wizardSteps.length-2){showExperiencePreview();if(!window.__revExperiencePreview)return}if(wizardIndex<wizardSteps.length-1){wizardIndex++;renderWizard();$('createCard').scrollIntoView({behavior:'smooth',block:'start'})}});
