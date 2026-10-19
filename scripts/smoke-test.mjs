@@ -18,10 +18,10 @@ if (!html.includes('src="./register-sw.js"')) failures.push("Service worker regi
 const vm = require("node:vm");
 for (const file of ["experiences.html", "trips.html", "nearby-map.html"]) {
   const source = fs.readFileSync(path.join(root, file), "utf8");
-  const scripts = [...source.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
   let index = 0;
   for (const match of scripts) {
-    if (/\\bsrc\\s*=/.test(match[1])) continue;
+    if (/\bsrc\s*=/.test(match[1])) continue;
     const body = match[2].trim();
     if (!body) continue;
     try { new vm.Script(body, { filename: file + ":inline-script-" + (++index) }); }
