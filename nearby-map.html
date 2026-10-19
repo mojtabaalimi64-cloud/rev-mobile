@@ -291,6 +291,18 @@ body.rev-modal-open{overflow:hidden!important}
 #navRecenterFloat{font-size:22px}
 #navRecenterFloat span{font-size:11px}
 @media(max-width:420px){#navRecenterFloat{right:10px;min-height:44px;padding:0 11px}#navRecenterFloat span{display:none}}
+
+/* REV station details: suppress the compact Leaflet popup and center the full details panel */
+.leaflet-popup-pane .leaflet-popup{display:none!important}
+#details-panel:not([hidden]){
+ position:fixed!important;top:50%!important;left:50%!important;right:auto!important;bottom:auto!important;
+ transform:translate(-50%,-50%)!important;width:min(760px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;height:auto!important;min-height:0!important;
+ max-height:82dvh!important;overflow-y:auto!important;overscroll-behavior:contain!important;
+ z-index:5000!important;margin:0!important;padding:20px!important;border-radius:18px!important;
+ background:#fff!important;box-shadow:0 12px 44px rgba(10,30,50,.24)!important;
+ border:1px solid #dce7ef!important;opacity:1!important;visibility:visible!important
+}
 </style>
 <script>
 (function(){
