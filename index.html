@@ -247,6 +247,70 @@
     .catch(function(){});
 })();
 </script>
+<style>
+#revAccountShade{position:fixed;inset:0;z-index:2500;background:rgba(10,24,38,.42);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:18px}
+#revAccountShade.show{display:flex}
+#revAccountCard{width:min(100%,390px);background:#fff;border:1px solid #e1ebf2;border-radius:22px;padding:22px;box-shadow:0 24px 70px rgba(10,35,55,.24);color:#14293b}
+#revAccountCard h2{margin:0 0 8px;font-size:19px}
+#revAccountCard p{margin:8px 0;color:#647b8d;font-size:13px}
+#revAccountCard .rev-account-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+#revAccountCard .rev-account-actions a,#revAccountCard .rev-account-actions button{font:inherit;font-size:13px;font-weight:800;border:0;border-radius:11px;padding:10px 14px;text-decoration:none;cursor:pointer}
+#revAccountTrips{background:#087f9c;color:#fff}
+#revAccountClose{background:#eef4f8;color:#234052}
+#revAccountStatus{padding:12px;background:#f4f8fb;border-radius:12px;overflow-wrap:anywhere}
+#avatarLink{cursor:pointer;touch-action:manipulation}
+</style>
+<div id="revAccountShade" aria-hidden="true">
+ <section id="revAccountCard" role="dialog" aria-modal="true" aria-labelledby="revAccountTitle">
+  <h2 id="revAccountTitle">حساب کاربری REV</h2>
+  <p id="revAccountStatus" role="status" aria-live="polite">در حال بررسی حساب کاربری…</p>
+  <div class="rev-account-actions">
+   <a id="revAccountTrips" href="./trips.html">سابقه سفرها</a>
+   <button id="revAccountClose" type="button">بستن</button>
+  </div>
+ </section>
+</div>
+<script>
+/* اصلاح کلیک آواتار صفحه خانه: بازکردن حساب کاربری یا فرم ورود */
+(function(){
+ var avatar=document.getElementById('avatarLink');
+ var shade=document.getElementById('revAccountShade');
+ var status=document.getElementById('revAccountStatus');
+ var close=document.getElementById('revAccountClose');
+ if(!avatar||!shade||!status||!close)return;
+ function hide(){shade.classList.remove('show');shade.setAttribute('aria-hidden','true');}
+ function show(){shade.classList.add('show');shade.setAttribute('aria-hidden','false');}
+ close.addEventListener('click',hide);
+ shade.addEventListener('click',function(e){if(e.target===shade)hide();});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')hide();});
+ avatar.addEventListener('click',async function(e){
+  e.preventDefault();
+  show();
+  status.textContent='در حال بررسی حساب کاربری…';
+  try{
+   var r=await fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'});
+   if(r.status===401){
+    hide();
+    if(typeof window.revShowLogin==='function')window.revShowLogin();
+    else {show();status.textContent='برای مشاهده حساب، ابتدا وارد REV شوید.';}
+    return;
+   }
+   var j=await r.json().catch(function(){return null;});
+   if(!r.ok||!j||!j.success)throw new Error('profile unavailable');
+   var u=j.user||{};
+   var name=u.name||u.full_name||u.first_name||'کاربر REV';
+   var phone=u.phone||u.phone_number||u.phone_e164||'ثبت نشده';
+   var email=u.email||'ثبت نشده';
+   status.textContent='نام: '+name+' · موبایل: '+phone+' · ایمیل: '+email;
+  }catch(err){
+   status.textContent='اطلاعات حساب دریافت نشد. اتصال اینترنت را بررسی کنید یا دوباره تلاش کنید.';
+   var retry=document.createElement('button');retry.type='button';retry.textContent='تلاش دوباره';retry.style.cssText='font:inherit;border:0;border-radius:9px;padding:8px 12px;background:#e5f4fa;color:#087f9c;margin-top:10px;cursor:pointer';
+   retry.addEventListener('click',function(){avatar.click();});
+   status.appendChild(document.createElement('br'));status.appendChild(retry);
+  }
+ });
+})();
+</script>
 <script>
 /* ثبت بازدید اپ REV در شمارنده مرکزی پنل مدیریت */
 (function(){
