@@ -67,8 +67,8 @@
 
 <header class="app-header"><div class="wrap top">
   <div class="greet">
-    <a class="avatar" href="#" aria-label="حساب کاربری">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.4 3.1-5.2 7-5.2s6.4 1.8 7 5.2"/></svg>
+    <a class="avatar" id="tripProfileAvatar" href="./profile.html?app=1" aria-label="رفتن به پروفایل کاربر" title="پروفایل کاربر" style="overflow:hidden;background-size:cover;background-position:center;text-decoration:none">
+      <span id="tripProfileAvatarFallback" aria-hidden="true">ر</span>
     </a>
     <div><div class="hello">برنامه‌ریزی سفر</div><div class="sub">مبدأ و مقصد را بزن، مسیر با شارژ تحویل بگیر</div></div>
   </div>
@@ -260,6 +260,23 @@ if('serviceWorker' in navigator){
     try{navigator.serviceWorker.register('./sw.js').catch(function(){})}catch(e){}
   });
 }
+</script>
+<script>
+/* همگام‌سازی تصویر حساب کاربری روی آیکون پروفایل صفحه سفر */
+(function(){
+  var avatar=document.getElementById('tripProfileAvatar'),fallback=document.getElementById('tripProfileAvatarFallback');
+  if(!avatar||!fallback)return;
+  fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(j){
+      if(!j||!j.success||!j.user)return;
+      var u=j.user,display=String(u.display_name||u.name||'').trim(),identity=String(u.id||u.email_normalized||u.email||display||'guest').toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,100),saved=u.avatar_data||null;
+      try{if(saved)localStorage.setItem('rev_driver_avatar_'+identity,saved);else saved=localStorage.getItem('rev_driver_avatar_'+identity)||localStorage.getItem('rev_driver_avatar_guest')}catch(e){}
+      fallback.textContent=(display||'ر').slice(0,1);
+      avatar.setAttribute('aria-label','رفتن به پروفایل '+(display||'کاربر REV'));
+      if(saved){avatar.style.backgroundImage='url("'+saved.replace(/["\\\\]/g,'')+'")';fallback.style.display='none';}
+    }).catch(function(){});
+})();
 </script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
 </body>
