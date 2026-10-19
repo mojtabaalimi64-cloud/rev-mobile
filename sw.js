@@ -1,4 +1,4 @@
-const CACHE_NAME = "rev-mobile-shell-v58";
+const CACHE_NAME = "rev-mobile-shell-v59";
 const SHELL = ["./", "./index.html", "./trips.html", "./rev-app-mode.js", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
@@ -21,6 +21,7 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+  const url = event.request.url;
   // فایل ناوبری همیشه تازه
   if (url.includes("rev-app-mode.js")) {
     event.respondWith(fetch(url, {cache: "reload"}).then(r => {
@@ -31,7 +32,6 @@ self.addEventListener("fetch", event => {
     return;
   }
   // هدایت CDNهای کند به سریع‌تر
-  const url = event.request.url;
   if (url.includes("unpkg.com/leaflet")) {
     const fast = url.replace("https://unpkg.com/leaflet@1.9.4/dist/",
                               "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/");
@@ -49,8 +49,8 @@ self.addEventListener("fetch", event => {
   }
   const request = event.request;
   if (request.method !== "GET") return;
-  const url = new URL(request.url);
-  if (url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
+  const urlObj = new URL(request.url);
+  if (urlObj.origin !== self.location.origin || url.pathname.includes("/api/")) return;
 
   if (request.mode === "navigate") {
     event.respondWith((async () => {
@@ -65,7 +65,7 @@ self.addEventListener("fetch", event => {
       } catch (error) {
         const cached = await cache.match(request, { ignoreSearch: true });
         if (cached) return cached;
-        const path = url.pathname.endsWith("/trips.html") ? "./trips.html" : "./index.html";
+        const path = urlObj.pathname.endsWith("/trips.html") ? "./trips.html" : "./index.html";
         return (await cache.match(path)) || Response.error();
       }
     })());
