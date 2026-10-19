@@ -70,7 +70,7 @@
           <label for="obPhone">شماره موبایل</label>
           <input id="obPhone" class="ob-phone" inputmode="numeric" autocomplete="tel" placeholder="09123456789" dir="ltr" maxlength="11">
         </div>
-        <button class="btn-primary ob-big-btn" id="obSend">دریافت کد تأیید</button><button type="button" id="obSkip" style="width:100%;margin-top:8px;background:none;border:none;color:#0887a7;font-size:14px;cursor:pointer">فعلاً رد شدن ← مشاهده خانه</button>
+        <button class="btn-primary ob-big-btn" id="obSend">دریافت کد تأیید</button>
         <div id="obStatus1" class="ob-status" role="status" aria-live="polite"></div>
       </div>
     </section>
@@ -543,14 +543,5 @@ if('serviceWorker' in navigator){
 }
 </script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
-
-<script>
-document.getElementById('obSkip').addEventListener('click', function(){
-  document.getElementById('onboard').classList.remove('show');
-  document.getElementById('onboard').setAttribute('aria-hidden','true');
-  try{localStorage.setItem('rev_onboard_skipped','1');}catch(e){}
-});
-</script>
-
 </body>
 </html>
