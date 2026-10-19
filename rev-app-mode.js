@@ -41,8 +41,6 @@
   var items = [
     {href:'./index.html',label:'خانه',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg>',match:'/index.html'},
     {href:'./nearby-map.html',label:'نقشه',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',match:'/nearby-map.html'},
-    {href:'./experiences.html?create=1',label:'ثبت تجربه',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',match:'/__create_experience__'},
-    {href:'./experiences.html?explore=1',label:'اکسپلور',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 4.3 4.3M8 13l2-4 4 2-2 4z"/></svg>',match:'/experiences.html'},
     {href:'./trips.html',label:'سفر',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg>',match:'/trips.html'},
     {href:'./businesses.html',label:'خدمات',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg>',match:'/businesses.html'}
   ];
@@ -54,9 +52,9 @@
     var a = document.createElement('a');
     a.href = item.href + (item.href.indexOf('?') >= 0 ? '&app=1' : '?app=1');
     a.innerHTML = item.icon + '<span>' + item.label + '</span>'; a.setAttribute('aria-label', item.label);
-    if (item.match === '/__create_experience__' && current.endsWith('/experiences.html') && new URLSearchParams(location.search).get('create') === '1') a.setAttribute('aria-current','page');
-    else if (item.label === 'اکسپلور' && current.endsWith('/experiences.html') && new URLSearchParams(location.search).get('create') !== '1') a.setAttribute('aria-current','page');
-    else if (item.match !== '/__create_experience__' && item.label !== 'اکسپلور' && current.endsWith(item.match)) a.setAttribute('aria-current','page');
+    
+    
+    if (current.endsWith(item.match)) a.setAttribute('aria-current','page');
 
     nav.appendChild(a);
   });
