@@ -377,7 +377,7 @@ var authP=fetch(API+'/api/portal/me',{credentials:'include',cache:'no-store'}).t
 var motionP=new Promise(function(res){setTimeout(res,MOTION_MS)});
 var capP=new Promise(function(res){setTimeout(function(){res('cap')},8000)});
 Promise.race([Promise.all([authP,motionP]),capP]).then(function(v){
-  var loggedIn=(v==='cap')?(hasFlag()):(v[0]===null?hasFlag():v[0]);
+  var loggedIn=(v==='cap')?false:(v[0]===true);
   try{document.dispatchEvent(new CustomEvent('rev:auth',{detail:{loggedIn:!!loggedIn}}))}catch(e){}
   s.classList.add('hide');
   setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},FADE_MS+80);
@@ -448,6 +448,7 @@ $('obVerify').addEventListener('click',async function(){
 window.revShowLogin=function(){
   var ob=$('onboard');ob.classList.add('show');ob.setAttribute('aria-hidden','false');goPage(1);
 };
+if(new URLSearchParams(window.location.search).get('login')==='1'){window.revShowLogin();}
 })();
 </script>
 <script>
