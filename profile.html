@@ -144,7 +144,24 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 <style id="navigationGateStyle">#navigationGate{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#080b0d,#102126);color:#f5f7f8;font:16px/1.9 Vazirmatn,Vazir,Tahoma,sans-serif}#navigationGate[hidden]{display:none!important}.gate-card{width:min(100%,600px);padding:26px;border:1px solid #2a343a;border-radius:18px;background:#121a1f;box-shadow:0 20px 70px #0008}.gate-card h1{font-size:26px;line-height:1.5}.gate-card p{color:#aab6bc}.gate-card a,.gate-card button{display:inline-block;margin:6px 5px 0 0;border-radius:10px;padding:10px 14px;text-decoration:none;font:inherit;font-weight:800;cursor:pointer}.gate-primary{background:#39ff88;color:#07100b;border:1px solid #39ff88}.gate-secondary{background:transparent;color:#39ff88;border:1px solid #395648}#navigationGateStatus{margin-top:12px;color:#ffdda0;white-space:pre-wrap;font-size:13px}</style>
 <link rel="stylesheet" href="./rev-mobile-theme.css?v=20261017-7">
 <style id="rev-mobile-profile-overrides">:root{--teal:#0866ff;--teal-dark:#0756d8;--teal-soft:#eaf1ff;--teal-line:#c8d9ff}a{color:#0866ff}.dp-tabs button.active,.btn.primary,.btn:not(.secondary):not(.danger){background:#0866ff!important;border-color:#0866ff!important;color:#fff!important}.bottom-nav a.active{color:#0866ff;background:#eaf1ff}</style>
-</head>
+
+<style id="rev-mobile-profile-shell">
+  html,body{background:#fff!important;color:#17253b}
+  body{padding-bottom:calc(88px + env(safe-area-inset-bottom))!important}
+  .wrap{width:100%;max-width:720px;margin:0 auto;padding:12px 12px calc(100px + env(safe-area-inset-bottom))}
+  .head{position:sticky;top:0;z-index:80;border-radius:0 0 16px 16px;margin:-12px -12px 12px;padding:12px;background:rgba(255,255,255,.97);backdrop-filter:blur(12px)}
+  .head-title{font-size:14px}
+  .panel,.map-shell{background:#fff!important;border-color:#e2eaf4!important;box-shadow:0 4px 18px rgba(20,41,59,.055)!important}
+  .dp-tabs{top:68px;z-index:70}
+  .dp-tabs button.active,.btn.primary,.btn:not(.secondary):not(.danger){background:#0866ff!important;border-color:#0866ff!important;color:#fff!important}
+  .btn.secondary{background:#fff!important;color:#0866ff!important;border-color:#cbdaf5!important}
+  #rev-mobile-profile-nav{position:fixed;z-index:99999;left:0;right:0;bottom:0;padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:rgba(255,255,255,.97);border-top:1px solid #e2eaf4;box-shadow:0 -4px 18px rgba(20,41,59,.07);backdrop-filter:blur(14px)}
+  #rev-mobile-profile-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:5px 2px;border-radius:11px;color:#64748b;font-size:10px;text-decoration:none;min-width:0}
+  #rev-mobile-profile-nav a span:first-child{font-size:19px;line-height:1.3}
+  #rev-mobile-profile-nav a[aria-current=page]{color:#0866ff;background:#eaf1ff;font-weight:800}
+  @media(min-width:700px){#rev-mobile-profile-nav{left:50%;right:auto;transform:translateX(-50%);width:min(560px,100%);border:1px solid #e2eaf4;border-bottom:0;border-radius:16px 16px 0 0}}
+</style>
+\n</head>
 <body>
 
 
@@ -649,4 +666,11 @@ try{
 })();
 </script>
 
-</body></html>
+
+<nav id="rev-mobile-profile-nav" aria-label="ناوبری اصلی اپ REV">
+  <a href="./index.html?v=20261019-1"><span aria-hidden="true">⌂</span><span>خانه</span></a>
+  <a href="./nearby-map.html?v=20261019-1"><span aria-hidden="true">⌖</span><span>نقشه</span></a>
+  <a href="./trips.html?v=20261019-1"><span aria-hidden="true">🧭</span><span>سفرها</span></a>
+  <a href="./businesses.html?v=20261019-1"><span aria-hidden="true">🔧</span><span>خدمات</span></a>
+</nav>
+\n</body></html>
