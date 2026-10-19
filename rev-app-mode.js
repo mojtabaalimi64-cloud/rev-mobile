@@ -16,7 +16,7 @@
     html[data-rev-app="1"] body .panel,html[data-rev-app="1"] body .card,html[data-rev-app="1"] body .tile,html[data-rev-app="1"] body .box,html[data-rev-app="1"] body .trip-card,html[data-rev-app="1"] body .section-card{background:#fff!important;color:#17253b!important;border-color:#e2eaf4!important;box-shadow:0 4px 18px rgba(20,41,59,.055)!important}
     html[data-rev-app="1"] body button,html[data-rev-app="1"] body .btn.primary,html[data-rev-app="1"] body [type=submit],html[data-rev-app="1"] body .primary-btn{background:#0866ff!important;color:#fff!important;border-color:#0866ff!important}
     html[data-rev-app="1"] body input,html[data-rev-app="1"] body select,html[data-rev-app="1"] body textarea{background:#fff!important;color:#17253b!important;border-color:#d5e2ec!important}
-    #rev-app-bottom-nav{position:fixed;z-index:99999;left:0;right:0;bottom:0;padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:rgba(255,255,255,.98);border-top:1px solid #e2eaf4;box-shadow:0 -4px 18px rgba(20,41,59,.07);backdrop-filter:blur(14px)}
+    #rev-app-bottom-nav{position:fixed;z-index:99999;left:0;right:0;bottom:0;padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:rgba(255,255,255,.98);border-top:1px solid #e2eaf4;box-shadow:0 -4px 18px rgba(20,41,59,.07);backdrop-filter:blur(14px)}
     #rev-app-bottom-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:52px;padding:5px 2px;border-radius:12px;color:#64748b!important;font-size:11px;font-weight:700;line-height:1.2;text-decoration:none!important;transition:background .18s ease,color .18s ease}
     #rev-app-bottom-nav a span{font-size:11px;line-height:1.2}#rev-app-bottom-nav a svg{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     #rev-app-bottom-nav a[aria-current="page"]{color:#087fcb!important;background:#edf7ff!important}
@@ -41,6 +41,8 @@
   var items = [
     {href:'./index.html',label:'خانه',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg>',match:'/index.html'},
     {href:'./nearby-map.html',label:'نقشه',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',match:'/nearby-map.html'},
+    {href:'./experiences.html?create=1',label:'ثبت تجربه',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',match:'/__create_experience__'},
+    {href:'./experiences.html?explore=1',label:'اکسپلور',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 4.3 4.3M8 13l2-4 4 2-2 4z"/></svg>',match:'/experiences.html'},
     {href:'./trips.html',label:'سفر',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg>',match:'/trips.html'},
     {href:'./businesses.html',label:'خدمات',icon:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg>',match:'/businesses.html'}
   ];
@@ -52,7 +54,9 @@
     var a = document.createElement('a');
     a.href = item.href + (item.href.indexOf('?') >= 0 ? '&app=1' : '?app=1');
     a.innerHTML = item.icon + '<span>' + item.label + '</span>'; a.setAttribute('aria-label', item.label);
-    if (current.endsWith(item.match)) a.setAttribute('aria-current','page');
+    if (item.match === '/__create_experience__' && current.endsWith('/experiences.html') && new URLSearchParams(location.search).get('create') === '1') a.setAttribute('aria-current','page');
+    else if (item.label === 'اکسپلور' && current.endsWith('/experiences.html') && new URLSearchParams(location.search).get('create') !== '1') a.setAttribute('aria-current','page');
+    else if (item.match !== '/__create_experience__' && item.label !== 'اکسپلور' && current.endsWith(item.match)) a.setAttribute('aria-current','page');
 
     nav.appendChild(a);
   });
