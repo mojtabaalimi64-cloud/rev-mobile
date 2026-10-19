@@ -56,7 +56,7 @@
     a.href = item.href + (item.href.indexOf('?') >= 0 ? '&app=1' : '?app=1');
     a.innerHTML = '<span aria-hidden="true">' + item.icon + '</span><span>' + item.label + '</span>';
     if (item.match.test(current) && item.label !== 'ایجاد تجربه' && item.label !== 'اکسپلور') a.setAttribute('aria-current','page');
-    if (item.label === 'اکسپلور' && /\\/experiences\\.html$/.test(current) && new URLSearchParams(location.search).get('create') !== '1') a.setAttribute('aria-current','page');
+    if (item.label === 'اکسپلور' && /\/experiences\.html$/.test(current) && new URLSearchParams(location.search).get('create') !== '1') a.setAttribute('aria-current','page');
     nav.appendChild(a);
   });
   document.body.appendChild(nav);
