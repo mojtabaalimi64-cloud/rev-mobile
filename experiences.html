@@ -62,4 +62,4 @@ fillTrips();drawFrame(0);loadFeed();
 const query=new URLSearchParams(location.search);const createMode=query.get('create')==='1';document.body.dataset.view=createMode?'create':'explore';if(createMode){$('pageTitle').textContent='ایجاد تجربه سفر';const ts=localTrips();if(ts.length){$('tripSelect').value='0';$('motionTrip').value='0';applyTrip('0')}setTimeout(()=>$('createCard').scrollIntoView({behavior:'smooth',block:'start'}),80)}else{document.title='اکسپلور تجربه‌های سفر | REV'}
 ['title','origin','destination','distance','duration','vehicle','energy','story','tripSelect'].forEach(id=>$(id).addEventListener('input',()=>{if($('previewCard').classList.contains('visible')){$('previewCard').classList.remove('visible');$('publish').disabled=true;window.__revExperiencePreview=null}}));
 })();
-</script><script src="./rev-app-mode.js?v=20261019-10"></script></body></html>
+</script><script src="./rev-app-mode.js?v=20261019-11"></script></body></html>
