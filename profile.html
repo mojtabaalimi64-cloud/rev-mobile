@@ -484,6 +484,7 @@ async function loadProfile(){
   const j=await r.json().catch(()=>({}));
   if(!r.ok||!j.success)throw new Error(j.error||'برای مشاهده اطلاعات حساب، ورود را بررسی کنید.');
   profileData=j.profile||{};serverTrips=Array.isArray(j.trips)?j.trips:[];serverOk=true;
+  try{const hr=await fetch(AUTH_API+'/api/driver/trips?limit=50',{credentials:'include',cache:'no-store'});const hj=await hr.json().catch(()=>({}));if(hr.ok&&hj.success&&Array.isArray(hj.trips))serverTrips=mergeDriverTrips(serverTrips,hj.trips);}catch(historyError){}
  }catch(e){serverError=e.message||'اتصال به حساب REV برقرار نشد.'}
  const localTrips=getLocalDriverTrips();
  const trips=mergeDriverTrips(serverTrips,localTrips);
