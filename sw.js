@@ -1,4 +1,4 @@
-const CACHE_NAME = "rev-mobile-shell-v56";
+const CACHE_NAME = "rev-mobile-shell-v57";
 const SHELL = ["./", "./index.html", "./trips.html", "./rev-app-mode.js", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
@@ -21,6 +21,15 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+  // فایل ناوبری همیشه تازه
+  if (url.includes("rev-app-mode.js")) {
+    event.respondWith(fetch(url, {cache: "reload"}).then(r => {
+      const copy = r.clone();
+      caches.open(CACHE_NAME).then(c => c.put(event.request, copy));
+      return r;
+    }).catch(() => caches.match(event.request)));
+    return;
+  }
   // هدایت CDNهای کند به سریع‌تر
   const url = event.request.url;
   if (url.includes("unpkg.com/leaflet")) {
