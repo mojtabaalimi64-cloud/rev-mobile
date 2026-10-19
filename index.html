@@ -283,31 +283,9 @@
  close.addEventListener('click',hide);
  shade.addEventListener('click',function(e){if(e.target===shade)hide();});
  document.addEventListener('keydown',function(e){if(e.key==='Escape')hide();});
- avatar.addEventListener('click',async function(e){
+ avatar.addEventListener('click',function(e){
   e.preventDefault();
-  show();
-  status.textContent='در حال بررسی حساب کاربری…';
-  try{
-   var r=await fetch('https://rev-auth-api.mojtaba-alimi64.workers.dev/api/portal/me',{credentials:'include',cache:'no-store'});
-   if(r.status===401){
-    hide();
-    if(typeof window.revShowLogin==='function')window.revShowLogin();
-    else {show();status.textContent='برای مشاهده حساب، ابتدا وارد REV شوید.';}
-    return;
-   }
-   var j=await r.json().catch(function(){return null;});
-   if(!r.ok||!j||!j.success)throw new Error('profile unavailable');
-   var u=j.user||{};
-   var name=u.name||u.full_name||u.first_name||'کاربر REV';
-   var phone=u.phone||u.phone_number||u.phone_e164||'ثبت نشده';
-   var email=u.email||'ثبت نشده';
-   status.textContent='نام: '+name+' · موبایل: '+phone+' · ایمیل: '+email;
-  }catch(err){
-   status.textContent='اطلاعات حساب دریافت نشد. اتصال اینترنت را بررسی کنید یا دوباره تلاش کنید.';
-   var retry=document.createElement('button');retry.type='button';retry.textContent='تلاش دوباره';retry.style.cssText='font:inherit;border:0;border-radius:9px;padding:8px 12px;background:#e5f4fa;color:#087f9c;margin-top:10px;cursor:pointer';
-   retry.addEventListener('click',function(){avatar.click();});
-   status.appendChild(document.createElement('br'));status.appendChild(retry);
-  }
+  window.location.href='https://mojtabaalimi64-cloud.github.io/rev/driver-profile.html?from=rev-app';
  });
 })();
 </script>
