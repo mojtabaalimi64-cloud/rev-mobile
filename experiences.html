@@ -494,12 +494,16 @@ function upgradeActionIcons(){
     }
   });
 }
-// اجرا بعد از لود و با ناظر
+// اجرای سبک: یک‌بار بعد از لود + throttle روی تغییرات
 document.addEventListener('DOMContentLoaded', function(){
   upgradeActionIcons();
   var feed = document.getElementById('feed');
   if(feed){
-    new MutationObserver(upgradeActionIcons).observe(feed, {childList: true, subtree: true});
+    var t = null;
+    new MutationObserver(function(){
+      if(t) return;
+      t = setTimeout(function(){ t = null; upgradeActionIcons(); }, 500);
+    }).observe(feed, {childList: true, subtree: false});
   }
 });
 </script>
