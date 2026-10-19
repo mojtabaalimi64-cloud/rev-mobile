@@ -625,19 +625,40 @@ function gradeStats(trips){
   function avg(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null}
   return{up:avg(up),flat:avg(flat),down:avg(down),points:pts};
 }
+function localTripsForAnalysis(){
+  try{var a=JSON.parse(localStorage.getItem('rev_driver_trip_analysis_local_v1')||'[]');return Array.isArray(a)?a.filter(function(t){return t&&t.started_at}):[]}catch(e){return[]}
+}
+function mergeAnalysisTrips(server,local){
+  var out=[],keys={};
+  (Array.isArray(server)?server:[]).concat(Array.isArray(local)?local:[]).sort(function(a,b){
+    if(!!a.id!==!!b.id)return a.id?-1:1;
+    return new Date(b.started_at||0)-new Date(a.started_at||0);
+  }).forEach(function(t){
+    var key=String(t.started_at||'')+'|'+String(t.vehicle_name||'');
+    if(!keys[key]){keys[key]=1;out.push(t);}
+  });
+  return out;
+}
 async function load(force){
   if(!body||busy||(done&&!force))return;busy=true;
-  body.innerHTML='<div class="muted">در حال بارگذاری تحلیل…</div>';
+  body.innerHTML='<div class="muted">در حال بارگذاری تحلیل سفرها…</div>';
+  var local=localTripsForAnalysis(),server=[],ins=null,serverError='';
   try{
     var r=await fetch(AUTH+'/api/driver/trips?limit=50',{credentials:'include',cache:'no-store'});
     var j=await r.json().catch(function(){return{}});
-    if(!r.ok||!j.success)throw new Error('برای دیدن تحلیل رفتار راننده، وارد حساب REV شوید.');
-    var trips=(j.trips||[]).filter(function(t){return t&&t.ended_at});
-    var ins=null;
+    if(!r.ok||!j.success)throw new Error(j.error||'تاریخچه حساب در دسترس نیست.');
+    server=Array.isArray(j.trips)?j.trips:[];
     try{var r2=await fetch(AUTH+'/api/driver/insights',{credentials:'include',cache:'no-store'});
       var j2=await r2.json().catch(function(){return{}});if(r2.ok&&j2&&j2.success!==false)ins=j2;}catch(e){}
-    render(trips,ins);done=true;
-  }catch(e){body.innerHTML='<div class="muted">'+esc(e.message)+'</div>';}
+  }catch(e){serverError=e.message||'خطا در دریافت تاریخچه';}
+  var trips=mergeAnalysisTrips(server,local).filter(function(t){return t&&(t.ended_at||t.started_at);});
+  if(!trips.length&&serverError){
+    body.innerHTML='<div class="muted">'+esc(serverError)+' هنوز سفر محلی در این دستگاه پیدا نشد.</div>';
+  }else{
+    render(trips,ins);
+    if(serverError&&trips.length)body.insertAdjacentHTML('beforeend','<p class="note">نمایش سفرهای ذخیره‌شده روی همین دستگاه؛ همگام‌سازی حساب در دسترس نیست.</p>');
+    done=true;
+  }
   busy=false;
 }
 function render(trips,ins){
@@ -645,6 +666,28 @@ function render(trips,ins){
   var byDate=trips.slice().sort(function(a,b){return new Date(a.ended_at)-new Date(b.ended_at)});
   var last12=byDate.slice(-12);
   var html='';
+  /* --- metrics based on entered trip data and available GPS samples --- */
+  var distAll=byDate.reduce(function(a,t){return a+Math.max(0,Number(t.distance_km)||0)},0);
+  var energyAll=byDate.reduce(function(a,t){return a+Math.max(0,Number(t.energy_kwh)||0)},0);
+  var ratedAll=byDate.filter(function(t){return Number(t.distance_km)>0&&Number(t.energy_kwh)>0});
+  var avgSpeedRows=byDate.map(function(t){var v=Number((t.driving_stats||{}).average_speed_kmh);return isFinite(v)&&v>=0?v:null}).filter(function(v){return v!==null});
+  var maxSpeedRows=byDate.map(function(t){var v=Number((t.driving_stats||{}).max_speed_kmh);return isFinite(v)&&v>=0?v:null}).filter(function(v){return v!==null});
+  var batteryRows=byDate.map(function(t){var v=Number(t.battery_consumption_percent!=null?t.battery_consumption_percent:(t.driving_stats||{}).battery_consumption_percent);return isFinite(v)&&v>=0?v:null}).filter(function(v){return v!==null});
+  var capacityRows=byDate.map(function(t){var v=Number(t.battery_capacity_kwh!=null?t.battery_capacity_kwh:(t.driving_stats||{}).battery_capacity_kwh);return isFinite(v)&&v>0?v:null}).filter(function(v){return v!==null});
+  var hardA=byDate.reduce(function(a,t){return a+Math.max(0,Number((t.driving_stats||{}).hard_acceleration_events)||0)},0);
+  var hardB=byDate.reduce(function(a,t){return a+Math.max(0,Number((t.driving_stats||{}).hard_braking_events)||0)},0);
+  function mean(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null}
+  html+='<div class="analysis-grid" style="margin-bottom:12px">'
+    +'<div class="analysis-box"><h3>خلاصه سفرها</h3><div class="big">'+fa(byDate.length,0)+'</div><div class="sub">تعداد سفرهای تحلیل‌شده</div></div>'
+    +'<div class="analysis-box"><h3>مسافت کل</h3><div class="big">'+fa(distAll,1)+'</div><div class="sub">کیلومتر</div></div>'
+    +'<div class="analysis-box"><h3>انرژی مصرفی کل</h3><div class="big">'+fa(energyAll,1)+'</div><div class="sub">کیلووات‌ساعت</div></div>'
+    +'<div class="analysis-box"><h3>میانگین مصرف</h3><div class="big">'+(distAll>0&&energyAll>0?fa(energyAll/distAll*100,1):'—')+'</div><div class="sub">kWh/100km</div></div>'
+    +'<div class="analysis-box"><h3>میانگین سرعت</h3><div class="big">'+(mean(avgSpeedRows)==null?'—':fa(mean(avgSpeedRows),1))+'</div><div class="sub">km/h · داده GPS</div></div>'
+    +'<div class="analysis-box"><h3>بیشترین سرعت ثبت‌شده</h3><div class="big">'+(maxSpeedRows.length?fa(Math.max.apply(null,maxSpeedRows),1):'—')+'</div><div class="sub">km/h · داده GPS</div></div>'
+    +'<div class="analysis-box"><h3>مصرف باتری گزارش‌شده</h3><div class="big">'+(mean(batteryRows)==null?'—':fa(mean(batteryRows),1)+'٪')+'</div><div class="sub">میانگین درصد باتری مصرف‌شده</div></div>'
+    +'<div class="analysis-box"><h3>ظرفیت باتری خودرو</h3><div class="big">'+(mean(capacityRows)==null?'—':fa(mean(capacityRows),1))+'</div><div class="sub">kWh · بر اساس اطلاعات واردشده</div></div>'
+    +'<div class="analysis-box"><h3>رفتار رانندگی ثبت‌شده</h3><div class="big">'+fa(hardA,0)+' / '+fa(hardB,0)+'</div><div class="sub">شتاب تند احتمالی / ترمز شدید احتمالی</div></div>'
+    +'</div>';
   /* --- prediction hero --- */
   var rated=byDate.map(function(t){
     var d=Number(t.distance_km),e=Number(t.energy_kwh);
