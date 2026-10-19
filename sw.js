@@ -1,4 +1,4 @@
-const CACHE_NAME = "rev-mobile-shell-v53";
+const CACHE_NAME = "rev-mobile-shell-v54";
 const SHELL = ["./", "./index.html", "./trips.html", "./experiences.html", "./rev-app-mode.js", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
@@ -28,6 +28,15 @@ self.addEventListener("fetch", event => {
                               "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/");
     event.respondWith(fetch(fast));
     return;
+  }
+  // تایل‌های نقشه: OSM کند -> CartoDB سریع‌تر
+  if (url.includes("tile.openstreetmap.org")) {
+    const m = url.match(/tile\.openstreetmap\.org\/(\d+)\/(\d+)\/(\d+)\.png/);
+    if (m) {
+      const fastTile = `https://a.basemaps.cartocdn.com/rastertiles/voyager/${m[1]}/${m[2]}/${m[3]}.png`;
+      event.respondWith(fetch(fastTile));
+      return;
+    }
   }
   const request = event.request;
   if (request.method !== "GET") return;
