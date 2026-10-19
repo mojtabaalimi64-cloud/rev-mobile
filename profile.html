@@ -180,6 +180,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
     <section class="panel">
       <div class="identity"><div style="display:flex;flex-direction:column;align-items:center;gap:7px;flex:0 0 auto"><div class="user-avatar" id="driverAvatar" aria-label="تصویر پروفایل">ر</div><div id="driverAccountValidity" class="note" style="max-width:110px;text-align:center;line-height:1.7">اعتبار حساب: بررسی…</div></div><div><div class="identity-name" id="driverDisplayName">کاربر REV</div><div class="sub">پروفایل راننده برقی</div><span class="vehicle-chip">● داشبورد شخصی</span><div style="margin-top:7px"><label class="btn secondary" for="profilePhotoInput" style="cursor:pointer;margin:0">انتخاب تصویر پروفایل</label><input id="profilePhotoInput" type="file" accept="image/*" hidden><button id="removeProfilePhoto" class="secondary" type="button" style="margin-top:4px">حذف تصویر</button></div><div class="note">نام از حساب واردشده گرفته می‌شود؛ تصویر پروفایل در حساب REV ذخیره می‌شود.</div></div></div>
       <div id="authStatus" class="status">در حال بررسی ورود…</div>
+      <a id="revLoginButton" class="secondary" href="index.html?login=1" style="display:inline-block;margin-top:10px;text-decoration:none">ورود با شماره موبایل</a>
       <button id="revLogoutButton" class="secondary" type="button" hidden style="margin-top:10px">خروج از حساب</button>
       <div id="signInHint" hidden class="note">برای ذخیره خصوصی سفرها، حساب کاربری REV باید فعال باشد و ورود از طریق سرویس احراز هویت انجام شده باشد.</div>
       <p class="note">GPS فقط پس از فشردن دکمه شروع فعال می‌شود. برای ثبت پیوسته، صفحه را باز نگه دارید؛ قفل‌شدن گوشی ممکن است ردیابی را متوقف کند.</p>
@@ -464,7 +465,7 @@ function loadSavedDriverVehicleSettings(){try{const v=JSON.parse(localStorage.ge
 function accountValidityText(createdAt){if(!createdAt)return "تاریخ ایجاد حساب در دسترس نیست";const start=new Date(createdAt);if(!Number.isFinite(start.getTime()))return "تاریخ ایجاد حساب نامعتبر است";const endMonth=start.getMonth()+6;const end=new Date(start.getFullYear(),endMonth,1,start.getHours(),start.getMinutes(),start.getSeconds(),start.getMilliseconds());const lastDay=new Date(end.getFullYear(),end.getMonth()+1,0).getDate();end.setDate(Math.min(start.getDate(),lastDay));const days=Math.ceil((end.getTime()-Date.now())/86400000);if(days<=0)return "اعتبار حساب پایان یافته";return "اعتبار حساب: "+days.toLocaleString("fa-IR")+" روز باقی‌مانده";}
 async function loadDisplayIdentity(){
  loadSavedDriverVehicleSettings();
- const avatar=$('driverAvatar'),name=$('driverDisplayName'),validity=$('driverAccountValidity'),status=$('authStatus'),logout=$('revLogoutButton');
+ const avatar=$('driverAvatar'),name=$('driverDisplayName'),validity=$('driverAccountValidity'),status=$('authStatus'),logout=$('revLogoutButton'),login=$('revLoginButton');
  let display='',serverAvatar=null,authenticated=false;
  try{
   const r=await fetch(AUTH_API+'/api/portal/me',{credentials:'include',cache:'no-store'});
@@ -476,12 +477,12 @@ async function loadDisplayIdentity(){
    if(validity)validity.textContent=accountValidityText(j.user.created_at);
    const identity=String(j.user.id||j.user.phone_e164||display||'user').toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,100);
    avatarStorageKey='rev_driver_avatar_'+identity;
-   if(logout)logout.hidden=false;
+   if(logout)logout.hidden=false;if(login)login.hidden=true;
   }else{
    if(validity)validity.textContent='برای مشاهده اعتبار حساب وارد شوید';
-   if(logout)logout.hidden=true;
+   if(logout)logout.hidden=true;if(login)login.hidden=false;
   }
- }catch(e){if(logout)logout.hidden=true;}
+ }catch(e){if(logout)logout.hidden=true;if(login)login.hidden=false;}
  name.textContent=authenticated?(display||'کاربر REV'):'مهمان';
  avatar.setAttribute('aria-label','تصویر پروفایل '+(authenticated?(display||'کاربر REV'):'مهمان'));
  let saved=authenticated?serverAvatar:null;
@@ -544,8 +545,8 @@ async function loadProfile(){
  renderDriverTripHistory(trips);
  const valid=trips.filter(t=>Number(t.distance_km)>0&&Number(t.energy_kwh)>0).slice(0,12).reverse();
  $('consumptionBars').innerHTML=valid.length?valid.map(t=>{const rate=Number(t.energy_kwh)/Number(t.distance_km)*100;return '<div class="barrow"><span>'+new Date(t.started_at).toLocaleDateString('fa-IR')+'</span><div class="bar"><i style="width:'+Math.min(100,rate/40*100)+'%"></i></div><b>'+fmt(rate)+'</b></div>'}).join(''):'<div class="muted">برای رسم نمودار، سفرهای دارای داده انرژی ثبت کنید.</div>';
- if(serverOk){$('authStatus').textContent=localTrips.length?'اطلاعات حساب بارگذاری شد؛ سفرهای ذخیره‌شده روی دستگاه نیز نمایش داده می‌شوند.':'وارد حساب کاربری هستید. سفرها به حساب شما متصل‌اند.';$('signInHint').hidden=true;currentUser=true;$('revLogoutButton').hidden=false;}
- else {currentUser=null;$('revLogoutButton').hidden=true;$('authStatus').textContent=localTrips.length?'وارد حساب نیستید؛ سفرهای ذخیره‌شده روی این دستگاه حفظ شده‌اند. برای همگام‌سازی، با شماره موبایل وارد شوید.':'وارد حساب نیستید؛ برای امکانات حساب با شماره موبایل وارد شوید.';$('signInHint').hidden=false;if(!trips.length){$('tripCount').textContent='—';$('totalDistance').textContent='—';$('totalEnergy').textContent='—';$('avgConsumption').textContent='—';}}
+ if(serverOk){$('authStatus').textContent=localTrips.length?'اطلاعات حساب بارگذاری شد؛ سفرهای ذخیره‌شده روی دستگاه نیز نمایش داده می‌شوند.':'وارد حساب کاربری هستید. سفرها به حساب شما متصل‌اند.';$('signInHint').hidden=true;currentUser=true;$('revLogoutButton').hidden=false;$('revLoginButton').hidden=true;}
+ else {currentUser=null;$('revLogoutButton').hidden=true;$('revLoginButton').hidden=false;$('authStatus').textContent=localTrips.length?'وارد حساب نیستید؛ سفرهای ذخیره‌شده روی این دستگاه حفظ شده‌اند. برای همگام‌سازی، با شماره موبایل وارد شوید.':'وارد حساب نیستید؛ برای امکانات حساب با شماره موبایل وارد شوید.';$('signInHint').hidden=false;if(!trips.length){$('tripCount').textContent='—';$('totalDistance').textContent='—';$('totalEnergy').textContent='—';$('avgConsumption').textContent='—';}}
 }
 async function deleteTrip(id){if(!confirm('این سفر از سابقه خصوصی شما حذف شود؟'))return;try{const r=await fetch(AUTH_API+'/api/driver/trips/'+encodeURIComponent(id)+'/delete',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:'{}'});const j=await r.json();if(!r.ok||!j.success)throw new Error(j.error||'حذف ناموفق بود');await loadProfile()}catch(e){alert('حذف انجام نشد: '+e.message)}}
 
@@ -567,7 +568,7 @@ $('revLogoutButton').addEventListener('click',async function(){
   $('driverAvatar').style.color='var(--green)';
   $('driverAvatar').textContent='م';
   $('authStatus').textContent='با موفقیت خارج شدید. برای ورود دوباره، شماره موبایل و کد پیامکی لازم است.';
-  btn.hidden=true;
+  btn.hidden=true;$('revLoginButton').hidden=false;
   currentUser=null;
   await loadProfile();
  }catch(e){$('authStatus').textContent='خروج کامل نشد: '+(e.message||'خطای ارتباط با سرور');}
