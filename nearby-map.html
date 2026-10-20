@@ -379,4 +379,28 @@ body.rev-modal-open{overflow:hidden!important}
   closeNavigationObstruction();
 })();
 </script>
+<script>
+/* دریافت برنامه سفر از صفحه سفر اپ؛ بدون خروج به وب‌سایت */
+(function(){
+  try {
+    var p = new URLSearchParams(location.search);
+    if (!p.has('tripPlanRequest')) return;
+    var origin = p.get('origin') || '';
+    var destination = p.get('destination') || '';
+    var start = document.getElementById('routeStart');
+    var end = document.getElementById('routeEnd');
+    if (start && origin) { start.value = origin; start.dispatchEvent(new Event('input', {bubbles:true})); }
+    if (end && destination) { end.value = destination; end.dispatchEvent(new Event('input', {bubbles:true})); }
+    var date = p.get('date') || '';
+    var time = p.get('time') || '';
+    try { sessionStorage.setItem('rev_trip_plan_departure', JSON.stringify({date:date,time:time,origin:origin,destination:destination})); } catch (_) {}
+    if (start && end && origin && destination) {
+      setTimeout(function(){
+        var build = document.getElementById('routeBuild');
+        if (build) build.click();
+      }, 350);
+    }
+  } catch (_) {}
+})();
+</script>
 </body></html>
