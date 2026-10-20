@@ -338,4 +338,22 @@ body.rev-modal-open{overflow:hidden!important}
 <script>
 (function(){var modal=document.getElementById("navArrive");if(!modal)return;window.revAskTripAnalysis=function(reason){var title=document.getElementById("navArriveTitle"),route=document.getElementById("navArriveRoute"),ask=document.getElementById("tripAnalysisAsk"),form=document.getElementById("tripAnalysisForm"),done=document.getElementById("tripAnalysisDone");if(title)title.textContent=reason||"سفر به پایان رسید";if(route&&!route.textContent.trim())route.textContent="ثبت اختیاری اطلاعات برای تحلیل رانندگی";if(ask)ask.hidden=false;if(form)form.hidden=true;if(done)done.hidden=true;modal.hidden=false;};})();
 </script>
+<script>
+/* During active navigation, dismiss station/notification detail windows so the top turn guidance stays visible. */
+(function(){
+  function closeNavigationObstruction(){
+    if(!document.body.classList.contains('rev-navigating')) return;
+    var details=document.getElementById('details-panel');
+    if(details && !details.hidden) details.hidden=true;
+    document.querySelectorAll('.leaflet-popup.rev-centered-popup').forEach(function(popup){
+      var close=popup.querySelector('.leaflet-popup-close-button');
+      if(close) close.click(); else popup.remove();
+    });
+  }
+  var bodyObserver=new MutationObserver(closeNavigationObstruction);
+  bodyObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
+  document.addEventListener('click',function(){if(document.body.classList.contains('rev-navigating'))requestAnimationFrame(closeNavigationObstruction)},true);
+  closeNavigationObstruction();
+})();
+</script>
 </body></html>
