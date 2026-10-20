@@ -1,4 +1,5 @@
-const CACHE_NAME = "rev-mobile-shell-v72";
+const CACHE_NAME = "rev-mobile-shell-v73";
+// Keep the new mobile information pages available in the install/offline shell.
 const SHELL = ["./", "./index.html", "./trips.html", "./news.html", "./safety-checklist.html", "./rev-app-mode.js", "./rev-auth-guard.js", "./rev-visual-identity.css", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
 self.addEventListener("install", event => {
