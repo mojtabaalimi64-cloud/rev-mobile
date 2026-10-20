@@ -203,7 +203,7 @@
 
   <section class="section" id="resumeSection" hidden aria-labelledby="resumeTitle">
     <div class="section-head"><h2 id="resumeTitle">ادامه برنامه قبلی</h2></div>
-    <a class="card row-item" id="resumeLink" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html" style="display:flex">
+    <a class="card row-item" id="resumeLink" href="./nearby-map.html" style="display:flex">
       <span class="ico">🗺️</span>
       <span class="copy"><b id="resumeRoute">—</b><small id="resumeMeta">—</small></span>
       <span class="chev" aria-hidden="true">‹</span>
@@ -228,7 +228,7 @@
         <span class="copy"><b>نقشه و ایستگاه‌های شارژ</b><small>شارژرهای نزدیک و روی مسیر</small></span>
         <span class="chev" aria-hidden="true">‹</span>
       </a>
-      <a class="row-item" href="https://mojtabaalimi64-cloud.github.io/rev/safety-checklist.html">
+      <a class="row-item" href="./safety-checklist.html">
         <span class="ico">✓</span>
         <span class="copy"><b>چک‌لیست ایمنی سفر</b><small>قبل از راه افتادن چک کن</small></span>
         <span class="chev" aria-hidden="true">‹</span>
@@ -319,7 +319,7 @@ $('planGo').addEventListener('click',function(){
   if(!Number.isFinite(departureAt.getTime())||departureAt.getTime()<Date.now()-5*60*1000){$('planStatus').textContent='تاریخ و ساعت حرکت باید در زمان حال یا آینده باشد.';return}
   $('planStatus').textContent='در حال آماده‌سازی نتیجه برنامه‌ریزی…';
   saveRecent(o,d);
-  location.href=SITE+'/trip.html?origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+'&date='+encodeURIComponent(dt)+'&time='+encodeURIComponent(tm)+'&resultOnly=1';
+  location.href='./nearby-map.html?tripPlanRequest=1&origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+'&date='+encodeURIComponent(dt)+'&time='+encodeURIComponent(tm);
 });
 renderRecent();
 
@@ -345,7 +345,7 @@ try{
       var _o=_pr.origin||p.origin||'مبدأ',_d=_pr.destination||p.destination||'مقصد';
       var _km=_pr.routeKm||(p.distance?Math.round(p.distance/100)/10:null);
       var _meta=[];if(_km)_meta.push(_km+' کیلومتر');if(p.createdAt)_meta.push(new Date(p.createdAt).toLocaleDateString('fa-IR'));
-      return '<a class="card row-item" href="https://mojtabaalimi64-cloud.github.io/rev/trip.html" style="display:flex;margin-bottom:8px"><span class="ico">💾</span><span class="copy"><b>'+_o+' ← '+_d+'</b><small>'+_meta.join(' · ')+'</small></span><span class="chev" aria-hidden="true">‹</span></a>';
+      return '<a class="card row-item" href="./nearby-map.html" style="display:flex;margin-bottom:8px"><span class="ico">💾</span><span class="copy"><b>'+_o+' ← '+_d+'</b><small>'+_meta.join(' · ')+'</small></span><span class="chev" aria-hidden="true">‹</span></a>';
     }).join('');
     document.getElementById('savedPlansList').innerHTML=_html;
     document.getElementById('savedPlansSection').hidden=false;
