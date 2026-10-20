@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0887a7">
+<meta name="color-scheme" content="light">
+<meta name="description" content="موضوعات و مرورهای REV درباره خودروهای برقی، باتری، شارژ و فناوری">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
+<title>اخبار و فناوری | REV</title>
+<link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
+<style>
+.news-wrap{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+.news-hero{margin-top:16px;padding:20px 18px;border-radius:22px;background:linear-gradient(140deg,#0a5f78,#0887a7 65%,#0b93b8);color:#fff;box-shadow:var(--shadow)}
+.news-kicker{font-size:11px;font-weight:850;letter-spacing:1px;color:#ccecf4}
+.news-hero h1{font-size:24px;line-height:1.5;margin:7px 0;font-weight:900}
+.news-hero p{font-size:12.5px;line-height:1.9;color:#e0f2f7;margin:0}
+.news-note{font-size:11px;color:var(--muted);line-height:1.8;margin:10px 2px 0}
+.news-filters{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin:12px 0 6px;scrollbar-width:none}
+.news-filters::-webkit-scrollbar{display:none}
+.news-filter{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:99px;padding:8px 13px;font-size:11.5px;font-weight:850;white-space:nowrap}
+.news-filter.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.featured-news{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);margin:14px 0}
+.featured-art{height:120px;display:grid;place-items:center;background:radial-gradient(circle,rgba(8,135,167,.18),transparent 52%),linear-gradient(135deg,#eaf5f9,#f7fafc);color:#0a7795;font-size:38px;font-weight:900;letter-spacing:5px;direction:ltr}
+.featured-copy{padding:15px}.category{font-size:10px;color:var(--teal);font-weight:900}.featured-copy h2{font-size:17px;line-height:1.8;margin:6px 0}.featured-copy p{font-size:12px;color:var(--muted);line-height:1.9;margin:0}
+.section-title{font-size:16px;font-weight:900;margin:20px 2px 10px}
+.news-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.news-card{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;box-shadow:var(--shadow-sm);min-width:0}
+.news-art{display:grid;place-items:center;min-height:100px;border-radius:12px;background:linear-gradient(145deg,#e5f3f8,#f5f9fb);color:#087f9d;font-size:17px;font-weight:900;direction:ltr;overflow:hidden}
+.news-content{min-width:0}.news-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:10px;color:var(--muted);margin:1px 0 5px}.news-category{font-weight:900;color:var(--teal)}.news-content h3{font-size:13px;line-height:1.8;margin:0 0 4px;font-weight:900}.news-content p{font-size:11px;line-height:1.8;color:var(--muted);margin:0}
+.empty-news{display:none;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);font-size:12px}
+@media(min-width:440px){.news-grid{grid-template-columns:1fr 1fr}.news-card{grid-template-columns:1fr}.news-art{min-height:90px}.news-content h3{font-size:13px}}
+</style>
+</head>
+<body class="has-bottom-nav">
+<header class="app-header"><div class="wrap top">
+  <div class="greet">
+    <a class="avatar" href="./profile.html?from=rev-app" aria-label="رفتن به پروفایل کاربر"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.4 3.1-5.2 7-5.2s6.4 1.8 7 5.2"/></svg></a>
+    <div><div class="hello">اخبار و فناوری</div><div class="sub">مروری بر موضوعات دنیای خودرو برقی</div></div>
+  </div>
+</div></header>
+<main class="wrap news-wrap">
+  <section class="news-hero">
+    <div class="news-kicker">REV / NEWS</div>
+    <h1>خودروهای برقی، باتری و آینده حمل‌ونقل</h1>
+    <p>مروری بر موضوعات فناوری، زیرساخت شارژ و تغییرات صنعت خودرو. این صفحه فعلاً محتوای موجود در نسخه وب را نمایش می‌دهد.</p>
+  </section>
+  <div class="news-note">محتوای این صفحه از نمونه‌های ثابت موجود در سایت وب بازآرایی شده و هنوز به خوراک خبری یا مدیریت محتوا متصل نیست.</div>
+  <div class="news-filters" role="group" aria-label="دسته‌بندی خبرها">
+    <button class="news-filter active" type="button" data-filter="all" aria-pressed="true">همه</button>
+    <button class="news-filter" type="button" data-filter="خودروهای برقی" aria-pressed="false">خودروهای برقی</button>
+    <button class="news-filter" type="button" data-filter="باتری" aria-pressed="false">باتری</button>
+    <button class="news-filter" type="button" data-filter="هوش مصنوعی" aria-pressed="false">هوش مصنوعی</button>
+    <button class="news-filter" type="button" data-filter="خودران" aria-pressed="false">خودران</button>
+    <button class="news-filter" type="button" data-filter="شارژ" aria-pressed="false">شارژ</button>
+    <button class="news-filter" type="button" data-filter="آینده" aria-pressed="false">آینده</button>
+  </div>
+  <section class="featured-news" data-category="خودروهای برقی">
+    <div class="featured-art" aria-hidden="true">REV · EV</div>
+    <div class="featured-copy"><div class="category">خودروهای برقی · خبر منتخب</div><h2>آینده صنعت خودرو در حال تغییر است</h2><p>خودروهای برقی دیگر یک فناوری آینده‌نگرانه نیستند؛ آن‌ها به یکی از بخش‌های مهم صنعت خودرو تبدیل شده‌اند.</p></div>
+  </section>
+  <h2 class="section-title">موضوعات بیشتر</h2>
+  <div class="news-grid" id="newsGrid">
+    <article class="news-card" data-category="خودروهای برقی"><div class="news-art">EV</div><div class="news-content"><div class="news-meta"><span class="news-category">خودروهای برقی</span><span>۰۶ مهر ۱۴۰۵</span></div><h3>خودروهای برقی چگونه بازار خودرو را تغییر می‌دهند؟</h3><p>نگاهی به روند رشد خودروهای برقی و تغییر رفتار بازار.</p></div></article>
+    <article class="news-card" data-category="باتری"><div class="news-art">BAT</div><div class="news-content"><div class="news-meta"><span class="news-category">باتری</span><span>۰۵ مهر ۱۴۰۵</span></div><h3>نسل جدید باتری‌ها چه تغییری ایجاد می‌کنند؟</h3><p>بررسی فناوری‌های جدید باتری و تأثیر آن‌ها بر برد خودرو.</p></div></article>
+    <article class="news-card" data-category="هوش مصنوعی"><div class="news-art">AI</div><div class="news-content"><div class="news-meta"><span class="news-category">هوش مصنوعی</span><span>۰۴ مهر ۱۴۰۵</span></div><h3>هوش مصنوعی وارد نسل جدید خودروها می‌شود</h3><p>نقش هوش مصنوعی در تجربه رانندگی، نرم‌افزار خودرو و سیستم‌های هوشمند.</p></div></article>
+    <article class="news-card" data-category="خودران"><div class="news-art">AUTO</div><div class="news-content"><div class="news-meta"><span class="news-category">خودران</span><span>۰۳ مهر ۱۴۰۵</span></div><h3>رقابت برای ساخت خودروهای خودران وارد مرحله جدیدی شد</h3><p>فناوری‌های جدید سنجش، پردازش و رانندگی خودکار.</p></div></article>
+    <article class="news-card" data-category="شارژ"><div class="news-art">CHG</div><div class="news-content"><div class="news-meta"><span class="news-category">شارژ</span><span>۰۲ مهر ۱۴۰۵</span></div><h3>آینده زیرساخت شارژ خودروهای برقی چگونه خواهد بود؟</h3><p>از شارژ سریع تا شبکه‌های هوشمند انرژی.</p></div></article>
+    <article class="news-card" data-category="آینده"><div class="news-art">FUTURE</div><div class="news-content"><div class="news-meta"><span class="news-category">آینده</span><span>۰۱ مهر ۱۴۰۵</span></div><h3>آینده حمل‌ونقل در دهه آینده چه شکلی خواهد بود؟</h3><p>بررسی فناوری‌هایی که ممکن است شیوه حرکت ما را تغییر دهند.</p></div></article>
+  </div>
+  <div class="empty-news" id="emptyNews">در این دسته‌بندی موردی پیدا نشد.</div>
+  <footer class="app-foot">REV · همراه سفر برقی تو</footer>
+</main>
+<nav class="bottom-nav" aria-label="پیمایش اصلی"><div class="tabs">
+  <a href="./index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg>خانه</a>
+  <a href="./nearby-map.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>نقشه</a>
+  <a href="./trips.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg>سفر</a>
+  <a href="./businesses.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg>خدمات</a>
+</div></nav>
+<script>
+(function(){
+ const buttons=[...document.querySelectorAll('[data-filter]')];
+ const cards=[...document.querySelectorAll('[data-category]')];
+ const empty=document.getElementById('emptyNews');
+ buttons.forEach(button=>button.addEventListener('click',()=>{
+   const value=button.dataset.filter;
+   buttons.forEach(item=>{const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active));});
+   let visible=0;
+   cards.forEach(card=>{const show=value==='all'||card.dataset.category===value;card.hidden=!show;if(show&&card.classList.contains('news-card'))visible++;});
+   empty.style.display=visible?'none':'block';
+ }));
+})();
+</script>
+<script src="./rev-app-mode.js?v=20261018-1"></script>
+</body>
+</html>
