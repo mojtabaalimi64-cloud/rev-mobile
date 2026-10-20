@@ -404,26 +404,31 @@ body.rev-modal-open{overflow:hidden!important}
 })();
 </script>
 <style>
-.rev-live-status{margin-top:14px;padding:12px;border:1px solid #dcebe7;border-radius:14px;background:#f4faf8}
-.rev-live-status h3{margin:0 0 8px;font-size:13.5px;color:#0b5563}
-.rev-ls-badge{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13.5px;padding:5px 12px;border-radius:999px}
+.rev-live-status{margin-top:14px;padding:12px;border:1.5px solid #e4edf3;border-radius:14px;background:#fff}
+.rev-live-status h3{margin:0 0 2px;font-size:14px;font-weight:900;color:#14293b}
+.rev-ls-sub{font-size:11.5px;color:#7e93a6;margin-bottom:8px}
+.rev-ls-badge{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13px;padding:5px 12px;border-radius:999px}
 .rev-ls-badge.free{background:#dcf5e3;color:#11703c}
 .rev-ls-badge.busy{background:#fde3e3;color:#a32727}
-.rev-ls-badge.broken{background:#fdf0d7;color:#8a6414}
+.rev-ls-badge.broken{background:#fdf0d7;color:#b7791f}
 .rev-ls-badge.none{background:#eef1f3;color:#61707a;font-weight:700}
-.rev-ls-meta{font-size:11.5px;color:#6b7c86;margin-top:6px}
+.rev-ls-meta{font-size:11.5px;color:#7e93a6;margin-top:6px}
 .rev-ls-btns{display:flex;gap:8px;margin-top:10px}
-.rev-ls-btn{flex:1;border:1px solid #cfded9;background:#fff;border-radius:10px;padding:8px 4px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
+.rev-ls-btn{flex:1;border:1.5px solid #e4edf3;background:#fff;border-radius:12px;padding:9px 4px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;color:#14293b}
 .rev-ls-btn:active{transform:scale(.97)}
 .rev-ls-btn:disabled{opacity:.45;cursor:default}
 .rev-ls-note{font-size:11.5px;margin-top:8px;min-height:14px;color:#0b5563}
+.rev-ls-note button{background:none;border:none;padding:0;font:inherit;font-weight:800;color:#b7791f;cursor:pointer;text-decoration:underline}
+.rev-ls-foot{margin-top:10px;padding-top:8px;border-top:1px dashed #e4edf3;font-size:11.5px;color:#7e93a6}
+.rev-ls-foot button{background:none;border:none;padding:0;font:inherit;font-weight:800;color:#b7791f;cursor:pointer}
 </style>
 <script>
-/* REV crowd-sourced charger live status — v1 */
+/* REV crowd-sourced charger live status — v2 (هماهنگ با مودال گزارش خطا) */
 (function(){
   var API='https://rev-status-api.mojtaba-alimi64.workers.dev';
   var TTL={free:7200000,busy:7200000,broken:259200000};
-  var LBL={free:'آزاده 🟢',busy:'اشغاله 🔴',broken:'خرابه ⚠️'};
+  var LBL={free:'آزاده 🟢',busy:'در حال شارژه 🔴',broken:'خراب یا غیرفعاله ⚠️'};
+  var BTN={free:'🟢 آزاده',busy:'🔴 در حال شارژه',broken:'⚠️ خراب یا غیرفعال'};
   var cache={};
   function faN(n){try{return Number(n).toLocaleString('fa-IR')}catch(e){return String(n)}}
   function ago(at){
@@ -434,12 +439,24 @@ body.rev-modal-open{overflow:hidden!important}
     if(h<24)return faN(h)+' ساعت پیش';
     return faN(Math.floor(h/24))+' روز پیش';
   }
-  function keyOf(content){
+  function parseCoords(content){
     var m=(content.textContent||'').match(/مختصات:\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)/);
     if(!m)return null;
     var lat=parseFloat(m[1]),lng=parseFloat(m[2]);
     if(!isFinite(lat)||!isFinite(lng))return null;
-    return 'g:'+lat.toFixed(6)+','+lng.toFixed(6);
+    return {lat:lat,lng:lng,key:'g:'+lat.toFixed(6)+','+lng.toFixed(6)};
+  }
+  function openReport(name,lat,lng){
+    var b=document.createElement('button');
+    b.className='detail-report-button';
+    b.setAttribute('data-station-id','');
+    b.setAttribute('data-station-name',name||'');
+    b.setAttribute('data-lat',lat);
+    b.setAttribute('data-lon',lng);
+    b.style.display='none';
+    document.body.appendChild(b);
+    b.click();
+    setTimeout(function(){try{b.remove()}catch(e){}},200);
   }
   function myLast(key){try{var t=JSON.parse(localStorage.getItem('rev_ls_my')||'{}');return t[key]||0}catch(e){return 0}}
   function setMy(key){try{var t=JSON.parse(localStorage.getItem('rev_ls_my')||'{}');t[key]=Date.now();localStorage.setItem('rev_ls_my',JSON.stringify(t))}catch(e){}}
@@ -448,7 +465,8 @@ body.rev-modal-open{overflow:hidden!important}
     if(!content||content.querySelector('.rev-live-status'))return;
     var type=content.querySelector('.detail-type');
     if(!type||type.textContent.indexOf('شارژ')<0)return;
-    var key=keyOf(content);if(!key)return;
+    var pc=parseCoords(content);if(!pc)return;
+    var key=pc.key;
     var nameEl=content.querySelector('.detail-name');
     var name=nameEl?nameEl.textContent.trim():'';
     var rec=cache[key];
@@ -468,22 +486,27 @@ body.rev-modal-open{overflow:hidden!important}
     var dis=cool?' disabled':'';
     var sec=document.createElement('div');
     sec.className='rev-live-status';
-    sec.innerHTML='<h3>⚡ وضعیت لحظه‌ای (گزارش کاربران)</h3>'+badge+
+    sec.innerHTML='<h3>⚡ وضعیت لحظه‌ای شارژر</h3>'+
+      '<div class="rev-ls-sub">بر اساس گزارش کاربران — برای همین لحظه‌ست، نه اطلاعات ثابت جایگاه</div>'+badge+
       '<div class="rev-ls-meta">'+meta+'</div>'+
       '<div class="rev-ls-btns">'+
-      '<button type="button" class="rev-ls-btn" data-s="free"'+dis+'>🟢 آزاده</button>'+
-      '<button type="button" class="rev-ls-btn" data-s="busy"'+dis+'>🔴 اشغاله</button>'+
-      '<button type="button" class="rev-ls-btn" data-s="broken"'+dis+'>⚠️ خرابه</button></div>'+
-      '<div class="rev-ls-note">'+(cool?'گزارشت ثبت شده ✅':'')+'</div>';
+      '<button type="button" class="rev-ls-btn" data-s="free"'+dis+'>'+BTN.free+'</button>'+
+      '<button type="button" class="rev-ls-btn" data-s="busy"'+dis+'>'+BTN.busy+'</button>'+
+      '<button type="button" class="rev-ls-btn" data-s="broken"'+dis+'>'+BTN.broken+'</button></div>'+
+      '<div class="rev-ls-note">'+(cool?'گزارشت ثبت شده ✅':'')+'</div>'+
+      '<div class="rev-ls-foot">اطلاعات جایگاه اشتباهه یا تخلفی دیدی؟ <button type="button" class="rev-ls-report-link">گزارش خطا و تخلف</button></div>';
     content.appendChild(sec);
     var btns=sec.querySelectorAll('.rev-ls-btn');
     for(var i=0;i<btns.length;i++){
       btns[i].addEventListener('click',function(){
-        report(key,name,this.getAttribute('data-s'),sec);
+        report(key,name,pc,this.getAttribute('data-s'),sec);
       });
     }
+    sec.querySelector('.rev-ls-report-link').addEventListener('click',function(){
+      openReport(name,pc.lat,pc.lng);
+    });
   }
-  function report(key,name,s,sec){
+  function report(key,name,pc,s,sec){
     var note=sec.querySelector('.rev-ls-note');
     var btns=sec.querySelectorAll('.rev-ls-btn');
     var i;
@@ -494,10 +517,15 @@ body.rev-modal-open{overflow:hidden!important}
     .then(function(d){
       if(d&&d.ok){
         cache[key]=d.record;setMy(key);
-        note.textContent='گزارشت ثبت شد ✅ ممنون!';
         var b=sec.querySelector('.rev-ls-badge');
         b.className='rev-ls-badge '+s;b.textContent=LBL[s];
         sec.querySelector('.rev-ls-meta').textContent='آخرین گزارش کاربران: همین الان';
+        if(s==='broken'){
+          note.innerHTML='گزارشت ثبت شد ✅ اگه این خرابی دائمیه، <button type="button">گزارش خطا</button> هم ثبت کن تا بررسی و اصلاح بشه.';
+          note.querySelector('button').addEventListener('click',function(){openReport(name,pc.lat,pc.lng)});
+        }else{
+          note.textContent='گزارشت ثبت شد ✅ ممنون!';
+        }
       }else{
         note.textContent='ثبت نشد — دوباره تلاش کن';
         for(i=0;i<btns.length;i++)btns[i].disabled=false;
@@ -520,5 +548,6 @@ body.rev-modal-open{overflow:hidden!important}
   fetchAll();
 })();
 </script>
+
 
 </body></html>
