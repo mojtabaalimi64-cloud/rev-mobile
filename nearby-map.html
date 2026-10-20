@@ -512,7 +512,7 @@ body.rev-modal-open{overflow:hidden!important}
     var i;
     for(i=0;i<btns.length;i++)btns[i].disabled=true;
     note.textContent='در حال ثبت…';
-    fetch(API+'/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,name:name,status:s})})
+    fetch(API+'/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,name:name,status:s,phone:(function(){try{return localStorage.getItem('rev_ls_phone')||''}catch(e){return''}})()})})
     .then(function(r){return r.json()})
     .then(function(d){
       if(d&&d.ok){
@@ -524,7 +524,7 @@ body.rev-modal-open{overflow:hidden!important}
           note.innerHTML='گزارشت ثبت شد ✅ اگه این خرابی دائمیه، <button type="button">گزارش خطا</button> هم ثبت کن تا بررسی و اصلاح بشه.';
           note.querySelector('button').addEventListener('click',function(){openReport(name,pc.lat,pc.lng)});
         }else{
-          note.textContent='گزارشت ثبت شد ✅ ممنون!';
+          note.textContent='گزارشت ثبت شد ✅ ممنون!'+(d.points!=null?' (⭐ امتیازت: '+faN(d.points)+')':'');
         }
       }else{
         note.textContent='ثبت نشد — دوباره تلاش کن';
@@ -549,5 +549,347 @@ body.rev-modal-open{overflow:hidden!important}
 })();
 </script>
 
+
+<style>
+#revAddStationBtn{position:fixed;left:12px;bottom:calc(150px + env(safe-area-inset-bottom));z-index:1400;background:linear-gradient(135deg,#0d7d8a,#1495a3);color:#fff;border:0;border-radius:999px;padding:11px 16px;font-family:inherit;font-size:13.5px;font-weight:900;cursor:pointer;box-shadow:0 8px 24px rgba(13,125,138,.4)}
+#revAddStationBtn:active{transform:scale(.96)}
+#revPickBar{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;left:12px;z-index:2400;background:#14293b;color:#fff;border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 12px 32px rgba(20,41,59,.35)}
+#revPickBar[hidden]{display:none}
+#revPickBar .pb-txt{flex:1;font-size:13px;font-weight:800;line-height:1.7}
+#revPickBar .pb-txt small{display:block;font-weight:600;color:#bcd2de;font-size:11px}
+#revPickBar button{border:0;border-radius:9px;padding:8px 10px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer}
+#revPickBar .pb-gps{background:#fff;color:#14293b}
+#revPickBar .pb-ok{background:linear-gradient(135deg,#0d7d8a,#1495a3);color:#fff}
+#revPickBar .pb-ok[disabled]{opacity:.4}
+#revPickBar .pb-x{background:transparent;color:#ffb4b4;padding:8px 4px}
+#revAddModal{position:fixed;inset:0;z-index:6000;background:rgba(10,20,28,.55);display:flex;align-items:center;justify-content:center;padding:14px}
+#revAddModal[hidden]{display:none}
+.rev-add-card{background:#fff;border-radius:20px;max-width:430px;width:100%;padding:22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow:auto}
+.rev-add-card h3{margin:0 0 2px;font-size:17px;font-weight:900;color:#14293b}
+.rev-add-card .ra-sub{font-size:12px;color:#7e93a6;margin:0 0 14px}
+.rev-add-card label{display:block;font-size:12.5px;font-weight:800;color:#14293b;margin:10px 0 4px}
+.rev-add-card input,.rev-add-card textarea,.rev-add-card select{width:100%;box-sizing:border-box;border:1.5px solid #e4edf3;border-radius:10px;padding:9px 10px;font-family:inherit;font-size:13.5px;background:#fbfcfd}
+.rev-add-card textarea{resize:vertical;min-height:56px}
+.rev-add-card .ra-coords{font-size:12px;color:#0b5563;background:#eef8f5;border-radius:9px;padding:7px 10px;margin-top:4px}
+.ra-conns{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.ra-conn{border:1.5px solid #e4edf3;background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;color:#14293b}
+.ra-conn.sel{background:#dcf5e3;border-color:#16a34a;color:#11703c}
+.ra-btns{display:flex;gap:8px;margin-top:16px}
+.ra-submit{flex:1;background:linear-gradient(135deg,#0887a7,#066d88);color:#fff;border:0;border-radius:10px;padding:11px;font-family:inherit;font-size:14px;font-weight:900;cursor:pointer}
+.ra-submit[disabled]{opacity:.5}
+.ra-cancel{background:#fff;border:1.5px solid #e4edf3;border-radius:10px;padding:11px 16px;font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer;color:#61707a}
+.ra-status{font-size:12.5px;margin-top:10px;min-height:16px;color:#0b5563}
+.ra-done{text-align:center;padding:8px 0}
+.ra-done .big{font-size:38px}
+.ra-done p{font-size:13.5px;color:#14293b;line-height:1.9}
+.ra-dup{background:#fdf0d7;border:1.5px solid #f0c36d;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:12.5px;color:#8a6414;line-height:1.8}
+.ra-dup b{color:#14293b}
+.ra-dup .ra-dup-btns{display:flex;gap:7px;margin-top:7px}
+.ra-dup button{flex:1;border-radius:8px;padding:7px 6px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.ra-dup .see{border:1.5px solid #f0c36d;background:#fff;color:#8a6414}
+.ra-dup .new{border:0;background:linear-gradient(135deg,#0887a7,#066d88);color:#fff}
+.ra-pts{display:inline-block;background:#fdf0d7;color:#8a6414;font-weight:900;border-radius:999px;padding:4px 14px;font-size:13px;margin-top:6px}
+</style>
+<script>
+/* REV — ثبت جایگاه جدید توسط کاربر + انتخاب موقعیت روی نقشه */
+(function(){
+  var API='https://rev-status-api.mojtaba-alimi64.workers.dev';
+  var CONNS=['GB/T DC','GB/T AC','Type 2','CCS2','CHAdeMO'];
+  var pickMode=false,pickMarker=null,picked=null,map=null;
+  var existing=[];
+  fetch('https://rev-api.mojtaba-alimi64.workers.dev/api/stations',{cache:'no-store'})
+  .then(function(r){return r.json()})
+  .then(function(d){existing=(d&&d.data)||[]})
+  .catch(function(){});
+  function distM(lat1,lng1,lat2,lng2){
+    var R=6371000,t=Math.PI/180;
+    var a=Math.sin((lat2-lat1)*t/2)*Math.sin((lat2-lat1)*t/2)+Math.cos(lat1*t)*Math.cos(lat2*t)*Math.sin((lng2-lng1)*t/2)*Math.sin((lng2-lng1)*t/2);
+    return 2*R*Math.asin(Math.sqrt(a));
+  }
+  function nearestDup(){
+    if(!picked)return null;
+    var best=null,bd=1e12;
+    for(var i=0;i<existing.length;i++){
+      var s=existing[i];
+      if(s.latitude==null||s.longitude==null)continue;
+      var d=distM(picked.lat,picked.lng,Number(s.latitude),Number(s.longitude));
+      if(d<bd){bd=d;best=s}
+    }
+    return (best&&bd<=120)?{s:best,d:bd}:null;
+  }
+  function $(id){return document.getElementById(id)}
+  function myPhone(){try{return localStorage.getItem('rev_ls_phone')||''}catch(e){return''}}
+  function setPhone(p){try{localStorage.setItem('rev_ls_phone',p)}catch(e){}}
+
+  var btn=document.createElement('button');
+  btn.id='revAddStationBtn';btn.type='button';btn.textContent='➕ ثبت جایگاه جدید';
+  document.body.appendChild(btn);
+
+  var bar=document.createElement('div');
+  bar.id='revPickBar';bar.hidden=true;
+  bar.innerHTML='<div class="pb-txt">📍 روی نقشه، جای دقیق جایگاه رو لمس کن<small>می‌تونی پین رو بکشی تا دقیق بشه</small></div>'+
+    '<button type="button" class="pb-gps">📡 موقعیت من</button>'+
+    '<button type="button" class="pb-ok" disabled>ادامه ←</button>'+
+    '<button type="button" class="pb-x">✕</button>';
+  document.body.appendChild(bar);
+
+  var modal=document.createElement('div');
+  modal.id='revAddModal';modal.hidden=true;
+  modal.innerHTML='<div class="rev-add-card" id="revAddCard"></div>';
+  document.body.appendChild(modal);
+
+  function getMap(){return window.revMap||null}
+  function enterPick(){
+    map=getMap();
+    if(!map||!window.L){alert('نقشه هنوز کامل لود نشده — چند ثانیه صبر کن و دوباره بزن');return}
+    pickMode=true;picked=null;
+    bar.hidden=false;
+    bar.querySelector('.pb-ok').disabled=true;
+    bar.querySelector('.pb-txt').firstChild.textContent='📍 روی نقشه، جای دقیق جایگاه رو لمس کن';
+    map.on('click',onMapClick);
+  }
+  function exitPick(){
+    pickMode=false;bar.hidden=true;
+    if(map)map.off('click',onMapClick);
+  }
+  function onMapClick(e){if(pickMode)setPick(e.latlng)}
+  function setPick(ll){
+    picked={lat:ll.lat,lng:ll.lng};
+    if(!pickMarker){
+      pickMarker=window.L.marker(ll,{draggable:true}).addTo(map);
+      pickMarker.on('dragend',function(){var p=pickMarker.getLatLng();picked={lat:p.lat,lng:p.lng};updBar()});
+    }else pickMarker.setLatLng(ll);
+    updBar();
+  }
+  function updBar(){
+    bar.querySelector('.pb-ok').disabled=false;
+    bar.querySelector('.pb-txt').innerHTML='📍 موقعیت انتخاب شد<small>'+picked.lat.toFixed(5)+' , '+picked.lng.toFixed(5)+' — برای تنظیم دقیق پین رو بکش</small>';
+  }
+  bar.querySelector('.pb-x').addEventListener('click',function(){
+    exitPick();
+    if(pickMarker&&map){map.removeLayer(pickMarker);pickMarker=null}
+  });
+  bar.querySelector('.pb-gps').addEventListener('click',function(){
+    if(!navigator.geolocation)return;
+    navigator.geolocation.getCurrentPosition(function(p){
+      var ll={lat:p.coords.latitude,lng:p.coords.longitude};
+      if(map)map.setView([ll.lat,ll.lng],Math.max(map.getZoom(),16));
+      setPick(ll);
+    },function(){alert('موقعیتت پیدا نشد — دستی روی نقشه لمس کن')},{enableHighAccuracy:true,timeout:12000});
+  });
+  bar.querySelector('.pb-ok').addEventListener('click',function(){
+    if(!picked)return;
+    exitPick();
+    openForm();
+  });
+  btn.addEventListener('click',enterPick);
+
+  function openForm(){
+    var card=$('revAddCard');
+    var conns=CONNS.map(function(c){return '<button type="button" class="ra-conn" data-c="'+c+'">'+c+'</button>'}).join('');
+    card.innerHTML='<h3>➕ ثبت جایگاه شارژ جدید</h3>'+
+      '<p class="ra-sub">مشخصات رو کامل کن؛ بعد از بررسی مدیر، روی نقشه میاد و ۵۰ امتیاز می‌گیری.</p>'+
+      '<div class="ra-coords">📍 مختصات: '+picked.lat.toFixed(6)+' , '+picked.lng.toFixed(6)+'</div>'+
+      '<div id="raDup"></div>'+
+      '<label>نام جایگاه *</label><input id="raName" type="text" maxlength="120" placeholder="مثلاً: ایستگاه شارژ پارک ملت">'+
+      '<label>شهر</label><input id="raCity" type="text" maxlength="60" placeholder="مثلاً: تهران">'+
+      '<label>آدرس دقیق *</label><textarea id="raAddr" maxlength="300" placeholder="خیابان، محله، نشانی قابل پیدا کردن…"></textarea>'+
+      '<label>توان شارژ (کیلووات)</label><input id="raPower" type="number" min="0" max="1000" step="1" placeholder="مثلاً: 60">'+
+      '<label>کانکتورها</label><div class="ra-conns">'+conns+'</div>'+
+      '<label>توضیحات (اختیاری)</label><textarea id="raNotes" maxlength="400" placeholder="ساعت کاری، طبقه پارکینگ، هزینه و…"></textarea>'+
+      '<label>شماره موبایلت * <span style="color:#7e93a6;font-weight:600">(برای امتیاز و پیگیری)</span></label><input id="raPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="09123456789" value="'+myPhone()+'">'+
+      '<div class="ra-btns"><button type="button" class="ra-submit" id="raSubmit">ثبت جایگاه</button><button type="button" class="ra-cancel" id="raCancel">انصراف</button></div>'+
+      '<div class="ra-status" id="raStatus" role="status" aria-live="polite"></div>';
+    modal.hidden=false;
+    var dup=nearestDup(),dupOk=!dup;
+    if(dup){
+      var dd=$('raDup');
+      dd.innerHTML='<div class="ra-dup">⚠️ <b>یه جایگاه این نزدیکی از قبل ثبت شده:</b><br>«'+dup.s.name+'» — حدود '+Math.round(dup.d)+' متر اون‌طرف‌تر.<br>اگه همونه، دوباره ثبتش نکن؛ وضعیتش رو از پنل خودش گزارش بده.'+
+      '<div class="ra-dup-btns"><button type="button" class="see" id="raDupSee">دیدن جایگاه موجود</button><button type="button" class="new" id="raDupNew">نه، این یه جایگاه جداست</button></div></div>';
+      $('raDupSee').addEventListener('click',function(){
+        closeForm();
+        var m=getMap();if(m)m.setView([Number(dup.s.latitude),Number(dup.s.longitude)],17);
+      });
+      $('raDupNew').addEventListener('click',function(){dupOk=true;dd.innerHTML=''});
+    }
+    var sel={};
+    var chips=card.querySelectorAll('.ra-conn');
+    for(var i=0;i<chips.length;i++){
+      chips[i].addEventListener('click',function(){
+        var c=this.getAttribute('data-c');
+        if(sel[c]){delete sel[c];this.classList.remove('sel')}
+        else{sel[c]=1;this.classList.add('sel')}
+      });
+    }
+    $('raCancel').addEventListener('click',closeForm);
+    $('raSubmit').addEventListener('click',function(){submit(sel,function(){return dupOk})});
+  }
+  function closeForm(){
+    modal.hidden=true;
+    if(pickMarker&&map){map.removeLayer(pickMarker);pickMarker=null}
+  }
+  function submit(sel,dupOkFn){
+    var st=$('raStatus');
+    if(dupOkFn&&!dupOkFn()){st.textContent='⚠️ اول مشخص کن این همون جایگاه قبلی نیست (دکمه «یه جایگاه جداست» رو بزن)';return}
+    var body={
+      name:$('raName').value.trim(),
+      city:$('raCity').value.trim(),
+      address:$('raAddr').value.trim(),
+      lat:picked.lat,lng:picked.lng,
+      power_kw:$('raPower').value===''?null:Number($('raPower').value),
+      connectors:Object.keys(sel),
+      notes:$('raNotes').value.trim(),
+      phone:$('raPhone').value.trim()
+    };
+    if(body.name.length<3){st.textContent='نام جایگاه رو کامل بنویس';return}
+    if(body.address.length<8){st.textContent='آدرس دقیق‌تر بنویس (حداقل چند کلمه)';return}
+    if(!/^09\d{9}$/.test(body.phone)){st.textContent='شماره موبایل رو درست وارد کن (09123456789)';return}
+    setPhone(body.phone);
+    var sb=$('raSubmit');sb.disabled=true;st.textContent='در حال ثبت…';
+    fetch(API+'/submit-station',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d&&d.ok){try{var ms=JSON.parse(localStorage.getItem('rev_ls_mysubs')||'[]');ms.push(d.id);localStorage.setItem('rev_ls_mysubs',JSON.stringify(ms))}catch(e){} showDone(body.phone)}
+      else{st.textContent='ثبت نشد — دوباره تلاش کن';sb.disabled=false}
+    }).catch(function(){st.textContent='ثبت نشد — اتصال اینترنت رو چک کن';sb.disabled=false});
+  }
+  function showDone(phone){
+    var card=$('revAddCard');
+    card.innerHTML='<div class="ra-done"><div class="big">✅</div>'+
+      '<p><b>جایگاهت ثبت شد!</b><br>بعد از بررسی روی نقشه میاد.<br>با تأییدش <b>۵۰ امتیاز</b> می‌گیری.</p>'+
+      '<div class="ra-pts" id="raPts">⭐ امتیازت: …</div>'+
+      '<div class="ra-btns"><button type="button" class="ra-submit" id="raClose">بستن</button></div></div>';
+    if(pickMarker&&map){map.removeLayer(pickMarker);pickMarker=null}
+    $('raClose').addEventListener('click',function(){modal.hidden=true});
+    fetch(API+'/points?phone='+encodeURIComponent(phone),{cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(d){var el=$('raPts');if(el&&d&&d.ok)el.textContent='⭐ امتیازت: '+Number(d.total).toLocaleString('fa-IR')})
+    .catch(function(){});
+  }
+  modal.addEventListener('click',function(e){if(e.target===modal)closeForm()});
+})();
+</script>
+
+<style>
+.rev-pin-pending{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50% 50% 50% 4px;background:linear-gradient(135deg,#f59e0b,#d97706);border:2px solid #fff;box-shadow:0 4px 14px rgba(217,119,6,.45);font-size:15px;transform:rotate(-45deg)}
+.rev-pin-pending i{transform:rotate(45deg);font-style:normal}
+#revVoteModal{position:fixed;inset:0;z-index:6000;background:rgba(10,20,28,.55);display:flex;align-items:center;justify-content:center;padding:14px}
+#revVoteModal[hidden]{display:none}
+.rev-vote-card{background:#fff;border-radius:20px;max-width:420px;width:100%;padding:22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow:auto}
+.rev-vote-card h3{margin:0 0 2px;font-size:16.5px;font-weight:900;color:#14293b}
+.rev-vote-card .rv-sub{font-size:12px;color:#7e93a6;margin:0 0 10px}
+.rev-vote-card .rv-meta{font-size:13px;color:#14293b;line-height:1.9}
+.rev-vote-card .rv-counts{display:flex;gap:8px;margin:12px 0}
+.rev-vote-card .rv-count{flex:1;text-align:center;border:1.5px solid #e4edf3;border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:800;color:#14293b}
+.rev-vote-card .rv-count b{display:block;font-size:17px}
+.rev-vote-card .rv-count.ok b{color:#11703c}
+.rev-vote-card .rv-count.no b{color:#a32727}
+.rv-verified{display:inline-block;background:#dcf5e3;color:#11703c;font-weight:800;font-size:12px;border-radius:999px;padding:3px 12px;margin-top:4px}
+.rv-vote-btns{display:flex;gap:8px}
+.rv-vote-btns button{flex:1;border-radius:10px;padding:11px 6px;font-family:inherit;font-size:13.5px;font-weight:900;cursor:pointer}
+.rv-yes{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:0}
+.rv-no{background:#fff;border:1.5px solid #f0c9c9;color:#a32727}
+.rv-vote-btns button[disabled]{opacity:.45;cursor:default}
+.rv-note{font-size:12px;color:#0b5563;margin-top:10px;min-height:15px}
+.rv-close{width:100%;margin-top:8px;background:#fff;border:1.5px solid #e4edf3;border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;color:#61707a}
+.rv-own{font-size:12.5px;color:#8a6414;background:#fdf0d7;border-radius:9px;padding:7px 10px;margin-top:8px}
+</style>
+<script>
+/* REV — پین ثبت‌های در انتظار + صحت‌سنجی جمعی کاربران */
+(function(){
+  var API='https://rev-status-api.mojtaba-alimi64.workers.dev';
+  function myPhone(){try{return localStorage.getItem('rev_ls_phone')||''}catch(e){return''}}
+  function mySubs(){try{return JSON.parse(localStorage.getItem('rev_ls_mysubs')||'[]')}catch(e){return[]}}
+  function myVotes(){try{return JSON.parse(localStorage.getItem('rev_ls_voted')||'{}')}catch(e){return{}}}
+  function setVoted(id,v){try{var t=myVotes();t[id]=v;localStorage.setItem('rev_ls_voted',JSON.stringify(t))}catch(e){}}
+
+  var modal=document.createElement('div');
+  modal.id='revVoteModal';modal.hidden=true;
+  modal.innerHTML='<div class="rev-vote-card" id="revVoteCard"></div>';
+  document.body.appendChild(modal);
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.hidden=true});
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+  function openVote(s){
+    var card=document.getElementById('revVoteCard');
+    var own=mySubs().indexOf(s.id)>=0;
+    var voted=myVotes()[s.id];
+    var conns=(s.connectors&&s.connectors.length)?s.connectors.join('، '):'—';
+    card.innerHTML='<h3>⏳ '+esc(s.name)+'</h3>'+
+      '<p class="rv-sub">این جایگاه رو یه کاربر ثبت کرده و منتظر تأییده. اگه خودت دیدیش، صحتش رو تأیید کن.</p>'+
+      '<div class="rv-meta">'+(s.city?'شهر: '+esc(s.city)+'<br>':'')+'آدرس: '+esc(s.address)+'<br>'+
+      (s.power_kw!=null?'توان: '+s.power_kw+' کیلووات<br>':'')+'کانکتور: '+esc(conns)+
+      (s.notes?'<br>توضیح: '+esc(s.notes):'')+'</div>'+
+      (s.verified?'<span class="rv-verified">✅ تأیید جامعه (۳+ رأی)</span>':'')+
+      '<div class="rv-counts"><div class="rv-count ok"><b id="rvConf">'+s.confirms+'</b>تأیید کردن</div>'+
+      '<div class="rv-count no"><b id="rvRej">'+s.rejects+'</b>رد کردن</div></div>'+
+      (own?'<div class="rv-own">این ثبتِ خودته — به خودت نمی‌تونی رأی بدی</div>':'')+
+      '<div class="rv-vote-btns">'+
+      '<button type="button" class="rv-yes" id="rvYes" '+((own||voted)?'disabled':'')+'>✅ هست، دیدمش</button>'+
+      '<button type="button" class="rv-no" id="rvNo" '+((own||voted)?'disabled':'')+'>❌ نیست / اشتباهه</button></div>'+
+      '<div class="rv-note" id="rvNote">'+(voted?'رأی تو ثبت شده ✅ هر رأی ۱ امتیاز داره.':'برای رأی دادن، شماره موبایلت لازمه (همونی که باهاش وارد آپ شدی).')+'</div>'+
+      '<button type="button" class="rv-close" id="rvClose">بستن</button>';
+    modal.hidden=false;
+    document.getElementById('rvClose').addEventListener('click',function(){modal.hidden=true});
+    if(!own&&!voted){
+      document.getElementById('rvYes').addEventListener('click',function(){vote(s,'confirm')});
+      document.getElementById('rvNo').addEventListener('click',function(){vote(s,'reject')});
+    }
+  }
+  function vote(s,v){
+    var phone=myPhone();
+    var note=document.getElementById('rvNote');
+    if(!/^09\d{9}$/.test(phone)){
+      note.innerHTML='اول شماره موبایلت رو یه بار تو فرم «ثبت جایگاه» یا همین‌جا وارد کن: <input id="rvPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="09123456789" style="width:130px;border:1.5px solid #e4edf3;border-radius:8px;padding:5px 8px;font-family:inherit"> <button type="button" id="rvPhoneOk" style="border:0;background:#0887a7;color:#fff;border-radius:8px;padding:6px 12px;font-family:inherit;font-weight:800;cursor:pointer">ثبت و رأی بده</button>';
+      document.getElementById('rvPhoneOk').addEventListener('click',function(){
+        var p=document.getElementById('rvPhone').value.trim();
+        if(!/^09\d{9}$/.test(p)){note.firstChild.textContent='شماره درست نیست — دوباره: ';return}
+        try{localStorage.setItem('rev_ls_phone',p)}catch(e){}
+        vote(s,v);
+      });
+      return;
+    }
+    note.textContent='در حال ثبت رأی…';
+    fetch(API+'/vote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:s.id,vote:v,phone:phone})})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d&&d.ok){
+        setVoted(s.id,v);
+        document.getElementById('rvConf').textContent=d.confirms;
+        document.getElementById('rvRej').textContent=d.rejects;
+        document.getElementById('rvYes').disabled=true;
+        document.getElementById('rvNo').disabled=true;
+        note.textContent='رأیت ثبت شد ✅'+(d.points!=null?' (⭐ امتیازت: '+Number(d.points).toLocaleString('fa-IR')+')':'')+(d.verified?' — این جایگاه حالا نشان تأیید جامعه رو داره':'');
+      }else if(d&&d.error==='own_submission'){
+        note.textContent='این ثبتِ خودته';
+      }else{
+        note.textContent='ثبت نشد — دوباره تلاش کن';
+      }
+    }).catch(function(){note.textContent='ثبت نشد — اتصال اینترنت رو چک کن'});
+  }
+
+  function addPins(){
+    var map=window.revMap;
+    if(!map||!window.L)return false;
+    fetch(API+'/pending-map',{cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var list=(d&&d.stations)||[];
+      list.forEach(function(s){
+        var icon=window.L.divIcon({className:'',html:'<span class="rev-pin-pending"><i>⏳</i></span>',iconSize:[30,30],iconAnchor:[15,28]});
+        var m=window.L.marker([s.lat,s.lng],{icon:icon,keyboard:false}).addTo(map);
+        m.on('click',function(){openVote(s)});
+      });
+    }).catch(function(){});
+    return true;
+  }
+  var tries=0;
+  var iv=setInterval(function(){
+    tries++;
+    if(addPins()||tries>40)clearInterval(iv);
+  },500);
+})();
+</script>
 
 </body></html>
