@@ -432,7 +432,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 <script>
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(error => console.warn("REV PWA registration failed:", error)));
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(error => console.warn("REV PWA registration failed:", error)));
 }
 </script>
 <script>
