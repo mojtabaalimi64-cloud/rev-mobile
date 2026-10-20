@@ -329,7 +329,7 @@ function saveRecent(o,d){
    if(b.dataset.cal==='today'){chosen=today;setDate(parseISO(today));return;}
    if(b.dataset.cal==='close'){box.hidden=true;input.setAttribute('aria-expanded','false');}
  });
- document.addEventListener('click',e=>{if(!box.hidden&&!box.contains(e.target)&&e.target!==input){box.hidden=true;input.setAttribute('aria-expanded','false');}});
+ document.addEventListener('click',e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];const inside=path.length?path.includes(box):box.contains(e.target);if(!box.hidden&&!inside&&e.target!==input){box.hidden=true;input.setAttribute('aria-expanded','false');}});
  setDate(parseISO(today));
 })();
 $('planGo').addEventListener('click',function(){
