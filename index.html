@@ -23,30 +23,30 @@
 .splash-label{animation:splashFade .5s ease-out backwards}
 .splash-brand{display:flex;flex-direction:column;align-items:center;gap:9px;animation:splashUp .7s ease-out .1s backwards}
 @keyframes splashUp{from{transform:translateY(16px);opacity:0}}
-.splash-logo{transition:all .5s ease;width:66px;height:66px;border-radius:21px;background:linear-gradient(140deg,#1744A0,#246BFD 60%,#3B82F6);display:grid;place-items:center;box-shadow:0 10px 26px rgba(8,135,167,.30)}
+.splash-logo{transition:all .5s ease;width:66px;height:66px;border-radius:21px;background:linear-gradient(140deg,#1744A0,#246BFD 60%,#3B82F6);display:grid;place-items:center;box-shadow:0 10px 26px rgba(36,107,253,.30)}
 .splash-logo svg{width:34px;height:34px}
 .splash-brand b{font-size:27px;font-weight:900;letter-spacing:7px;color:#14293b;margin-right:-7px}
 .splash-brand small{font-size:12px;color:#7e93a6}
 @media(prefers-reduced-motion:reduce){#splashRoute,.splash-pop,.splash-label,.splash-brand,.splash-map{animation-duration:.01s !important;animation-delay:0s !important}}
 </style>
 <style>
-#onboard{position:fixed;inset:0;z-index:1500;background:linear-gradient(160deg,#e3f2f8 0%,#FFFFFF 55%,#eaf5fa 100%);display:none;align-items:center;justify-content:center;padding:24px}
+#onboard{position:fixed;inset:0;z-index:1500;background:linear-gradient(160deg,#FFFFFF 0%,#FFFFFF 55%,#F4F7FF 100%);display:none;align-items:center;justify-content:center;padding:24px}
 #onboard.show{display:flex}
 .ob-pages{width:min(400px,100%)}
 .ob-page{display:none}
 .ob-page.ob-active{display:block;animation:obPageIn .38s cubic-bezier(.2,.9,.3,1)}
 @keyframes obPageIn{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
-.ob-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:34px 24px 28px;box-shadow:0 24px 60px rgba(8,135,167,.14);text-align:center;position:relative}
-.ob-logo{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#0db1d6,#1557D4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(8,135,167,.35);margin-bottom:4px}
+.ob-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:34px 24px 28px;box-shadow:0 24px 60px rgba(36,107,253,.14);text-align:center;position:relative}
+.ob-logo{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#3B82F6,#1557D4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(36,107,253,.35);margin-bottom:4px}
 .ob-logo svg{width:38px;height:38px}
 .ob-card h1{font-size:22px;margin:12px 0 8px;font-weight:900;color:#0b2b3a}
 .ob-sub{font-size:13px;color:var(--muted);margin:0 0 24px;line-height:2}
 .ob-card .field{text-align:right;margin-bottom:16px}
 .ob-card .field label{display:block;font-size:13px;font-weight:800;color:#33475c;margin-bottom:8px}
-.ob-phone{width:100%;font-size:26px !important;padding:18px 14px !important;text-align:center !important;letter-spacing:5px !important;font-weight:800 !important;border:2px solid #dcebf2 !important;border-radius:18px !important;background:#f8fbfd !important;color:#0b2b3a !important;box-sizing:border-box;direction:ltr}
-.ob-phone:focus{outline:none;border-color:var(--teal) !important;box-shadow:0 0 0 4px rgba(8,135,167,.12);background:#fff !important}
-.ob-code{width:100%;font-size:30px !important;padding:18px 14px !important;text-align:center !important;letter-spacing:10px !important;font-weight:800 !important;border:2px solid #dcebf2 !important;border-radius:18px !important;background:#f8fbfd !important;color:#0b2b3a !important;box-sizing:border-box;direction:ltr}
-.ob-code:focus{outline:none;border-color:var(--teal) !important;box-shadow:0 0 0 4px rgba(8,135,167,.12);background:#fff !important}
+.ob-phone{width:100%;font-size:26px !important;padding:18px 14px !important;text-align:center !important;letter-spacing:5px !important;font-weight:800 !important;border:2px solid #DDE7F5 !important;border-radius:18px !important;background:#FFFFFF !important;color:#0b2b3a !important;box-sizing:border-box;direction:ltr}
+.ob-phone:focus{outline:none;border-color:var(--teal) !important;box-shadow:0 0 0 4px rgba(36,107,253,.12);background:#fff !important}
+.ob-code{width:100%;font-size:30px !important;padding:18px 14px !important;text-align:center !important;letter-spacing:10px !important;font-weight:800 !important;border:2px solid #DDE7F5 !important;border-radius:18px !important;background:#FFFFFF !important;color:#0b2b3a !important;box-sizing:border-box;direction:ltr}
+.ob-code:focus{outline:none;border-color:var(--teal) !important;box-shadow:0 0 0 4px rgba(36,107,253,.12);background:#fff !important}
 .ob-big-btn{width:100%;padding:16px;font-size:16px;font-weight:900;margin-top:4px}
 .ob-back{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#FFFFFF;color:#33475c;font-size:18px;font-weight:900;cursor:pointer;line-height:1}
 .ob-foot{display:flex;justify-content:center;margin-top:16px}
@@ -121,13 +121,13 @@
     
     <text class="splash-label" style="animation-delay:3.2s" x="340" y="95" text-anchor="middle" font-size="12.5" font-weight="800" fill="#b3372f">مقصد</text>
     <g id="splashCharge" opacity="0">
-      <circle r="22" fill="#0d9488" opacity=".15"/>
+      <circle r="22" fill="#246BFD" opacity=".15"/>
       <text x="0" y="10" text-anchor="middle" font-size="28">🔌</text>
     </g>
     <g id="splashCar" opacity="0">
       <circle r="18" fill="#246BFD" opacity=".14"/>
       <g>
-        <rect id="splashCarBody" x="-20" y="-8" width="40" height="13" rx="6.5" fill="#22c55e" stroke="#ffffff" stroke-width="2.5"/>
+        <rect id="splashCarBody" x="-20" y="-8" width="40" height="13" rx="6.5" fill="#246BFD" stroke="#ffffff" stroke-width="2.5"/>
         <path id="splashCarRoof" d="M-10,-8 L-6,-15 Q-5.5,-16.5 -4,-16.5 L6,-16.5 Q7.5,-16.5 8.5,-15 L12,-8 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/>
         <rect x="-12" y="-27" width="24" height="11" rx="3" fill="#f0a02c" stroke="#ffffff" stroke-width="2"/>
         <line x1="-12" y1="-21.5" x2="12" y2="-21.5" stroke="#d98a1f" stroke-width="1.4"/>
@@ -362,7 +362,7 @@ function render(t){
     } else charge.setAttribute('opacity','0');
   }
   if(logo){
-    if(t>=0.92){logo.style.filter='drop-shadow(0 0 18px #22c55e)';logo.style.transform='scale(1.15)';}
+    if(t>=0.92){logo.style.filter='drop-shadow(0 0 18px #246BFD)';logo.style.transform='scale(1.15)';}
     else{logo.style.filter='';logo.style.transform='';}
   }
 }
