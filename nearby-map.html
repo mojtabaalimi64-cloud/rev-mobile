@@ -991,4 +991,63 @@ body.rev-modal-open{overflow:hidden!important}
   else renderPlannedChargingStops();
 })();
 </script>
+
+<style id="rev-mobile-navigation-layout-fix">
+/* Mobile navigation layout: prevent the guidance UI from stacking over controls. */
+@media (max-width: 700px) {
+  body.rev-navigating .bottom-nav,
+  body.rev-navigating .map-search-bar,
+  body.rev-navigating #navStartFloat,
+  body.rev-navigating #revAddStationBtn,
+  body.rev-navigating #routePanel,
+  body.rev-navigating #detailsPanel {
+    display: none !important;
+  }
+  body.rev-navigating #navBanner {
+    top: calc(8px + env(safe-area-inset-top)) !important;
+    left: 10px !important; right: 10px !important;
+    width: auto !important; max-width: none !important;
+    z-index: 2201 !important;
+    max-height: 22dvh; overflow: auto;
+  }
+  body.rev-navigating #navDash {
+    left: 10px !important; right: 10px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+    width: auto !important; max-width: none !important;
+    max-height: 30dvh; overflow: auto;
+    z-index: 2202 !important;
+  }
+  body.rev-navigating #tripLivePanel {
+    display: none !important;
+  }
+  body.rev-navigating #revMusicDock {
+    right: 10px !important;
+    bottom: calc(16px + env(safe-area-inset-bottom) + 31dvh) !important;
+    z-index: 2203 !important;
+    max-width: calc(100vw - 20px);
+  }
+  body.rev-navigating #revMusicPanel {
+    right: 10px !important; left: 10px !important;
+    bottom: calc(20px + env(safe-area-inset-bottom) + 31dvh) !important;
+    width: auto !important; max-height: 34dvh !important;
+    z-index: 2204 !important;
+  }
+  body.rev-navigating #routeSettingsToggle {
+    top: calc(10px + env(safe-area-inset-top) + 23dvh) !important;
+    left: 10px !important; z-index: 2205 !important;
+  }
+  body.rev-navigating #routeSettingsPanel {
+    top: calc(10px + env(safe-area-inset-top) + 30dvh) !important;
+    left: 10px !important; right: 10px !important;
+    width: auto !important; max-height: 35dvh !important;
+    z-index: 2206 !important;
+  }
+  body.rev-navigating #navRecenterFloat {
+    right: 10px !important;
+    top: 48% !important;
+    z-index: 1800 !important;
+  }
+}
+</style>
+
 </body></html>
