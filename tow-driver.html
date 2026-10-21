@@ -26,20 +26,30 @@
   .btn-ghost{background:#fff;color:#066d88;border:1.5px solid #cbe6f0}
   .btn-red{background:#fdf1f1;color:#a52820;border:1.5px solid #f0c9c6}
   .btn-green{background:#11703c;color:#fff}
+  .btn-small{padding:8px 12px;font-size:12.5px;width:auto;margin-top:0}
   .note{font-size:12px;color:#687b8d;line-height:1.9;margin-top:8px}
   .err{font-size:12px;color:#a52820;min-height:16px;margin-top:6px}
   .ok{font-size:12.5px;color:#11703c}
   .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800}
   .pill.green{background:#dcf5e3;color:#11703c}
   .pill.grey{background:#eef1f3;color:#61707a}
+  .pill.amber{background:#fdf0d7;color:#8a5a00}
+  .pill.teal{background:#e5f3f8;color:#066d88}
   .offer{border:2px solid #b7791f;background:#fffdf4}
   .offer .timer{font-size:26px;font-weight:900;color:#b7791f;text-align:center;margin:6px 0}
-  .offer .row{font-size:13px;line-height:2}
-  .offer .row b{color:#14293b}
+  .offer .row,.row{font-size:13px;line-height:2}
   .btns{display:flex;gap:8px}
   .btns .btn{flex:1}
   .hidden{display:none!important}
   .gpsok{font-size:12px;color:#11703c;margin-top:6px;display:none}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}
+  .stat{background:#f7fafc;border:1px solid #e4edf3;border-radius:12px;padding:9px 4px;text-align:center}
+  .stat b{display:block;font-size:17px;color:#066d88}
+  .stat span{font-size:10.5px;color:#687b8d}
+  .mission{border:1px solid #e4edf3;border-radius:12px;padding:10px 12px;margin-top:8px;background:#fff}
+  .mission .mtop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .mission .mmeta{font-size:12px;color:#687b8d;line-height:1.9;margin-top:3px}
+  .codebox{background:#eaf7fb;border:1px solid #cbe6f0;border-radius:10px;padding:10px;margin-top:8px;text-align:center;line-height:1.9}
 </style>
 </head>
 <body>
@@ -52,6 +62,8 @@
     <h3>ثبت‌نام راننده همکار</h3>
     <div class="field"><label for="dName">نام و نام خانوادگی</label><input id="dName" placeholder="مثلاً محمد کریمی"></div>
     <div class="field"><label for="dPhone">شماره موبایل</label><input id="dPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789"></div>
+    <div class="field"><label for="dVehicle">خودروبر و پلاک</label><input id="dVehicle" placeholder="مثلاً کفی نیسان — ۲۲ ب ۳۴۵ ایران ۶۶"></div>
+    <div class="field"><label for="dCity">شهر محل خدمت</label><input id="dCity" placeholder="مثلاً تهران"></div>
     <div class="field"><label for="dRadius">شعاع پوشش (کیلومتر)</label>
       <select id="dRadius"><option value="50">۵۰ کیلومتر</option><option value="80" selected>۸۰ کیلومتر</option><option value="100">۱۰۰ کیلومتر</option></select>
     </div>
@@ -60,8 +72,20 @@
       <div class="gpsok" id="dGpsOk">✓ موقعیت ثبت شد.</div>
     </div>
     <div class="err" id="regErr"></div>
-    <button class="btn btn-teal" id="dRegister">ثبت‌نام و فعال‌سازی پنل</button>
-    <p class="note">با ثبت‌نام، درخواست‌های امداد در شعاع پوششت اول برای تو ارسال می‌شود. این صفحه را هنگام آماده‌باش باز نگه دار.</p>
+    <button class="btn btn-teal" id="dRegister">ثبت‌نام راننده</button>
+    <p class="note">بعد از ثبت‌نام، مدیر REV مشخصاتت را بررسی و تأیید می‌کند؛ از لحظه تأیید، درخواست‌های امداد در شعاع پوششت برایت می‌آید.</p>
+    <hr style="border:0;border-top:1px solid #eef1f3;margin:16px 0 4px">
+    <div class="field"><label for="dTokenRestore">قبلاً ثبت‌نام کردی و توکن بازیابی داری؟</label>
+      <div style="display:flex;gap:8px"><input id="dTokenRestore" dir="ltr" style="text-align:left;flex:1" placeholder="توکن دریافتی از مدیر"><button class="btn btn-ghost btn-small" id="dRestore" type="button">بازیابی</button></div>
+      <div class="err" id="restoreErr"></div>
+    </div>
+  </section>
+
+  <!-- در انتظار تأیید -->
+  <section class="card hidden" id="pendingCard" style="border-color:#f0d48a;background:#fffdf4">
+    <h3>⏳ در انتظار تأیید مدیر</h3>
+    <p class="note" id="pendingText" style="color:#8a5a00">ثبت‌نامت رسیده و در صف بررسی مدیر REV است. به محض تأیید، این پنل فعال می‌شود و درخواست‌های امداد را می‌گیری.</p>
+    <button class="btn btn-ghost" id="btnCheckApproval" type="button">🔄 بررسی وضعیت تأیید</button>
   </section>
 
   <!-- پنل فعال راننده -->
@@ -75,6 +99,18 @@
     </div>
     <p class="note">این صفحه هر چند ثانیه درخواست تازه را چک می‌کند و موقعیتت را به‌روز نگه می‌دارد. صفحه را نبند.</p>
     <button class="btn btn-ghost" id="dRefresh" type="button">🔄 بررسی فوری درخواست</button>
+  </section>
+
+  <!-- آمار و سوابق -->
+  <section class="card hidden" id="statsCard">
+    <h3>📊 آمار و سوابق من</h3>
+    <div class="stats">
+      <div class="stat"><b id="stScore">—</b><span>امتیاز</span></div>
+      <div class="stat"><b id="stDone">—</b><span>انجام‌شده</span></div>
+      <div class="stat"><b id="stAccepted">—</b><span>قبول‌شده</span></div>
+      <div class="stat"><b id="stMissed">—</b><span>رد / ازدست‌رفته</span></div>
+    </div>
+    <div id="missionList"><p class="note">هنوز مأموریتی نداری.</p></div>
   </section>
 
   <!-- پیشنهاد فعال -->
@@ -92,8 +128,9 @@
   <section class="card hidden" id="doneCard">
     <h3>✅ درخواست را پذیرفتی</h3>
     <div class="row" id="doneBody" style="font-size:13px;line-height:2"></div>
-    <p class="note">مشتری شماره تو را می‌بیند و منتظر تماس است. موفق باشی!</p>
-    <button class="btn btn-ghost" id="btnDoneClose" type="button">پایان مأموریت</button>
+    <p class="note">مشتری شماره تو را می‌بیند و منتظر تماس است. وقتی کار تمام شد «پایان مأموریت» را بزن تا در سوابقت ثبت شود.</p>
+    <button class="btn btn-teal" id="btnDoneClose" type="button">✔️ پایان مأموریت</button>
+    <div class="err" id="doneErr"></div>
   </section>
 </main>
 
@@ -101,12 +138,15 @@
 (function(){
   var API='https://rev-tow-dispatch.mojtaba-alimi64.workers.dev';
   var KEY='rev_tow_driver_v1';
-  var gpsPos=null, curOffer=null, timerInt=null, pollInt=null;
+  var gpsPos=null, curOffer=null, timerInt=null, pollInt=null, pendInt=null;
   function $(id){return document.getElementById(id)}
   function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
   function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function faN(n){try{return Number(n).toLocaleString('fa-IR')}catch(e){return String(n)}}
+  function faDate(ts){try{return new Date(ts).toLocaleDateString('fa-IR')+' '+new Date(ts).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
 
+  /* ---------- ثبت‌نام ---------- */
   $('dGps').addEventListener('click',function(){
     var b=this;b.disabled=true;b.textContent='در حال گرفتن موقعیت…';
     if(!navigator.geolocation){b.disabled=false;b.textContent='📍 ثبت موقعیت فعلی با GPS';$('regErr').textContent='این مرورگر مکان‌یابی ندارد.';return}
@@ -122,27 +162,101 @@
     if(!/^09\d{9}$/.test(phone)){$('regErr').textContent='شماره موبایل معتبر وارد کن.';return}
     if(!gpsPos){$('regErr').textContent='اول موقعیت پایگاه را با GPS ثبت کن.';return}
     var btn=this;btn.disabled=true;btn.textContent='در حال ثبت‌نام…';
-    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
+    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,vehicle:$('dVehicle').value.trim(),city:$('dCity').value.trim(),lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
     .then(function(r){return r.json()})
     .then(function(d){
-      btn.disabled=false;btn.textContent='ثبت‌نام و فعال‌سازی پنل';
+      btn.disabled=false;btn.textContent='ثبت‌نام راننده';
       if(!d||!d.ok){$('regErr').textContent=(d&&d.err)||'ثبت‌نام ناموفق بود.';return}
-      save({id:d.id,token:d.token,name:name,phone:phone,radius:d.radius});
-      showPanel();
+      save({id:d.id,token:d.token,name:name,phone:phone,radius:d.radius,approved:d.approved===true});
+      syncFromServer();
     })
-    .catch(function(){btn.disabled=false;btn.textContent='ثبت‌نام و فعال‌سازی پنل';$('regErr').textContent='اتصال به سرور برقرار نشد.';});
+    .catch(function(){btn.disabled=false;btn.textContent='ثبت‌نام راننده';$('regErr').textContent='اتصال به سرور برقرار نشد.';});
   });
 
-  function showPanel(){
-    var d=load();if(!d)return;
+  /* ---------- بازیابی با توکن ---------- */
+  $('dRestore').addEventListener('click',function(){
+    var t=$('dTokenRestore').value.trim();
+    if(t.length<16){$('restoreErr').textContent='توکن را کامل وارد کن.';return}
+    fetch(API+'/api/driver/history?token='+encodeURIComponent(t),{cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(!d||!d.ok||!d.driver){$('restoreErr').textContent='توکن معتبر نیست.';return}
+      save({id:d.driver.id,token:t,name:d.driver.name,phone:d.driver.phone,radius:d.driver.radius,approved:d.driver.approved===true});
+      syncFromServer();
+    })
+    .catch(function(){$('restoreErr').textContent='اتصال برقرار نشد.';});
+  });
+
+  /* ---------- وضعیت و نما ---------- */
+  function showApproved(){
     $('regCard').classList.add('hidden');
+    $('pendingCard').classList.add('hidden');
     $('panelCard').classList.remove('hidden');
-    $('drvTitle').textContent='🚛 '+d.name;
-    $('drvMeta').textContent='کد راننده: '+d.id+' · '+d.phone;
-    $('pRadius').value=String(d.radius||80);
-    startPolling();
+    $('statsCard').classList.remove('hidden');
+  }
+  function showPending(){
+    var d=load();
+    $('regCard').classList.add('hidden');
+    $('panelCard').classList.add('hidden');
+    $('statsCard').classList.add('hidden');
+    $('pendingCard').classList.remove('hidden');
+    if(d)$('pendingText').textContent='ثبت‌نام «'+d.name+'» رسیده و در صف بررسی مدیر REV است. به محض تأیید، این پنل فعال می‌شود و درخواست‌های امداد را می‌گیری.';
+  }
+  function showReg(){
+    $('regCard').classList.remove('hidden');
+    $('pendingCard').classList.add('hidden');
+    $('panelCard').classList.add('hidden');
+    $('statsCard').classList.add('hidden');
   }
 
+  function missionPill(s){
+    if(s==='انجام شد')return '<span class="pill green">انجام شد</span>';
+    if(s==='راننده در راه')return '<span class="pill teal">در مسیر</span>';
+    if(s==='لغو شد')return '<span class="pill grey">لغو شد</span>';
+    return '<span class="pill amber">'+esc(s)+'</span>';
+  }
+
+  function renderMissions(missions){
+    var el=$('missionList');
+    if(!missions||!missions.length){el.innerHTML='<p class="note">هنوز مأموریتی نداری.</p>';return}
+    el.innerHTML=missions.map(function(m){
+      return '<div class="mission"><div class="mtop"><b dir="ltr" style="font-size:12px">'+esc(m.id)+'</b>'+missionPill(m.status)+'</div>'
+        +'<div class="mmeta">'+esc(m.problem)+(m.car?' · '+esc(m.car):'')+'<br>'+esc(faDate(m.ts))+(m.loc?' · '+esc(m.loc):'')+(m.serviceCode?'<br>🔐 کد امداد: <b dir="ltr">'+esc(m.serviceCode)+'</b>':'')+'</div>'
+        +(m.status==='راننده در راه'?'<button class="btn btn-teal btn-small" data-complete="'+esc(m.id)+'" type="button" style="margin-top:8px">✔️ پایان این مأموریت</button>':'')
+        +'</div>';
+    }).join('');
+    el.querySelectorAll('[data-complete]').forEach(function(b){
+      b.addEventListener('click',function(){completeMission(b.getAttribute('data-complete'),b)});
+    });
+  }
+
+  function syncFromServer(){
+    var d=load();if(!d){showReg();return}
+    fetch(API+'/api/driver/history?token='+encodeURIComponent(d.token),{cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(res){
+      if(!res||!res.ok||!res.driver){showReg();return}
+      var drv=res.driver;
+      d.name=drv.name;d.phone=drv.phone;d.radius=drv.radius;d.approved=drv.approved===true;save(d);
+      if(!drv.approved){showPending();startPendingPoll();return}
+      clearInterval(pendInt);
+      $('drvTitle').textContent='🚛 '+drv.name;
+      $('drvMeta').textContent='کد راننده: '+drv.id+(drv.vehicle?' · '+drv.vehicle:'')+(drv.city?' · '+drv.city:'')+' · '+drv.phone;
+      $('pRadius').value=String(drv.radius||80);
+      $('stScore').textContent=faN(drv.score);
+      $('stDone').textContent=faN(drv.stats.completed);
+      $('stAccepted').textContent=faN(drv.stats.accepted);
+      $('stMissed').textContent=faN((drv.stats.rejected||0)+(drv.stats.missed||0));
+      renderMissions(res.missions);
+      showApproved();
+      startPolling();
+    })
+    .catch(function(){
+      if(d.approved){showApproved();startPolling()}else if(d.id){showPending()}else{showReg()}
+    });
+  }
+
+  /* ---------- آماده‌باش ---------- */
   function heartbeat(){
     var d=load();if(!d)return;
     var body={token:d.token,radius:d.radius};
@@ -153,11 +267,13 @@
       },function(){
         fetch(API+'/api/driver/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(function(){});
       },{timeout:8000,maximumAge:60000});
+    }else{
+      fetch(API+'/api/driver/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(function(){});
     }
   }
 
   function poll(){
-    var d=load();if(!d)return;
+    var d=load();if(!d||!d.approved)return;
     fetch(API+'/api/driver/offers?token='+encodeURIComponent(d.token),{cache:'no-store'})
     .then(function(r){return r.json()})
     .then(function(res){
@@ -171,11 +287,11 @@
     curOffer=offer;
     var r=offer.request;
     $('offerBody').innerHTML=
-      '<div class="row"><b>مشکل:</b> '+r.problem+'</div>'+
-      (r.car?'<div class="row"><b>خودرو:</b> '+r.car+'</div>':'')+
-      '<div class="row"><b>موقعیت:</b> '+ (r.loc||'ثبت نشده') +'</div>'+
-      (r.note?'<div class="row"><b>توضیح:</b> '+r.note+'</div>':'')+
-      '<div class="row"><b>مشتری:</b> <span dir="ltr">'+r.phone+'</span></div>'+
+      '<div class="row"><b>مشکل:</b> '+esc(r.problem)+'</div>'+
+      (r.car?'<div class="row"><b>خودرو:</b> '+esc(r.car)+'</div>':'')+
+      '<div class="row"><b>موقعیت:</b> '+esc(r.loc||'ثبت نشده')+'</div>'+
+      (r.note?'<div class="row"><b>توضیح:</b> '+esc(r.note)+'</div>':'')+
+      '<div class="row"><b>مشتری:</b> <span dir="ltr">'+esc(r.phone)+'</span></div>'+
       (r.gps?'<div class="row"><a href="https://www.google.com/maps?q='+r.gps.lat+','+r.gps.lng+'" target="_blank" rel="noopener">📍 دیدن موقعیت مشتری روی نقشه</a></div>':'');
     $('doneCard').classList.add('hidden');
     $('offerCard').classList.remove('hidden');
@@ -206,25 +322,42 @@
         try{localStorage.setItem(KEY+'_last',JSON.stringify(last))}catch(e){}
         showDone(last);
       }
-      poll();
+      syncFromServer();poll();
     })
     .catch(function(){bA.disabled=false;bR.disabled=false;$('offerErr').textContent='اتصال برقرار نشد.';});
   }
-  function showDone(last){
-    if(!last)return;
-    $('doneBody').innerHTML='<b>مشکل:</b> '+last.problem+'<br><b>مشتری:</b> <a href="tel:'+last.phone+'" dir="ltr">'+last.phone+'</a><br><b>موقعیت:</b> '+(last.loc||'—')
-      +(last.serviceCode?'<div style="background:#eaf7fb;border:1px solid #cbe6f0;border-radius:10px;padding:10px;margin-top:8px;text-align:center;line-height:1.9">🔐 <b>کد اختصاصی امداد REV</b><br><span dir="ltr" style="font-size:24px;font-weight:900;letter-spacing:4px;color:#066d88">'+last.serviceCode+'</span><br><span style="font-size:12px">وقتی رسیدی از مشتری بخواه این کد را بگوید؛ این کد ثابت می‌کند امداد از طرف REV است.</span></div>':'');
-    $('doneCard').classList.remove('hidden');
-  }
   $('btnAccept').addEventListener('click',function(){respond(true)});
   $('btnReject').addEventListener('click',function(){respond(false)});
-  $('dRefresh').addEventListener('click',function(){heartbeat();poll();});
 
-  function startPolling(){
-    heartbeat();poll();
-    clearInterval(pollInt);
-    pollInt=setInterval(function(){heartbeat();poll();},15000);
+  function showDone(last){
+    if(!last)return;
+    $('doneBody').innerHTML='<b>مشکل:</b> '+esc(last.problem)+'<br><b>مشتری:</b> <a href="tel:'+esc(last.phone)+'" dir="ltr">'+esc(last.phone)+'</a><br><b>موقعیت:</b> '+esc(last.loc||'—')
+      +(last.serviceCode?'<div class="codebox">🔐 <b>کد اختصاصی امداد REV</b><br><span dir="ltr" style="font-size:24px;font-weight:900;letter-spacing:4px;color:#066d88">'+esc(last.serviceCode)+'</span><br><span style="font-size:12px">وقتی رسیدی از مشتری بخواه این کد را بگوید؛ این کد ثابت می‌کند امداد از طرف REV است.</span></div>':'');
+    $('doneCard').classList.remove('hidden');
   }
+
+  function completeMission(reqId,btn){
+    var d=load();if(!d)return;
+    if(btn){btn.disabled=true;btn.textContent='در حال ثبت…'}
+    fetch(API+'/api/driver/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:d.token,reqId:reqId})})
+    .then(function(r){return r.json()})
+    .then(function(res){
+      if(res&&res.ok){
+        try{var last=JSON.parse(localStorage.getItem(KEY+'_last')||'null');if(last&&last.reqId===reqId)localStorage.removeItem(KEY+'_last')}catch(e){}
+        $('doneCard').classList.add('hidden');
+        syncFromServer();
+      }else{
+        if(btn){btn.disabled=false;btn.textContent='✔️ پایان مأموریت'}
+        $('doneErr').textContent=(res&&res.err)||'ثبت پایان مأموریت نشد.';
+      }
+    })
+    .catch(function(){if(btn){btn.disabled=false;btn.textContent='✔️ پایان مأموریت'}});
+  }
+  $('btnDoneClose').addEventListener('click',function(){
+    var last=null;try{last=JSON.parse(localStorage.getItem(KEY+'_last')||'null')}catch(e){}
+    if(last&&last.reqId){completeMission(last.reqId,this)}
+    else{$('doneCard').classList.add('hidden')}
+  });
 
   $('pRadius').addEventListener('change',function(){
     var d=load();if(!d)return;
@@ -232,16 +365,27 @@
     $('radiusOk').textContent='✓ شعاع پوشش شد '+faN(d.radius)+' کیلومتر';
     heartbeat();
   });
+  $('dRefresh').addEventListener('click',function(){heartbeat();poll();syncFromServer();});
+  $('btnCheckApproval').addEventListener('click',function(){syncFromServer();});
 
-  $('btnDoneClose').addEventListener('click',function(){
-    try{localStorage.removeItem(KEY+'_last')}catch(e){}
-    $('doneCard').classList.add('hidden');
-  });
-
-  if(load()){
-    showPanel();
-    try{var last=JSON.parse(localStorage.getItem(KEY+'_last')||'null');if(last)showDone(last)}catch(e){}
+  function startPolling(){
+    heartbeat();poll();
+    clearInterval(pollInt);
+    pollInt=setInterval(function(){heartbeat();poll();},15000);
+    clearInterval(pendInt);
+    pendInt=setInterval(function(){syncFromServer();},45000);
   }
+  function startPendingPoll(){
+    clearInterval(pendInt);
+    pendInt=setInterval(function(){syncFromServer();},20000);
+  }
+
+  /* ---------- شروع ---------- */
+  (function init(){
+    var d=load();
+    try{var last=JSON.parse(localStorage.getItem(KEY+'_last')||'null');if(last&&d)showDone(last)}catch(e){}
+    if(d&&d.token){syncFromServer()}else{showReg()}
+  })();
 })();
 </script>
 </body>
