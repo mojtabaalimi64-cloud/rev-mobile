@@ -240,7 +240,7 @@ function buildTypes(){
 function openModal(id,name,lat,lon){cur.id=id||'';cur.name=name||'';cur.lat=lat;cur.lon=lon;$('rmStationName').textContent=cur.name||'جایگاه انتخاب‌شده';$('rmDetails').value='';$('rmStatus').textContent='';$('rmStatus').className='rm-status';$('reportModal').hidden=false;requestAnimationFrame(function(){$('reportModal').classList.add('show')});}
 function closeModal(){$('reportModal').classList.remove('show');setTimeout(function(){$('reportModal').hidden=true},200);}
 function say(m,ok){var s=$('rmStatus');s.textContent=m;s.className='rm-status '+(ok?'ok':'err');}
-document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('.detail-report-button'):null;if(b){var la=parseFloat(b.getAttribute('data-lat')),lo=parseFloat(b.getAttribute('data-lon'));openModal(b.getAttribute('data-station-id'),b.getAttribute('data-station-name'),isFinite(la)?la:null,isFinite(lo)?lo:null);}});
+document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('.detail-report-button'):null;if(b){var la=parseFloat(b.getAttribute('data-lat')),lo=parseFloat(b.getAttribute('data-lon'));var sid=b.getAttribute('data-station-id');if(!sid&&isFinite(la)&&isFinite(lo))sid='g:'+la.toFixed(6)+','+lo.toFixed(6);openModal(sid,b.getAttribute('data-station-name'),isFinite(la)?la:null,isFinite(lo)?lo:null);}});
 $('rmCancel').addEventListener('click',closeModal);
 $('reportModal').addEventListener('click',function(e){if(e.target===$('reportModal'))closeModal()});
 $('rmSubmit').addEventListener('click',async function(){
