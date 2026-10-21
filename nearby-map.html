@@ -227,7 +227,18 @@ try{new MutationObserver(function(){
   if(!document.body.classList.contains('rev-navigating')&&!panel.hidden){panel.hidden=true;btn.setAttribute('aria-expanded','false')}
 }).observe(document.body,{attributes:true,attributeFilter:['class']})}catch(e){}
 })();
-</script><div id="reportModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle" hidden><div class="rm-card"><h3 id="rmTitle">⚠️ گزارش خطای جایگاه</h3><p class="rm-sub" id="rmStationName"></p><div class="rm-types" id="rmTypes"></div><textarea id="rmDetails" placeholder="توضیح تکمیلی (اختیاری)"></textarea><div class="rm-btns"><button class="rm-submit" id="rmSubmit">ثبت گزارش</button><button class="rm-cancel" id="rmCancel" type="button">انصراف</button></div><div class="rm-status" id="rmStatus" role="status" aria-live="polite"></div></div></div><script>
+</script>
+<style>
+/* REV: تثبیت رنگ‌بندی پنل مسیریابی — کارت‌ها سفید و خوانا، انتخاب‌شده سبزآبی روشن */
+#routePanel{color-scheme:light}
+#routePanel .route-tools button{background:#fff!important;color:#066d88!important;border:1.5px solid #cbe6f0!important}
+#routePanel .route-choice{background:#fff!important;color:#14293b!important;border:1.5px solid #dce6ee!important;box-shadow:none!important}
+#routePanel .route-choice.selected{background:#eaf7fb!important;border:2px solid #0887a7!important;box-shadow:0 3px 12px rgba(8,135,167,.13)!important}
+#routePanel .route-choice-top b{color:#14293b!important}
+#routePanel .route-choice-top strong{color:#066d88!important}
+#routePanel .route-choice-meta{color:#687b8d!important}
+</style>
+<div id="reportModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle" hidden><div class="rm-card"><h3 id="rmTitle">⚠️ گزارش خطای جایگاه</h3><p class="rm-sub" id="rmStationName"></p><div class="rm-types" id="rmTypes"></div><textarea id="rmDetails" placeholder="توضیح تکمیلی (اختیاری)"></textarea><div class="rm-btns"><button class="rm-submit" id="rmSubmit">ثبت گزارش</button><button class="rm-cancel" id="rmCancel" type="button">انصراف</button></div><div class="rm-status" id="rmStatus" role="status" aria-live="polite"></div></div></div><script>
 (function(){
 var REPORT_API='https://rev-ratings-api.mojtaba-alimi64.workers.dev/api/station-reports';
 var TYPES=[['not_found','جایگاه در محل وجود ندارد'],['not_working','خراب یا غیرفعال است'],['connector_wrong','کانکتور اشتباه ثبت شده'],['power_wrong','توان شارژ اشتباه ثبت شده'],['location_wrong','موقعیت یا نشانی اشتباه است'],['duplicate','جایگاه تکراری است'],['violation','تخلف یا اطلاعات جعلی'],['other','سایر موارد']];
