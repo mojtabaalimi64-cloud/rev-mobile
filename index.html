@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080B0D">
+<meta name="theme-color" content="#ffffff">
 <meta name="color-scheme" content="light">
 <meta name="description" content="REV؛ همراه کاربردی سفر با خودروی برقی">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
 <title>REV | همراه سفر برقی</title>
-<link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
+<link rel="stylesheet" href="./rev-visual-identity.css?v=20261021-4">
 <style>
-#revSplash{position:fixed;inset:0;z-index:2000;background:#f5f8fa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;transition:opacity .55s ease}
+#revSplash{position:fixed;inset:0;z-index:2000;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;transition:opacity .55s ease}
 #revSplash.hide{opacity:0;pointer-events:none}
 .splash-map{width:min(340px,86vw);height:auto;animation:splashFade .8s ease-out backwards}
 .splash-map text{font-family:'Vazirmatn',Vazir,Tahoma,sans-serif}
@@ -23,21 +23,21 @@
 .splash-label{animation:splashFade .5s ease-out backwards}
 .splash-brand{display:flex;flex-direction:column;align-items:center;gap:9px;animation:splashUp .7s ease-out .1s backwards}
 @keyframes splashUp{from{transform:translateY(16px);opacity:0}}
-.splash-logo{transition:all .5s ease;width:66px;height:66px;border-radius:21px;background:linear-gradient(140deg,#0a5f78,#0887a7 60%,#0b93b8);display:grid;place-items:center;box-shadow:0 10px 26px rgba(8,135,167,.30)}
+.splash-logo{transition:all .5s ease;width:66px;height:66px;border-radius:21px;background:linear-gradient(140deg,#1744A0,#246BFD 60%,#3B82F6);display:grid;place-items:center;box-shadow:0 10px 26px rgba(8,135,167,.30)}
 .splash-logo svg{width:34px;height:34px}
 .splash-brand b{font-size:27px;font-weight:900;letter-spacing:7px;color:#14293b;margin-right:-7px}
 .splash-brand small{font-size:12px;color:#7e93a6}
 @media(prefers-reduced-motion:reduce){#splashRoute,.splash-pop,.splash-label,.splash-brand,.splash-map{animation-duration:.01s !important;animation-delay:0s !important}}
 </style>
 <style>
-#onboard{position:fixed;inset:0;z-index:1500;background:linear-gradient(160deg,#e3f2f8 0%,#f5f8fa 55%,#eaf5fa 100%);display:none;align-items:center;justify-content:center;padding:24px}
+#onboard{position:fixed;inset:0;z-index:1500;background:linear-gradient(160deg,#e3f2f8 0%,#FFFFFF 55%,#eaf5fa 100%);display:none;align-items:center;justify-content:center;padding:24px}
 #onboard.show{display:flex}
 .ob-pages{width:min(400px,100%)}
 .ob-page{display:none}
 .ob-page.ob-active{display:block;animation:obPageIn .38s cubic-bezier(.2,.9,.3,1)}
 @keyframes obPageIn{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
 .ob-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:34px 24px 28px;box-shadow:0 24px 60px rgba(8,135,167,.14);text-align:center;position:relative}
-.ob-logo{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#0db1d6,#066d88);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(8,135,167,.35);margin-bottom:4px}
+.ob-logo{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#0db1d6,#1557D4);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(8,135,167,.35);margin-bottom:4px}
 .ob-logo svg{width:38px;height:38px}
 .ob-card h1{font-size:22px;margin:12px 0 8px;font-weight:900;color:#0b2b3a}
 .ob-sub{font-size:13px;color:var(--muted);margin:0 0 24px;line-height:2}
@@ -48,7 +48,7 @@
 .ob-code{width:100%;font-size:30px !important;padding:18px 14px !important;text-align:center !important;letter-spacing:10px !important;font-weight:800 !important;border:2px solid #dcebf2 !important;border-radius:18px !important;background:#f8fbfd !important;color:#0b2b3a !important;box-sizing:border-box;direction:ltr}
 .ob-code:focus{outline:none;border-color:var(--teal) !important;box-shadow:0 0 0 4px rgba(8,135,167,.12);background:#fff !important}
 .ob-big-btn{width:100%;padding:16px;font-size:16px;font-weight:900;margin-top:4px}
-.ob-back{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#f5f8fa;color:#33475c;font-size:18px;font-weight:900;cursor:pointer;line-height:1}
+.ob-back{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#FFFFFF;color:#33475c;font-size:18px;font-weight:900;cursor:pointer;line-height:1}
 .ob-foot{display:flex;justify-content:center;margin-top:16px}
 .ob-foot button{border:0;background:none;color:var(--teal);font-weight:800;font-size:13px;padding:8px;cursor:pointer}
 .ob-foot button:disabled{color:var(--muted);cursor:default}
@@ -93,7 +93,7 @@
 </div>
 <div id="revSplash" aria-hidden="true">
   <svg class="splash-map" viewBox="0 0 360 250" role="img" aria-label="نقشه مسیر">
-    <rect x="0" y="0" width="360" height="250" fill="#f5f8fa"/>
+    <rect x="0" y="0" width="360" height="250" fill="#FFFFFF"/>
     <g fill="#edf3f7">
       <rect x="16" y="16" width="72" height="46" rx="9"/>
       <rect x="240" y="28" width="88" height="54" rx="9"/>
@@ -108,12 +108,12 @@
       <path d="M0,205 H360"/>
     </g>
     <path d="M-10,235 C80,210 120,150 200,140 S310,80 370,55" fill="none" stroke="#d8e7ef" stroke-width="13" stroke-linecap="round"/>
-    <path id="splashRoute" d="M48,208 C110,190 130,150 200,140 S300,84 322,58" fill="none" stroke="#0887a7" stroke-width="4.5" stroke-linecap="round" opacity=".9"/>
+    <path id="splashRoute" d="M48,208 C110,190 130,150 200,140 S300,84 322,58" fill="none" stroke="#246BFD" stroke-width="4.5" stroke-linecap="round" opacity=".9"/>
     <g class="splash-pop">
-      <circle cx="48" cy="208" r="16" fill="#0887a7" opacity=".13"/>
-      <circle cx="48" cy="208" r="8.5" fill="#0887a7" stroke="#ffffff" stroke-width="3"/>
+      <circle cx="48" cy="208" r="16" fill="#246BFD" opacity=".13"/>
+      <circle cx="48" cy="208" r="8.5" fill="#246BFD" stroke="#ffffff" stroke-width="3"/>
     </g>
-    <text class="splash-label" style="animation-delay:.3s" x="48" y="234" text-anchor="middle" font-size="12.5" font-weight="800" fill="#066d88">مبدأ</text>
+    <text class="splash-label" style="animation-delay:.3s" x="48" y="234" text-anchor="middle" font-size="12.5" font-weight="800" fill="#1557D4">مبدأ</text>
     <g class="splash-pop" style="animation-delay:2.8s">
       <path d="M340,2 c-9,0 -15,6 -15,14 0,10 15,24 15,24 s15,-14 15,-24 c0,-8 -6,-14 -15,-14z" fill="#df5454"/>
       <circle cx="340" cy="16" r="5.5" fill="#ffffff"/>
@@ -125,7 +125,7 @@
       <text x="0" y="10" text-anchor="middle" font-size="28">🔌</text>
     </g>
     <g id="splashCar" opacity="0">
-      <circle r="18" fill="#0887a7" opacity=".14"/>
+      <circle r="18" fill="#246BFD" opacity=".14"/>
       <g>
         <rect id="splashCarBody" x="-20" y="-8" width="40" height="13" rx="6.5" fill="#22c55e" stroke="#ffffff" stroke-width="2.5"/>
         <path id="splashCarRoof" d="M-10,-8 L-6,-15 Q-5.5,-16.5 -4,-16.5 L6,-16.5 Q7.5,-16.5 8.5,-15 L12,-8 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/>
@@ -187,14 +187,14 @@
   </section>
   <section class="section" id="inviteSection" style="margin-top:14px">
     <div class="card" style="padding:0;overflow:hidden">
-      <div style="background:linear-gradient(140deg,#0a5f78,#0887a7 60%,#0b93b8);padding:16px 18px;color:#fff;display:flex;align-items:center;gap:12px">
+      <div style="background:linear-gradient(140deg,#1744A0,#246BFD 60%,#3B82F6);padding:16px 18px;color:#fff;display:flex;align-items:center;gap:12px">
         <span style="font-size:30px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))" aria-hidden="true">🎁</span>
         <div><b style="font-size:15.5px">دوستانت رو به REV دعوت کن</b><div style="font-size:12px;color:#d3ecf4;margin-top:3px">هرکی برقی داره یا می‌خواد بخره، این آپ به دردش می‌خوره</div></div>
       </div>
-      <div style="padding:16px;background:linear-gradient(180deg,#f5f8fa,#ffffff)">
+      <div style="padding:16px;background:linear-gradient(180deg,#FFFFFF,#ffffff)">
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
         <button class="btn-primary" id="inviteShare" style="flex:1;min-width:150px">📤 اشتراک‌گذاری</button>
-        <button class="btn-primary" id="inviteCopy" style="background:#fff;color:#0887a7;border:1.5px solid #0887a7;box-shadow:none">📋 کپی متن</button>
+        <button class="btn-primary" id="inviteCopy" style="background:#fff;color:#246BFD;border:1.5px solid #246BFD;box-shadow:none">📋 کپی متن</button>
       </div>
       <div id="inviteStatus" role="status" aria-live="polite" style="min-height:20px;font-size:12px;margin-top:6px;color:#1ea56c"></div>
       </div>
@@ -205,11 +205,11 @@
     <div class="section-head"><h2 id="travelToolsTitle">ابزارهای سفر</h2></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <a class="card" href="./news.html" style="padding:14px 12px;display:flex;align-items:center;gap:10px;min-width:0">
-        <span aria-hidden="true" style="width:40px;height:40px;flex:0 0 40px;border-radius:13px;background:#e5f3f8;color:#0887a7;display:grid;place-items:center;font-size:21px">📰</span>
+        <span aria-hidden="true" style="width:40px;height:40px;flex:0 0 40px;border-radius:13px;background:#EAF1FF;color:#246BFD;display:grid;place-items:center;font-size:21px">📰</span>
         <span style="min-width:0"><b style="display:block;font-size:13px">اخبار و فناوری</b><small style="display:block;color:var(--muted);font-size:10.5px;line-height:1.7">موضوعات خودرو برقی</small></span>
       </a>
       <a class="card" href="./safety-checklist.html" style="padding:14px 12px;display:flex;align-items:center;gap:10px;min-width:0">
-        <span aria-hidden="true" style="width:40px;height:40px;flex:0 0 40px;border-radius:13px;background:#e5f3f8;color:#0887a7;display:grid;place-items:center;font-size:21px">✓</span>
+        <span aria-hidden="true" style="width:40px;height:40px;flex:0 0 40px;border-radius:13px;background:#EAF1FF;color:#246BFD;display:grid;place-items:center;font-size:21px">✓</span>
         <span style="min-width:0"><b style="display:block;font-size:13px">چک‌لیست ایمنی</b><small style="display:block;color:var(--muted);font-size:10.5px;line-height:1.7">بررسی پیش از حرکت</small></span>
       </a>
     </div>
