@@ -349,8 +349,37 @@ function renderTow(){
     }).catch(function(){});
   });
 }
+function syncTowHistory(){
+  var l=load(TOW_KEY,[]);
+  var phone='';
+  try{phone=localStorage.getItem('rev_ls_phone')||''}catch(e){}
+  if(!phone){var withPhone=l.find(function(r){return r.phone});if(withPhone)phone=withPhone.phone}
+  if(!phone)return;
+  fetch(TOW_API+'/api/tow/my-requests?phone='+encodeURIComponent(phone),{cache:'no-store'})
+  .then(function(x){return x.json()})
+  .then(function(d){
+    if(!d||!d.ok||!d.requests)return;
+    var cur=load(TOW_KEY,[]);
+    var byId={};cur.forEach(function(r){byId[r.id]=r});
+    var changed=false;
+    d.requests.forEach(function(s){
+      var ex=byId[s.id];
+      if(ex){
+        if(ex.status!==s.status||JSON.stringify(ex.driver||null)!==JSON.stringify(s.driver||null)||(ex.serviceCode||null)!==(s.serviceCode||null)){
+          ex.status=s.status;ex.driver=s.driver||null;ex.serviceCode=s.serviceCode||null;changed=true;
+        }
+      }else{
+        cur.push({id:s.id,ts:s.ts,status:s.status,phone:phone,car:s.car||'',problem:s.problem||'',loc:s.loc||'',gps:s.gps||null,note:s.note||'',driver:s.driver||null,serviceCode:s.serviceCode||null});
+        changed=true;
+      }
+    });
+    if(changed){cur.sort(function(a,b){return b.ts-a.ts});save(TOW_KEY,cur);renderTow()}
+  }).catch(function(){});
+}
 renderTow();
+syncTowHistory();
 setInterval(function(){
+  syncTowHistory();
   var l=load(TOW_KEY,[]);
   if(l.some(function(r){return r.status!=='لغو شد'&&r.status!=='انجام شد'}))renderTow();
 },20000);
