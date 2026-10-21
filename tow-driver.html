@@ -69,6 +69,10 @@
     <h3 id="drvTitle">راننده</h3>
     <div class="note" id="drvMeta"></div>
     <div style="margin-top:8px"><span class="pill green" id="livePill">● آماده دریافت درخواست</span></div>
+    <div class="field"><label for="pRadius">شعاع پوشش من (کیلومتر)</label>
+      <select id="pRadius"><option value="50">۵۰ کیلومتر</option><option value="80">۸۰ کیلومتر</option><option value="100">۱۰۰ کیلومتر</option></select>
+      <div class="ok" id="radiusOk"></div>
+    </div>
     <p class="note">این صفحه هر چند ثانیه درخواست تازه را چک می‌کند و موقعیتت را به‌روز نگه می‌دارد. صفحه را نبند.</p>
     <button class="btn btn-ghost" id="dRefresh" type="button">🔄 بررسی فوری درخواست</button>
   </section>
@@ -133,13 +137,14 @@
     $('regCard').classList.add('hidden');
     $('panelCard').classList.remove('hidden');
     $('drvTitle').textContent='🚛 '+d.name;
-    $('drvMeta').textContent='کد راننده: '+d.id+' · شعاع پوشش: '+faN(d.radius)+' کیلومتر · '+d.phone;
+    $('drvMeta').textContent='کد راننده: '+d.id+' · '+d.phone;
+    $('pRadius').value=String(d.radius||80);
     startPolling();
   }
 
   function heartbeat(){
     var d=load();if(!d)return;
-    var body={token:d.token};
+    var body={token:d.token,radius:d.radius};
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(p){
         body.lat=p.coords.latitude;body.lng=p.coords.longitude;
@@ -212,6 +217,13 @@
     clearInterval(pollInt);
     pollInt=setInterval(function(){heartbeat();poll();},15000);
   }
+
+  $('pRadius').addEventListener('change',function(){
+    var d=load();if(!d)return;
+    d.radius=Number(this.value);save(d);
+    $('radiusOk').textContent='✓ شعاع پوشش شد '+faN(d.radius)+' کیلومتر';
+    heartbeat();
+  });
 
   if(load())showPanel();
 })();
