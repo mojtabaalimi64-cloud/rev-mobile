@@ -62,7 +62,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 /* ---------- hero card ---------- */
 .hero-card{
   margin-top:18px;padding:22px 18px;border-radius:22px;color:#fff;
-  background:linear-gradient(140deg,var(--teal-deep),var(--teal) 60%,#0b93b8);
+  background:linear-gradient(140deg,var(--teal-deep),var(--teal) 60%,#3B82F6);
   box-shadow:var(--shadow);position:relative;overflow:hidden;
 }
 .hero-card::after{
@@ -160,7 +160,7 @@ body.has-bottom-nav{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 footer.app-foot{text-align:center;color:#9aa9b8;font-size:10.5px;padding:26px 0 8px}
 
 @media(min-width:700px){
-  body{background:#eef3f6}
+  body{background:#FFFFFF}
   .app-shell{max-width:560px;margin:18px auto;background:var(--bg);min-height:calc(100vh - 36px);
     border:1px solid var(--line);border-radius:22px;overflow:hidden;position:relative}
   .bottom-nav{position:sticky;margin-top:14px;border-top:1px solid var(--line);border-radius:0 0 22px 22px}
