@@ -412,7 +412,9 @@ body.rev-modal-open{overflow:hidden!important}
 .rev-ls-badge.busy{background:#fde3e3;color:#a32727}
 .rev-ls-badge.broken{background:#fdf0d7;color:#b7791f}
 .rev-ls-badge.none{background:#eef1f3;color:#61707a;font-weight:700}
+.rev-ls-badge.stale{background:#eef1f3;color:#7d8a94;border:1.5px dashed #c3ccd2;opacity:.75}
 .rev-ls-meta{font-size:11.5px;color:#7e93a6;margin-top:6px}
+.rev-ls-meta.stale{color:#a07c1f}
 .rev-ls-btns{display:flex;gap:8px;margin-top:10px}
 .rev-ls-btn{flex:1;border:1.5px solid #e4edf3;background:#fff;border-radius:12px;padding:9px 4px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;color:#14293b}
 .rev-ls-btn:active{transform:scale(.97)}
@@ -423,7 +425,7 @@ body.rev-modal-open{overflow:hidden!important}
 .rev-ls-foot button{background:none;border:none;padding:0;font:inherit;font-weight:800;color:#b7791f;cursor:pointer}
 </style>
 <script>
-/* REV crowd-sourced charger live status — v2 (هماهنگ با مودال گزارش خطا) */
+/* REV crowd-sourced charger live status — v3 (نمایش سن وضعیت + خاکستری‌شدن کهنه‌ها) */
 (function(){
   var API='https://rev-status-api.mojtaba-alimi64.workers.dev';
   var TTL={free:7200000,busy:7200000,broken:259200000};
@@ -471,13 +473,15 @@ body.rev-modal-open{overflow:hidden!important}
     var name=nameEl?nameEl.textContent.trim():'';
     var rec=cache[key];
     var fresh=rec&&(Date.now()-rec.at)<(TTL[rec.s]||0);
-    var badge,meta;
+    var LBLP={free:'آزاد',busy:'در حال شارژ',broken:'خراب یا غیرفعال'};
+    var badge,meta,staleCls='';
     if(fresh){
       badge='<span class="rev-ls-badge '+rec.s+'">'+LBL[rec.s]+'</span>';
       meta='آخرین گزارش کاربران: '+ago(rec.at)+(rec.n>1?' ('+faN(rec.n)+' گزارش)':'');
     }else if(rec){
-      badge='<span class="rev-ls-badge none">گزارش تازه‌ای نیست</span>';
-      meta='آخرین گزارش: '+ago(rec.at)+' — '+LBL[rec.s];
+      badge='<span class="rev-ls-badge stale">⏳ آخرین وضعیت: '+LBLP[rec.s]+'</span>';
+      meta='این گزارش '+ago(rec.at)+' ثبت شده و دیگه تازه نیست — ممکنه الان وضعیت فرق کرده باشه. اگه اینجایی، وضعیت فعلی رو گزارش بده 👇';
+      staleCls=' stale';
     }else{
       badge='<span class="rev-ls-badge none">هنوز گزارشی ثبت نشده</span>';
       meta='اولین نفری باش که وضعیت این شارژر رو می‌گه';
@@ -488,7 +492,7 @@ body.rev-modal-open{overflow:hidden!important}
     sec.className='rev-live-status';
     sec.innerHTML='<h3>⚡ وضعیت لحظه‌ای شارژر</h3>'+
       '<div class="rev-ls-sub">بر اساس گزارش کاربران — برای همین لحظه‌ست، نه اطلاعات ثابت جایگاه</div>'+badge+
-      '<div class="rev-ls-meta">'+meta+'</div>'+
+      '<div class="rev-ls-meta'+staleCls+'">'+meta+'</div>'+
       '<div class="rev-ls-btns">'+
       '<button type="button" class="rev-ls-btn" data-s="free"'+dis+'>'+BTN.free+'</button>'+
       '<button type="button" class="rev-ls-btn" data-s="busy"'+dis+'>'+BTN.busy+'</button>'+
@@ -519,7 +523,7 @@ body.rev-modal-open{overflow:hidden!important}
         cache[key]=d.record;setMy(key);
         var b=sec.querySelector('.rev-ls-badge');
         b.className='rev-ls-badge '+s;b.textContent=LBL[s];
-        sec.querySelector('.rev-ls-meta').textContent='آخرین گزارش کاربران: همین الان';
+        var mm=sec.querySelector('.rev-ls-meta');mm.classList.remove('stale');mm.textContent='آخرین گزارش کاربران: همین الان';
         if(s==='broken'){
           note.innerHTML='گزارشت ثبت شد ✅ اگه این خرابی دائمیه، <button type="button">گزارش خطا</button> هم ثبت کن تا بررسی و اصلاح بشه.';
           note.querySelector('button').addEventListener('click',function(){openReport(name,pc.lat,pc.lng)});
