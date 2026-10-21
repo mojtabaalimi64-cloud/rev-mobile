@@ -1,7 +1,5 @@
-/* REV Mobile Visual Identity v3 — teal design system (matches the app mockup)
-   Single source of truth for the mobile shell. Pages style themselves with
-   these tokens and components; no !important overrides live here, so page
-   styles and this file compose instead of fighting. */
+/* REV Mobile Visual Identity v4 — white surfaces + blue actions.
+   Keep primary UI blue and backgrounds white; reserve red/amber for semantic states. */
 @font-face{
   font-family:'Vazirmatn';
   src:url('https://mojtabaalimi64-cloud.github.io/rev/Vazirmatn%5Bwght%5D.woff2') format('woff2');
@@ -9,21 +7,21 @@
 }
 :root{
   color-scheme:light;
-  --teal:#0887a7;          /* primary — sampled from the mockup */
-  --teal-dark:#066d88;     /* pressed / gradient end */
-  --teal-deep:#0a5f78;     /* deep gradient start */
-  --teal-soft:#e5f3f8;     /* icon chips, soft fills */
-  --teal-softer:#f0f8fb;   /* hero card wash */
+  --teal:#246BFD;          /* primary action blue */
+  --teal-dark:#1557D4;     /* pressed / gradient end */
+  --teal-deep:#1744A0;     /* deep gradient start */
+  --teal-soft:#EAF1FF;     /* icon chips, soft fills */
+  --teal-softer:#F4F7FF;   /* hero card wash */
   --ink:#14293b;
   --muted:#7e93a6;
   --line:#e4edf3;
-  --bg:#f5f8fa;
+  --bg:#FFFFFF;
   --surface:#ffffff;
-  --green:#1ea56c; --green-soft:#e4f6ec;
+  --green:#246BFD; --green-soft:#EAF1FF;
   --red:#df5454;   --red-soft:#fdecec;
   --amber:#f0a02c; --amber-soft:#fdf3e0;
   --radius:18px;
-  --shadow:0 10px 26px rgba(8,135,167,.10);
+  --shadow:0 10px 26px rgba(36,107,253,.10);
   --shadow-sm:0 3px 12px rgba(20,41,59,.06);
 }
 *{box-sizing:border-box}
@@ -88,7 +86,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
   display:flex;align-items:center;justify-content:center;gap:8px;
   min-height:50px;padding:12px 16px;border-radius:14px;border:0;
   background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;
-  font-size:15px;font-weight:850;width:100%;box-shadow:0 6px 16px rgba(8,135,167,.35);
+  font-size:15px;font-weight:850;width:100%;box-shadow:0 6px 16px rgba(36,107,253,.35);
 }
 .btn-primary:active{transform:translateY(1px);background:var(--teal-dark)}
 
