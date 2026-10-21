@@ -515,8 +515,8 @@ body.rev-modal-open{overflow:hidden!important}
     var btns=sec.querySelectorAll('.rev-ls-btn');
     var i;
     for(i=0;i<btns.length;i++)btns[i].disabled=true;
-    note.textContent='در حال ثبت…';
-    fetch(API+'/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,name:name,status:s,phone:(function(){try{return localStorage.getItem('rev_ls_phone')||''}catch(e){return''}})()})})
+    var sendReport=function(geo){
+    fetch(API+'/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,name:name,status:s,lat:geo.lat,lng:geo.lng,phone:(function(){try{return localStorage.getItem('rev_ls_phone')||''}catch(e){return''}})()})})
     .then(function(r){return r.json()})
     .then(function(d){
       if(d&&d.ok){
@@ -530,6 +530,12 @@ body.rev-modal-open{overflow:hidden!important}
         }else{
           note.textContent='گزارشت ثبت شد ✅ ممنون!'+(d.points!=null?' (⭐ امتیازت: '+faN(d.points)+')':'');
         }
+      }else if(d&&d.error==='too_far'){
+        note.textContent='از شارژر دوری'+(d.distance!=null?' (حدود '+faN(d.distance)+' متر)':'')+' — ثبت وضعیت فقط از محل شارژر ممکنه 📍';
+        for(i=0;i<btns.length;i++)btns[i].disabled=false;
+      }else if(d&&d.error==='location_required'){
+        note.textContent='بدون موقعیت مکانی نمی‌شه وضعیت ثبت کرد — GPS رو فعال کن 📍';
+        for(i=0;i<btns.length;i++)btns[i].disabled=false;
       }else{
         note.textContent='ثبت نشد — دوباره تلاش کن';
         for(i=0;i<btns.length;i++)btns[i].disabled=false;
@@ -538,6 +544,17 @@ body.rev-modal-open{overflow:hidden!important}
       note.textContent='ثبت نشد — اتصال اینترنت رو چک کن';
       for(i=0;i<btns.length;i++)btns[i].disabled=false;
     });
+    };
+    if(!navigator.geolocation){
+      note.textContent='این مرورگر مکان‌یابی نداره — ثبت وضعیت ممکن نیست';
+      for(i=0;i<btns.length;i++)btns[i].disabled=false;
+      return;
+    }
+    note.textContent='در حال گرفتن موقعیتت…';
+    navigator.geolocation.getCurrentPosition(
+      function(p){note.textContent='در حال ثبت…';sendReport({lat:p.coords.latitude,lng:p.coords.longitude})},
+      function(){note.textContent='برای ثبت وضعیت باید دسترسی مکان رو فعال کنی و نزدیک شارژر باشی 📍';for(i=0;i<btns.length;i++)btns[i].disabled=false},
+      {enableHighAccuracy:true,timeout:8000,maximumAge:30000});
   }
   function fetchAll(){
     fetch(API+'/status',{cache:'no-store'})
@@ -854,23 +871,38 @@ body.rev-modal-open{overflow:hidden!important}
       });
       return;
     }
-    note.textContent='در حال ثبت رأی…';
-    fetch(API+'/vote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:s.id,vote:v,phone:phone})})
-    .then(function(r){return r.json()})
-    .then(function(d){
-      if(d&&d.ok){
-        setVoted(s.id,v);
-        document.getElementById('rvConf').textContent=d.confirms;
-        document.getElementById('rvRej').textContent=d.rejects;
-        document.getElementById('rvYes').disabled=true;
-        document.getElementById('rvNo').disabled=true;
-        note.textContent='رأیت ثبت شد ✅'+(d.points!=null?' (⭐ امتیازت: '+Number(d.points).toLocaleString('fa-IR')+')':'')+(d.verified?' — این جایگاه حالا نشان تأیید جامعه رو داره':'');
-      }else if(d&&d.error==='own_submission'){
-        note.textContent='این ثبتِ خودته';
-      }else{
-        note.textContent='ثبت نشد — دوباره تلاش کن';
-      }
-    }).catch(function(){note.textContent='ثبت نشد — اتصال اینترنت رو چک کن'});
+    var sendVote=function(geo){
+      var payload={id:s.id,vote:v,phone:phone};
+      if(geo){payload.lat=geo.lat;payload.lng=geo.lng}
+      fetch(API+'/vote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json()})
+      .then(function(d){
+        if(d&&d.ok){
+          setVoted(s.id,v);
+          document.getElementById('rvConf').textContent=d.confirms;
+          document.getElementById('rvRej').textContent=d.rejects;
+          document.getElementById('rvYes').disabled=true;
+          document.getElementById('rvNo').disabled=true;
+          note.textContent='رأیت ثبت شد ✅'+(d.points!=null?' (⭐ امتیازت: '+Number(d.points).toLocaleString('fa-IR')+')':'')+(d.verified?' — این جایگاه حالا نشان تأیید جامعه رو داره':'')+((v==='confirm'&&!geo)?' — بدون موقعیت ثبت شد؛ برای وزن کامل تأیید، دسترسی مکان رو فعال کن':'');
+        }else if(d&&d.error==='own_submission'){
+          note.textContent='این ثبتِ خودته';
+        }else if(d&&d.error==='too_far'){
+          note.textContent='برای تأیید «دیدمش» باید نزدیک جایگاه باشی — الان ازش دوری 📍';
+        }else{
+          note.textContent='ثبت نشد — دوباره تلاش کن';
+        }
+      }).catch(function(){note.textContent='ثبت نشد — اتصال اینترنت رو چک کن'});
+    };
+    if(v==='confirm'&&navigator.geolocation){
+      note.textContent='در حال گرفتن موقعیتت…';
+      navigator.geolocation.getCurrentPosition(
+        function(p){sendVote({lat:p.coords.latitude,lng:p.coords.longitude})},
+        function(){sendVote(null)},
+        {enableHighAccuracy:true,timeout:6000,maximumAge:60000});
+    }else{
+      note.textContent='در حال ثبت رأی…';
+      sendVote(null);
+    }
   }
 
   function addPins(){
