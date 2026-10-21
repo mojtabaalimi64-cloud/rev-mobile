@@ -232,6 +232,7 @@ try{new MutationObserver(function(){
 var REPORT_API='https://rev-ratings-api.mojtaba-alimi64.workers.dev/api/station-reports';
 var TYPES=[['not_found','جایگاه در محل وجود ندارد'],['not_working','خراب یا غیرفعال است'],['connector_wrong','کانکتور اشتباه ثبت شده'],['power_wrong','توان شارژ اشتباه ثبت شده'],['location_wrong','موقعیت یا نشانی اشتباه است'],['duplicate','جایگاه تکراری است'],['violation','تخلف یا اطلاعات جعلی'],['other','سایر موارد']];
 var cur={id:'',name:'',lat:null,lon:null};
+function voterId(){var key='rev_public_rating_voter_v1';try{var id=localStorage.getItem(key);if(!id){id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'rev-'+Date.now()+'-'+Math.random().toString(36).slice(2,12);localStorage.setItem(key,id);}return id;}catch(e){return 'rev-'+Date.now()+'-'+Math.random().toString(36).slice(2,12);}}
 function $(id){return document.getElementById(id)}
 function buildTypes(){
   $('rmTypes').innerHTML=TYPES.map(function(t,i){return '<label class="rm-type'+(i===1?' sel':'')+'"><input type="radio" name="rmType" value="'+t[0]+'"'+(i===1?' checked':'')+'> '+t[1]+'</label>';}).join('');
@@ -247,7 +248,7 @@ $('rmSubmit').addEventListener('click',async function(){
   var te=document.querySelector('input[name="rmType"]:checked');var type=te?te.value:'other';var details=$('rmDetails').value.trim();
   if(!cur.id){say('شناسه جایگاه یافت نشد (name:'+(cur.name||'?')+')؛ لطفاً دوباره روی پین بزنید.',false);return;}
   var btn=$('rmSubmit');btn.disabled=true;say('',false);
-  var payload={station_id:cur.id,station_name:cur.name,report_type:type,details:details};
+  var payload={station_id:cur.id,station_name:cur.name||'جایگاه بدون نام',report_type:type,details:details,voter:voterId()};
   if(cur.lat!=null)payload.latitude=cur.lat;
   if(cur.lon!=null)payload.longitude=cur.lon;
   try{var r=await fetch(REPORT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
