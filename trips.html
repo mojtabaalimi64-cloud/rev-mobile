@@ -344,7 +344,7 @@ $('planGo').addEventListener('click',function(){
   var departureAt=new Date(dt+'T'+tm+'');
   if(!Number.isFinite(departureAt.getTime())||departureAt.getTime()<Date.now()-5*60*1000){$('planStatus').textContent='تاریخ و ساعت حرکت باید در زمان حال یا آینده باشد.';return}
   var jalaliDate=revLatinDigits($('planDateDisplay').value).replace(/[.-]/g,'/');
-  if(!/^\\d{4}\\/\\d{1,2}\\/\\d{1,2}$/.test(jalaliDate)){ $('planStatus').textContent='تاریخ شمسی معتبر نیست؛ تاریخ را دوباره انتخاب کن.';return; }
+  if(!/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(jalaliDate)){ $('planStatus').textContent='تاریخ شمسی معتبر نیست؛ تاریخ را دوباره انتخاب کن.';return; }
   $('planStatus').textContent='در حال باز کردن برنامه‌ریز هوشمند خودروهای برقی…';
   saveRecent(o,d);
   var planner=new URL('https://mojtabaalimi64-cloud.github.io/rev/trip.html');
