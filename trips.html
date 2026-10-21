@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080B0D">
+<meta name="theme-color" content="#ffffff">
 <meta name="color-scheme" content="light">
 <meta name="description" content="برنامه‌ریزی سفر با خودروی برقی در REV؛ مبدأ و مقصد، شارژرهای مسیر و سفرهای قبلی">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
 <title>برنامه‌ریزی سفر | REV</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="./rev-visual-identity.css?v=20261017-3">
+<link rel="stylesheet" href="./rev-visual-identity.css?v=20261021-5">
 <style>
 /* یکدست‌سازی کارت‌های برنامه با تم teal آپ */
 #resumeSection .card.row-item,
 #savedPlansSection .card.row-item{
-  background:linear-gradient(135deg,#0d7d8a,#1495a3)!important;
+  background:linear-gradient(135deg,#1744A0,#246BFD)!important;
   color:#fff!important;
   border:none!important;
   border-radius:20px!important;
-  box-shadow:0 4px 16px rgba(13,125,138,.3)!important;
+  box-shadow:0 4px 16px rgba(36,107,253,.24)!important;
 }
 #resumeSection .card.row-item .copy b,
 #savedPlansSection .card.row-item .copy b{color:#fff!important}
@@ -332,15 +332,36 @@ function saveRecent(o,d){
  document.addEventListener('click',e=>{const path=typeof e.composedPath==='function'?e.composedPath():[];const inside=path.length?path.includes(box):box.contains(e.target);if(!box.hidden&&!inside&&e.target!==input){box.hidden=true;input.setAttribute('aria-expanded','false');}});
  setDate(parseISO(today));
 })();
+function revLatinDigits(value){
+  return String(value||'')
+    .replace(/[۰-۹]/g,d=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+    .replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+}
 $('planGo').addEventListener('click',function(){
   var o=$('planOrigin').value.trim(),d=$('planDest').value.trim(),dt=$('planDate').value,tm=$('planTime').value;
   if(!o||!d){$('planStatus').textContent='مبدأ و مقصد را وارد کن.';return}
   if(!dt||!tm){$('planStatus').textContent='تاریخ و ساعت حرکت را هم انتخاب کن.';return}
   var departureAt=new Date(dt+'T'+tm+'');
   if(!Number.isFinite(departureAt.getTime())||departureAt.getTime()<Date.now()-5*60*1000){$('planStatus').textContent='تاریخ و ساعت حرکت باید در زمان حال یا آینده باشد.';return}
-  $('planStatus').textContent='در حال آماده‌سازی نتیجه برنامه‌ریزی…';
+  var jalaliDate=revLatinDigits($('planDateDisplay').value).replace(/[.-]/g,'/');
+  if(!/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(jalaliDate)){ $('planStatus').textContent='تاریخ شمسی معتبر نیست؛ تاریخ را دوباره انتخاب کن.';return; }
+  $('planStatus').textContent='در حال باز کردن برنامه‌ریز هوشمند خودروهای برقی…';
   saveRecent(o,d);
-  location.href='./nearby-map.html?tripPlanRequest=1&origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+'&date='+encodeURIComponent(dt)+'&time='+encodeURIComponent(tm);
+  var planner=new URL('https://mojtabaalimi64-cloud.github.io/rev/trip.html');
+  planner.searchParams.set('from','rev-mobile');
+  planner.searchParams.set('origin',o);
+  planner.searchParams.set('destination',d);
+  planner.searchParams.set('date',jalaliDate);
+  planner.searchParams.set('time',tm);
+  planner.searchParams.set('vehicleType','bev');
+  planner.searchParams.set('battery','60');
+  planner.searchParams.set('soc','90');
+  planner.searchParams.set('consumption','18');
+  planner.searchParams.set('reserve','15');
+  planner.searchParams.set('targetSoc','80');
+  planner.searchParams.set('radius','10');
+  planner.searchParams.set('hvac','auto');
+  location.href=planner.toString();
 });
 renderRecent();
 

@@ -940,4 +940,55 @@ body.rev-modal-open{overflow:hidden!important}
 })();
 </script>
 
+
+<script>
+/* نمایش توقف‌های شارژ ذخیره‌شده توسط برنامه‌ریز EV روی نقشه اپ */
+(function(){
+  function renderPlannedChargingStops(){
+    try{
+      if(!new URLSearchParams(location.search).has("navstart"))return;
+      var raw=sessionStorage.getItem("rev_planned_route")||localStorage.getItem("rev_planned_route");
+      var plan=raw?JSON.parse(raw):null;
+      var stops=plan&&Array.isArray(plan.stops)?plan.stops:[];
+      if(!stops.length)return;
+      var attempts=0;
+      var timer=setInterval(function(){
+        var map=window.revMap;
+        if(map&&window.L&&typeof window.L.layerGroup==="function"){
+          clearInterval(timer);
+          try{
+            if(window.revChargingStopsLayer){try{map.removeLayer(window.revChargingStopsLayer)}catch(_){}}
+            var layer=window.L.layerGroup().addTo(map);
+            stops.forEach(function(stop,index){
+              var lat=Number(stop.lat),lon=Number(stop.lon);
+              if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return;
+              var marker=window.L.marker([lat,lon],{title:"توقف شارژ "+(index+1)}).addTo(layer);
+              var popup=document.createElement("div");
+              var title=document.createElement("strong");
+              title.textContent="توقف شارژ "+(index+1)+": "+String(stop.name||"ایستگاه شارژ");
+              popup.appendChild(title);
+              var details=[];
+              if(Number.isFinite(Number(stop.routeKm)))details.push("حدود کیلومتر "+Math.round(Number(stop.routeKm))+" مسیر");
+              if(stop.arrivalSoc!=null&&Number.isFinite(Number(stop.arrivalSoc)))details.push("باتری هنگام رسیدن: "+Math.round(Number(stop.arrivalSoc))+"٪");
+              if(stop.targetSoc!=null&&Number.isFinite(Number(stop.targetSoc)))details.push("شارژ هدف: "+Math.round(Number(stop.targetSoc))+"٪");
+              if(stop.chargeMinutes!=null&&Number.isFinite(Number(stop.chargeMinutes)))details.push("زمان شارژ تخمینی: "+Math.round(Number(stop.chargeMinutes))+" دقیقه");
+              if(stop.power!=null&&Number.isFinite(Number(stop.power))&&Number(stop.power)>0)details.push("توان ثبت‌شده: "+Number(stop.power)+" kW");
+              var detail=document.createElement("div");
+              detail.textContent=details.join(" · ");
+              detail.style.maxWidth="260px";
+              detail.style.fontSize="12px";
+              detail.style.marginTop="5px";
+              popup.appendChild(detail);
+              marker.bindPopup(popup);
+            });
+            window.revChargingStopsLayer=layer;
+          }catch(error){console.warn("REV planned charging stops could not be drawn:",error)}
+        }else if(++attempts>=100){clearInterval(timer)}
+      },100);
+    }catch(error){console.warn("REV saved EV plan could not be read:",error)}
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",renderPlannedChargingStops,{once:true});
+  else renderPlannedChargingStops();
+})();
+</script>
 </body></html>

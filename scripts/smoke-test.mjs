@@ -78,6 +78,17 @@ if (!guard.includes("showConnectionError") || !guard.includes("10000")) {
   failures.push("Authentication guard must provide a timeout and visible recovery state");
 }
 
+
+const tripPlannerPage = fs.readFileSync(path.join(root, "trips.html"), "utf8");
+if (!tripPlannerPage.includes("https://mojtabaalimi64-cloud.github.io/rev/trip.html") ||
+    !tripPlannerPage.includes("searchParams.set('from','rev-mobile')")) {
+  failures.push("Mobile trip planner must hand off to the full EV planner with a return marker");
+}
+const mapPage = fs.readFileSync(path.join(root, "nearby-map.html"), "utf8");
+if (!mapPage.includes("revChargingStopsLayer") || !mapPage.includes("plan.stops")) {
+  failures.push("Mobile navigation map must render saved EV charging stops");
+}
+
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);
