@@ -93,6 +93,7 @@
     <h3>✅ درخواست را پذیرفتی</h3>
     <div class="row" id="doneBody" style="font-size:13px;line-height:2"></div>
     <p class="note">مشتری شماره تو را می‌بیند و منتظر تماس است. موفق باشی!</p>
+    <button class="btn btn-ghost" id="btnDoneClose" type="button">پایان مأموریت</button>
   </section>
 </main>
 
@@ -201,12 +202,19 @@
       var r=curOffer.request;curOffer=null;clearInterval(timerInt);
       $('offerCard').classList.add('hidden');
       if(accept){
-        $('doneBody').innerHTML='<b>مشکل:</b> '+r.problem+'<br><b>مشتری:</b> <a href="tel:'+r.phone+'" dir="ltr">'+r.phone+'</a><br><b>موقعیت:</b> '+(r.loc||'—');
-        $('doneCard').classList.remove('hidden');
+        var last={reqId:reqId,serviceCode:res.serviceCode||'',problem:r.problem,phone:r.phone,loc:r.loc||''};
+        try{localStorage.setItem(KEY+'_last',JSON.stringify(last))}catch(e){}
+        showDone(last);
       }
       poll();
     })
     .catch(function(){bA.disabled=false;bR.disabled=false;$('offerErr').textContent='اتصال برقرار نشد.';});
+  }
+  function showDone(last){
+    if(!last)return;
+    $('doneBody').innerHTML='<b>مشکل:</b> '+last.problem+'<br><b>مشتری:</b> <a href="tel:'+last.phone+'" dir="ltr">'+last.phone+'</a><br><b>موقعیت:</b> '+(last.loc||'—')
+      +(last.serviceCode?'<div style="background:#eaf7fb;border:1px solid #cbe6f0;border-radius:10px;padding:10px;margin-top:8px;text-align:center;line-height:1.9">🔐 <b>کد اختصاصی امداد REV</b><br><span dir="ltr" style="font-size:24px;font-weight:900;letter-spacing:4px;color:#066d88">'+last.serviceCode+'</span><br><span style="font-size:12px">وقتی رسیدی از مشتری بخواه این کد را بگوید؛ این کد ثابت می‌کند امداد از طرف REV است.</span></div>':'');
+    $('doneCard').classList.remove('hidden');
   }
   $('btnAccept').addEventListener('click',function(){respond(true)});
   $('btnReject').addEventListener('click',function(){respond(false)});
@@ -225,7 +233,15 @@
     heartbeat();
   });
 
-  if(load())showPanel();
+  $('btnDoneClose').addEventListener('click',function(){
+    try{localStorage.removeItem(KEY+'_last')}catch(e){}
+    $('doneCard').classList.add('hidden');
+  });
+
+  if(load()){
+    showPanel();
+    try{var last=JSON.parse(localStorage.getItem(KEY+'_last')||'null');if(last)showDone(last)}catch(e){}
+  }
 })();
 </script>
 </body>

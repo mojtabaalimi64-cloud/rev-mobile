@@ -322,6 +322,7 @@ function renderTow(){
     return '<div class="req"><div class="rtop"><span class="rcode">'+esc(r.id)+'</span>'+towStatusPill(r.status)+'</div>'
     +'<div class="rmeta">'+esc(r.problem)+' · '+esc(faDate(r.ts))+(r.car?' · '+esc(r.car):'')+'<br>'+esc(r.loc||'موقعیت ثبت نشده')+(r.gps?' (GPS ✓)':'')+'</div>'
     +(r.driver?'<div class="rmeta">🚛 راننده: <b>'+esc(r.driver.name)+'</b> · <a href="tel:'+esc(r.driver.phone)+'" dir="ltr">'+esc(r.driver.phone)+'</a></div>':'')
+    +(r.serviceCode&&r.status==='راننده در راه'?'<div class="rmeta" style="background:#eaf7fb;border:1px solid #cbe6f0;border-radius:10px;padding:8px 10px;margin-top:6px;line-height:1.9">🔐 <b>کد اختصاصی امداد REV: <span dir="ltr" style="font-size:16px;letter-spacing:2px">'+esc(r.serviceCode)+'</span></b><br>وقتی راننده رسید این کد را از او بخواه؛ فقط راننده رسمی REV این کد را دارد.</div>':'')
     +((r.status!=='لغو شد'&&r.status!=='انجام شد')?'<div class="ractions"><button class="link-btn" data-cancel-tow="'+esc(r.id)+'">لغو درخواست</button></div>':'')
     +'</div>';
   }).join('');
@@ -342,8 +343,8 @@ function renderTow(){
     .then(function(d){
       if(!d||!d.ok)return;
       var l=load(TOW_KEY,[]);var cur=l.find(function(x){return x.id===r.id});
-      if(cur&&(cur.status!==d.status||JSON.stringify(cur.driver||null)!==JSON.stringify(d.driver||null))){
-        cur.status=d.status;cur.driver=d.driver||null;save(TOW_KEY,l);renderTow();
+      if(cur&&(cur.status!==d.status||JSON.stringify(cur.driver||null)!==JSON.stringify(d.driver||null)||(cur.serviceCode||null)!==(d.serviceCode||null))){
+        cur.status=d.status;cur.driver=d.driver||null;cur.serviceCode=d.serviceCode||null;save(TOW_KEY,l);renderTow();
       }
     }).catch(function(){});
   });
