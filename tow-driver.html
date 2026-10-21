@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="description" content="پنل راننده یدک‌کش REV — دریافت و پذیرش درخواست امداد خودروی برقی">
+<title>پنل راننده یدک‌کش | REV</title>
+<link rel="stylesheet" href="https://mojtabaalimi64-cloud.github.io/rev-mobile/rev-visual-identity.css?v=20261017-3">
+<script src="./rev-auth-guard.js?v=20261019-1"></script>
+<script src="./rev-app-mode.js?v=20261019-11"></script>
+<style>
+  body{margin:0;background:#f4f8fb;color:#14293b;font-family:Vazirmatn,Vazir,Tahoma,sans-serif}
+  .wrap{max-width:560px;margin:0 auto;padding:18px 14px 110px}
+  .hello{font-size:20px;font-weight:900}
+  .sub{color:#687b8d;font-size:12.5px;margin-top:2px}
+  .card{background:#fff;border:1px solid #e4edf3;border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 4px 18px rgba(20,41,59,.05)}
+  .card h3{margin:0 0 8px;font-size:15px;font-weight:900}
+  .field{margin-top:10px}
+  .field label{display:block;font-size:12.5px;font-weight:800;margin-bottom:5px}
+  .field input,.field select{width:100%;box-sizing:border-box;border:1.5px solid #dce6ee;border-radius:11px;padding:11px;font:inherit;font-size:14px;background:#fff;color:#14293b}
+  .btn{display:block;width:100%;border:0;border-radius:12px;padding:13px;font:inherit;font-size:14.5px;font-weight:900;cursor:pointer;margin-top:14px}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn-teal{background:linear-gradient(135deg,#0887a7,#066d88);color:#fff}
+  .btn-ghost{background:#fff;color:#066d88;border:1.5px solid #cbe6f0}
+  .btn-red{background:#fdf1f1;color:#a52820;border:1.5px solid #f0c9c6}
+  .btn-green{background:#11703c;color:#fff}
+  .note{font-size:12px;color:#687b8d;line-height:1.9;margin-top:8px}
+  .err{font-size:12px;color:#a52820;min-height:16px;margin-top:6px}
+  .ok{font-size:12.5px;color:#11703c}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800}
+  .pill.green{background:#dcf5e3;color:#11703c}
+  .pill.grey{background:#eef1f3;color:#61707a}
+  .offer{border:2px solid #b7791f;background:#fffdf4}
+  .offer .timer{font-size:26px;font-weight:900;color:#b7791f;text-align:center;margin:6px 0}
+  .offer .row{font-size:13px;line-height:2}
+  .offer .row b{color:#14293b}
+  .btns{display:flex;gap:8px}
+  .btns .btn{flex:1}
+  .hidden{display:none!important}
+  .gpsok{font-size:12px;color:#11703c;margin-top:6px;display:none}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="hello">🚛 پنل راننده یدک‌کش</div>
+  <div class="sub">درخواست‌های امداد نزدیک تو اینجا میاد؛ ۳ دقیقه فرصت داری قبول یا رد کنی.</div>
+
+  <!-- ثبت‌نام راننده -->
+  <section class="card" id="regCard">
+    <h3>ثبت‌نام راننده همکار</h3>
+    <div class="field"><label for="dName">نام و نام خانوادگی</label><input id="dName" placeholder="مثلاً محمد کریمی"></div>
+    <div class="field"><label for="dPhone">شماره موبایل</label><input id="dPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789"></div>
+    <div class="field"><label for="dRadius">شعاع پوشش (کیلومتر)</label>
+      <select id="dRadius"><option value="50">۵۰ کیلومتر</option><option value="80" selected>۸۰ کیلومتر</option><option value="100">۱۰۰ کیلومتر</option></select>
+    </div>
+    <div class="field"><label>موقعیت پایگاه (جایی که معمولاً مستقر هستی)</label>
+      <button class="btn btn-ghost" id="dGps" type="button" style="margin-top:0">📍 ثبت موقعیت فعلی با GPS</button>
+      <div class="gpsok" id="dGpsOk">✓ موقعیت ثبت شد.</div>
+    </div>
+    <div class="err" id="regErr"></div>
+    <button class="btn btn-teal" id="dRegister">ثبت‌نام و فعال‌سازی پنل</button>
+    <p class="note">با ثبت‌نام، درخواست‌های امداد در شعاع پوششت اول برای تو ارسال می‌شود. این صفحه را هنگام آماده‌باش باز نگه دار.</p>
+  </section>
+
+  <!-- پنل فعال راننده -->
+  <section class="card hidden" id="panelCard">
+    <h3 id="drvTitle">راننده</h3>
+    <div class="note" id="drvMeta"></div>
+    <div style="margin-top:8px"><span class="pill green" id="livePill">● آماده دریافت درخواست</span></div>
+    <p class="note">این صفحه هر چند ثانیه درخواست تازه را چک می‌کند و موقعیتت را به‌روز نگه می‌دارد. صفحه را نبند.</p>
+    <button class="btn btn-ghost" id="dRefresh" type="button">🔄 بررسی فوری درخواست</button>
+  </section>
+
+  <!-- پیشنهاد فعال -->
+  <section class="card offer hidden" id="offerCard">
+    <h3>🚨 درخواست امداد تازه!</h3>
+    <div class="timer" id="offerTimer">۳:۰۰</div>
+    <div class="row" id="offerBody"></div>
+    <div class="btns">
+      <button class="btn btn-green" id="btnAccept">✅ قبول می‌کنم</button>
+      <button class="btn btn-red" id="btnReject">رد کردن</button>
+    </div>
+    <div class="err" id="offerErr"></div>
+  </section>
+
+  <section class="card hidden" id="doneCard">
+    <h3>✅ درخواست را پذیرفتی</h3>
+    <div class="row" id="doneBody" style="font-size:13px;line-height:2"></div>
+    <p class="note">مشتری شماره تو را می‌بیند و منتظر تماس است. موفق باشی!</p>
+  </section>
+</main>
+
+<script>
+(function(){
+  var API='https://rev-tow-dispatch.mojtaba-alimi64.workers.dev';
+  var KEY='rev_tow_driver_v1';
+  var gpsPos=null, curOffer=null, timerInt=null, pollInt=null;
+  function $(id){return document.getElementById(id)}
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+  function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+  function faN(n){try{return Number(n).toLocaleString('fa-IR')}catch(e){return String(n)}}
+
+  $('dGps').addEventListener('click',function(){
+    var b=this;b.disabled=true;b.textContent='در حال گرفتن موقعیت…';
+    if(!navigator.geolocation){b.disabled=false;b.textContent='📍 ثبت موقعیت فعلی با GPS';$('regErr').textContent='این مرورگر مکان‌یابی ندارد.';return}
+    navigator.geolocation.getCurrentPosition(function(p){
+      gpsPos={lat:p.coords.latitude,lng:p.coords.longitude};
+      $('dGpsOk').style.display='block';b.disabled=false;b.textContent='📍 ثبت موقعیت فعلی با GPS';
+    },function(){b.disabled=false;b.textContent='📍 ثبت موقعیت فعلی با GPS';$('regErr').textContent='دسترسی به موقعیت داده نشد؛ دوباره تلاش کن.'},{enableHighAccuracy:true,timeout:12000});
+  });
+
+  $('dRegister').addEventListener('click',function(){
+    var name=$('dName').value.trim(),phone=$('dPhone').value.trim(),radius=$('dRadius').value;
+    if(name.length<2){$('regErr').textContent='نام را کامل وارد کن.';return}
+    if(!/^09\d{9}$/.test(phone)){$('regErr').textContent='شماره موبایل معتبر وارد کن.';return}
+    if(!gpsPos){$('regErr').textContent='اول موقعیت پایگاه را با GPS ثبت کن.';return}
+    var btn=this;btn.disabled=true;btn.textContent='در حال ثبت‌نام…';
+    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      btn.disabled=false;btn.textContent='ثبت‌نام و فعال‌سازی پنل';
+      if(!d||!d.ok){$('regErr').textContent=(d&&d.err)||'ثبت‌نام ناموفق بود.';return}
+      save({id:d.id,token:d.token,name:name,phone:phone,radius:d.radius});
+      showPanel();
+    })
+    .catch(function(){btn.disabled=false;btn.textContent='ثبت‌نام و فعال‌سازی پنل';$('regErr').textContent='اتصال به سرور برقرار نشد.';});
+  });
+
+  function showPanel(){
+    var d=load();if(!d)return;
+    $('regCard').classList.add('hidden');
+    $('panelCard').classList.remove('hidden');
+    $('drvTitle').textContent='🚛 '+d.name;
+    $('drvMeta').textContent='کد راننده: '+d.id+' · شعاع پوشش: '+faN(d.radius)+' کیلومتر · '+d.phone;
+    startPolling();
+  }
+
+  function heartbeat(){
+    var d=load();if(!d)return;
+    var body={token:d.token};
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(p){
+        body.lat=p.coords.latitude;body.lng=p.coords.longitude;
+        fetch(API+'/api/driver/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(function(){});
+      },function(){
+        fetch(API+'/api/driver/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(function(){});
+      },{timeout:8000,maximumAge:60000});
+    }
+  }
+
+  function poll(){
+    var d=load();if(!d)return;
+    fetch(API+'/api/driver/offers?token='+encodeURIComponent(d.token),{cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(res){
+      if(res&&res.ok&&res.offer&&res.offer.request){showOffer(res.offer)}
+      else if(!curOffer){$('offerCard').classList.add('hidden')}
+    }).catch(function(){});
+  }
+
+  function showOffer(offer){
+    if(curOffer&&curOffer.reqId===offer.reqId)return;
+    curOffer=offer;
+    var r=offer.request;
+    $('offerBody').innerHTML=
+      '<div class="row"><b>مشکل:</b> '+r.problem+'</div>'+
+      (r.car?'<div class="row"><b>خودرو:</b> '+r.car+'</div>':'')+
+      '<div class="row"><b>موقعیت:</b> '+ (r.loc||'ثبت نشده') +'</div>'+
+      (r.note?'<div class="row"><b>توضیح:</b> '+r.note+'</div>':'')+
+      '<div class="row"><b>مشتری:</b> <span dir="ltr">'+r.phone+'</span></div>'+
+      (r.gps?'<div class="row"><a href="https://www.google.com/maps?q='+r.gps.lat+','+r.gps.lng+'" target="_blank" rel="noopener">📍 دیدن موقعیت مشتری روی نقشه</a></div>':'');
+    $('doneCard').classList.add('hidden');
+    $('offerCard').classList.remove('hidden');
+    clearInterval(timerInt);
+    var tick=function(){
+      var left=Math.max(0,Math.round((offer.expiresAt-Date.now())/1000));
+      var m=Math.floor(left/60),s=left%60;
+      $('offerTimer').textContent=faN(m)+':'+(s<10?'۰':'')+faN(s);
+      if(left<=0){clearInterval(timerInt);curOffer=null;$('offerCard').classList.add('hidden');poll();}
+    };
+    tick();timerInt=setInterval(tick,1000);
+    try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}
+  }
+
+  function respond(accept){
+    var d=load();if(!d||!curOffer)return;
+    var reqId=curOffer.reqId;
+    var bA=$('btnAccept'),bR=$('btnReject');bA.disabled=true;bR.disabled=true;
+    fetch(API+'/api/driver/respond',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:d.token,reqId:reqId,accept:accept})})
+    .then(function(r){return r.json()})
+    .then(function(res){
+      bA.disabled=false;bR.disabled=false;
+      if(!res||!res.ok){$('offerErr').textContent=(res&&res.err)||'خطا — شاید پیشنهاد منقضی شده باشد.';return}
+      var r=curOffer.request;curOffer=null;clearInterval(timerInt);
+      $('offerCard').classList.add('hidden');
+      if(accept){
+        $('doneBody').innerHTML='<b>مشکل:</b> '+r.problem+'<br><b>مشتری:</b> <a href="tel:'+r.phone+'" dir="ltr">'+r.phone+'</a><br><b>موقعیت:</b> '+(r.loc||'—');
+        $('doneCard').classList.remove('hidden');
+      }
+      poll();
+    })
+    .catch(function(){bA.disabled=false;bR.disabled=false;$('offerErr').textContent='اتصال برقرار نشد.';});
+  }
+  $('btnAccept').addEventListener('click',function(){respond(true)});
+  $('btnReject').addEventListener('click',function(){respond(false)});
+  $('dRefresh').addEventListener('click',function(){heartbeat();poll();});
+
+  function startPolling(){
+    heartbeat();poll();
+    clearInterval(pollInt);
+    pollInt=setInterval(function(){heartbeat();poll();},15000);
+  }
+
+  if(load())showPanel();
+})();
+</script>
+</body>
+</html>

@@ -126,7 +126,8 @@
     </div>
   </section>
 
-  <!-- ============ 2) قطعات ضروری ============ -->
+  <section class="section"><a class="card row-item" href="./tow-driver.html" style="display:flex"><span class="ico">🚛</span><span class="copy"><b>پنل راننده یدک‌کش</b><small>ویژه راننده‌های همکار REV — دریافت و پذیرش درخواست امداد</small></span><span class="chev" aria-hidden="true">‹</span></a></section>
+   <!-- ============ 2) قطعات ضروری ============ -->
   <section class="section sec-anchor" id="parts" aria-labelledby="partsTitle">
     <div class="section-head"><h2 id="partsTitle">قطعات ضروری</h2><a href="#cart" id="openCartLink">سبد سفارش</a></div>
     <div class="searchbar">
@@ -184,7 +185,7 @@
   <div class="grab"></div>
   <button class="x" data-close aria-label="بستن">✕</button>
   <h3 id="towSheetTitle">🚨 درخواست یدک‌کش مجاز</h3>
-  <p class="ssub">فرم را پر کن؛ درخواستت با کد رهگیری ذخیره می‌شود.</p>
+  <p class="ssub">فرم را پر کن؛ درخواستت فوری برای نزدیک‌ترین یدک‌کش مجاز ارسال می‌شود. حتماً موقعیت GPS را ثبت کن تا راننده پیدا شود.</p>
   <div class="field"><label for="towName">نام و نام خانوادگی</label><input id="towName" placeholder="مثلاً علی رضایی"><div class="err" id="e-towName">نام را وارد کن.</div></div>
   <div class="field"><label for="towPhone">شماره موبایل</label><input id="towPhone" inputmode="numeric" placeholder="09123456789" dir="ltr" style="text-align:left"><div class="err" id="e-towPhone">شماره موبایل معتبر وارد کن (مثل 09123456789).</div></div>
   <div class="field"><label for="towCar">مدل خودرو</label><input id="towCar" placeholder="مثلاً نبکا ET5"></div>
@@ -285,17 +286,34 @@ $('gpsBtn').addEventListener('click',function(){
     $('gpsOk').style.display='block';b.disabled=false;b.textContent='📍 ثبت موقعیت GPS';toast('موقعیت ثبت شد.');
   },function(){b.disabled=false;b.textContent='📍 ثبت موقعیت GPS';toast('دسترسی به موقعیت داده نشد؛ آدرس را دستی بنویس.')},{timeout:12000});
 });
+var TOW_API='https://rev-tow-dispatch.mojtaba-alimi64.workers.dev';
 $('towSubmit').addEventListener('click',function(){
   var okName=fieldOk(0,'e-towName', $('towName').value.trim().length>=2);
   var okPhone=fieldOk(0,'e-towPhone', validPhone($('towPhone').value));
   if(!okName||!okPhone)return;
-  var list=load(TOW_KEY,[]);
-  var req={id:code('TW'),ts:Date.now(),status:'ثبت شد',name:$('towName').value.trim(),phone:$('towPhone').value.trim(),car:$('towCar').value.trim(),problem:$('towProblem').value,loc:$('towLoc').value.trim(),gps:gpsPos,note:$('towNote').value.trim()};
-  list.unshift(req);save(TOW_KEY,list);
-  ['towName','towPhone','towCar','towLoc','towNote'].forEach(function(i){$(i).value=''});
-  closeSheets();renderTow();toast('درخواست '+req.id+' ثبت شد. همکاران ما تماس می‌گیرند.');
+  var btn=$('towSubmit');btn.disabled=true;btn.textContent='در حال ارسال…';
+  var payload={name:$('towName').value.trim(),phone:$('towPhone').value.trim(),car:$('towCar').value.trim(),problem:$('towProblem').value,loc:$('towLoc').value.trim(),gps:gpsPos?{lat:gpsPos.lat,lng:gpsPos.lng}:null,note:$('towNote').value.trim()};
+  fetch(TOW_API+'/api/tow/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  .then(function(r){return r.json()})
+  .then(function(d){
+    btn.disabled=false;btn.textContent='ثبت درخواست یدک‌کش';
+    if(!d||!d.ok){toast((d&&d.err)||'ثبت درخواست ناموفق بود؛ دوباره تلاش کن.');return}
+    var list=load(TOW_KEY,[]);
+    list.unshift({id:d.id,ts:Date.now(),status:d.status||'ثبت شد',name:payload.name,phone:payload.phone,car:payload.car,problem:payload.problem,loc:payload.loc,gps:payload.gps,note:payload.note,driver:null});
+    save(TOW_KEY,list);
+    ['towName','towPhone','towCar','towLoc','towNote'].forEach(function(i){$(i).value=''});
+    closeSheets();renderTow();
+    toast('درخواست '+d.id+' ثبت شد و برای نزدیک‌ترین یدک‌کش ارسال شد.');
+  })
+  .catch(function(){btn.disabled=false;btn.textContent='ثبت درخواست یدک‌کش';toast('اتصال به سرور برقرار نشد؛ اینترنت را چک و دوباره تلاش کن.');});
 });
-function towStatusPill(s){return s==='لغو شد'?'<span class="pill red">لغو شد</span>':s==='انجام شد'?'<span class="pill green">انجام شد</span>':'<span class="pill teal">ثبت شد</span>'}
+function towStatusPill(s){
+  if(s==='لغو شد')return '<span class="pill red">لغو شد</span>';
+  if(s==='راننده در راه')return '<span class="pill green">راننده در راه 🚛</span>';
+  if(s==='در انتظار اپراتور')return '<span class="pill red">در انتظار اپراتور</span>';
+  if(s==='انجام شد')return '<span class="pill green">انجام شد</span>';
+  return '<span class="pill teal">'+esc(s||'ثبت شد')+'</span>';
+}
 function renderTow(){
   var list=load(TOW_KEY,[]);
   $('towCount').textContent=list.length?list.length+' درخواست':'';
@@ -303,15 +321,39 @@ function renderTow(){
   $('towList').innerHTML=list.map(function(r){
     return '<div class="req"><div class="rtop"><span class="rcode">'+esc(r.id)+'</span>'+towStatusPill(r.status)+'</div>'
     +'<div class="rmeta">'+esc(r.problem)+' · '+esc(faDate(r.ts))+(r.car?' · '+esc(r.car):'')+'<br>'+esc(r.loc||'موقعیت ثبت نشده')+(r.gps?' (GPS ✓)':'')+'</div>'
-    +(r.status==='ثبت شد'?'<div class="ractions"><button class="link-btn" data-cancel-tow="'+esc(r.id)+'">لغو درخواست</button></div>':'')
+    +(r.driver?'<div class="rmeta">🚛 راننده: <b>'+esc(r.driver.name)+'</b> · <a href="tel:'+esc(r.driver.phone)+'" dir="ltr">'+esc(r.driver.phone)+'</a></div>':'')
+    +((r.status!=='لغو شد'&&r.status!=='انجام شد')?'<div class="ractions"><button class="link-btn" data-cancel-tow="'+esc(r.id)+'">لغو درخواست</button></div>':'')
     +'</div>';
   }).join('');
   $('towList').querySelectorAll('[data-cancel-tow]').forEach(function(b){b.addEventListener('click',function(){
     var l=load(TOW_KEY,[]);var r=l.find(function(x){return x.id===b.getAttribute('data-cancel-tow')});
-    if(r){r.status='لغو شد';save(TOW_KEY,l);renderTow();toast('درخواست لغو شد.')}
+    if(!r)return;
+    fetch(TOW_API+'/api/tow/cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:r.id,phone:r.phone})})
+    .then(function(x){return x.json()})
+    .then(function(d){
+      if(d&&d.ok){r.status='لغو شد';save(TOW_KEY,l);renderTow();toast('درخواست لغو شد.');}
+      else toast('لغو نشد؛ دوباره تلاش کن.');
+    }).catch(function(){toast('اتصال برقرار نشد.');});
   })});
+  list.forEach(function(r){
+    if(r.status==='لغو شد'||r.status==='انجام شد')return;
+    fetch(TOW_API+'/api/tow/status?id='+encodeURIComponent(r.id),{cache:'no-store'})
+    .then(function(x){return x.json()})
+    .then(function(d){
+      if(!d||!d.ok)return;
+      var l=load(TOW_KEY,[]);var cur=l.find(function(x){return x.id===r.id});
+      if(cur&&(cur.status!==d.status||JSON.stringify(cur.driver||null)!==JSON.stringify(d.driver||null))){
+        cur.status=d.status;cur.driver=d.driver||null;save(TOW_KEY,l);renderTow();
+      }
+    }).catch(function(){});
+  });
 }
 renderTow();
+setInterval(function(){
+  var l=load(TOW_KEY,[]);
+  if(l.some(function(r){return r.status!=='لغو شد'&&r.status!=='انجام شد'}))renderTow();
+},20000);
+
 
 /* ================= 2) قطعات ضروری ================= */
 var PARTS=[
