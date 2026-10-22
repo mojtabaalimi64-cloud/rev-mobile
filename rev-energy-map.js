@@ -56,11 +56,43 @@ function verified(s){
  if(a)return /^(approved|verified|active|published|تاییدشده|تأییدشده|فعال)$/.test(a);
  return /^(approved|verified|active|published|تاییدشده|تأییدشده|فعال)$/.test(st);
 }
+function normPortName(x){
+ var k=String(x||'').toUpperCase().replace(/[\"\'\[\]{}]/g,'').replace(/[\s_\-]+/g,' ').trim();
+ if(!k)return null;
+ if(k.indexOf('CHADEMO')>-1)return 'CHAdeMO';
+ if(k.indexOf('GB')>-1&&k.indexOf('T')>-1){if(k.indexOf('AC')>-1&&k.indexOf('DC')===-1)return 'GB/T AC';return 'GB/T DC';}
+ if(k.indexOf('CCS')>-1||k.indexOf('COMBO')>-1)return 'CCS2';
+ if(k.indexOf('TYPE 2')>-1||k.indexOf('MENNEKES')>-1||k==='TYPE2')return 'Type 2';
+ if(k.indexOf('TYPE 1')>-1||k.indexOf('J1772')>-1||k==='TYPE1')return 'Type 1';
+ return null;
+}
+function parsePorts(v,out){
+ out=out||{};
+ if(v==null)return out;
+ if(Array.isArray(v)){for(var i=0;i<v.length;i++)parsePorts(v[i],out);return out;}
+ if(typeof v==='object'){Object.keys(v).forEach(function(k){if(v[k]){var n=normPortName(k);if(n)out[n]=1;}});return out;}
+ var s=String(v).trim();if(!s)return out;
+ if(s.charAt(0)==='['||s.charAt(0)==='{'){try{return parsePorts(JSON.parse(s),out);}catch(e){}}
+ s.split(/[,;|]+/).forEach(function(part){var n=normPortName(part);if(n)out[n]=1;});
+ return out;
+}
+window.__revNormPorts=parsePorts;
+window.__revPortCompat=function(st){
+ try{
+  var p=JSON.parse(localStorage.getItem('rev_driver_vehicle_profile')||'null');
+  var my=p&&p.port;if(!my)return '';
+  var ports=parsePorts(st&&(st.connectors||st.connector||st.plugs));
+  if(!Object.keys(ports).length)return '';
+  return ports[my]?'ok':'no';
+ }catch(e){return '';}
+};
+function myPortOf(){try{var p=JSON.parse(localStorage.getItem('rev_driver_vehicle_profile')||'null');return (p&&p.port)||'';}catch(e){return '';}}
 function normalize(raw){
+
  var list=Array.isArray(raw)?raw:(raw&&[raw.stations,raw.data,raw.data&&raw.data.stations,raw.result&&raw.result.stations,raw.result&&raw.result.data].find(Array.isArray))||[];
  return list.map(function(s){
   var lat=num(s.latitude??s.lat??s.Latitude),lon=num(s.longitude??s.lng??s.lon??s.Longitude);
-  return {raw:s,lat:lat,lon:lon,name:String(s.name||s.title||s.station_name||'جایگاه شارژ REV'),power:num(s.power_kw??s.power??s.powerKw),address:String(s.address||s.location||s.city||''),status:String(s.status||s.status_name||''),approval_status:String(s.approval_status||s.approvalStatus||'')};
+  return {raw:s,lat:lat,lon:lon,name:String(s.name||s.title||s.station_name||'جایگاه شارژ REV'),power:num(s.power_kw??s.power??s.powerKw),ports:parsePorts(s.connectors||s.connector||s.plugs),address:String(s.address||s.location||s.city||''),status:String(s.status||s.status_name||''),approval_status:String(s.approval_status||s.approvalStatus||'')};
  }).filter(function(s){return Number.isFinite(s.lat)&&Number.isFinite(s.lon)&&Math.abs(s.lat)<=90&&Math.abs(s.lon)<=180&&verified(s.raw);});
 }
 function ensureBanner(){
@@ -110,6 +142,7 @@ function routeDistanceAlong(route,lat,lon){
  return {offRoute:best,remaining:remaining,index:idx};
 }
 function candidates(profile,route){
+ var myPort=String(profile&&profile.port||'');
  var cap=num(profile.battery_kwh),cons=num(profile.consumption),soc=num(profile.soc_pct),reserve=num(profile.reserve_soc);
  if(!Number.isFinite(reserve))reserve=15;
  if(!(cap>0&&cons>0&&soc>=0&&soc<=100))return [];
@@ -127,9 +160,10 @@ function candidates(profile,route){
   var arrival=soc-energyNeed/cap*100;
   var usableKm=Math.max(0,(soc-reserve)/100*cap/cons*100);
   if(from>usableKm*0.8)return;
-  out.push({station:s,distanceKm:from,offRouteKm:nearest.offRoute/1000,arrivalSoc:arrival,routeKm:Math.max(0,ahead/1000),energyKwh:energyNeed,reachable:arrival>=reserve});
+  var __ports=s.ports||{};var compat=!myPort||!Object.keys(__ports).length||!!__ports[myPort];
+  out.push({station:s,distanceKm:from,offRouteKm:nearest.offRoute/1000,arrivalSoc:arrival,routeKm:Math.max(0,ahead/1000),energyKwh:energyNeed,reachable:arrival>=reserve&&compat,compat:compat});
  });
- out.sort(function(a,b){return a.distanceKm-b.distanceKm;});
+ out.sort(function(a,b){return ((b.compat?1:0)-(a.compat?1:0))||(a.distanceKm-b.distanceKm);});
  return out.slice(0,3);
 }
 function drawPins(items,profile){
@@ -137,14 +171,15 @@ function drawPins(items,profile){
  if(state.layer){try{map.removeLayer(state.layer)}catch(e){}}
  state.layer=L.layerGroup().addTo(map);
  items.forEach(function(item,index){
-  var color=item.reachable?'#0b9b73':'#d94841';
-  var html='<div style="width:32px;height:38px;position:relative;filter:drop-shadow(0 2px 3px #102a3d55)"><div style="width:30px;height:30px;border:2px solid #fff;border-radius:50% 50% 50% 5px;transform:rotate(-45deg);background:'+color+';display:grid;place-items:center;color:#fff;font:bold 13px Tahoma"><span style="transform:rotate(45deg)">'+(index+1)+'</span></div></div>';
+  var color=item.compat===false?'#9db2c1':(item.reachable?'#0b9b73':'#d94841');
+  var html='<div style="width:32px;height:38px;position:relative;filter:drop-shadow(0 2px 3px #102a3d55)"><div style="width:30px;height:30px;border:2px solid #fff;border-radius:50% 50% 50% 5px;transform:rotate(-45deg);background:'+color+';display:grid;place-items:center;color:#fff;font:bold 13px Tahoma"><span style="transform:rotate(45deg)">'+(index+1)+'</span>'+(item.station.ports&&Object.keys(item.station.ports).length?'<span style="position:absolute;top:-9px;inset-inline-end:-15px;background:#fff;border:1px solid #b9cfdb;border-radius:99px;font-size:7.5px;font-weight:800;color:#3c5266;padding:0 4px;line-height:1.8;white-space:nowrap;box-shadow:0 1px 4px rgba(20,41,59,.25)">'+(myPortOf()&&item.station.ports[myPortOf()]?myPortOf()+' \u2713':Object.keys(item.station.ports)[0])+'</span>':'')+'</div></div>';
   var marker=L.marker([item.station.lat,item.station.lon],{icon:L.divIcon({className:'rev-energy-recommendation-pin',html:html,iconSize:[32,38],iconAnchor:[15,35]}),zIndexOffset:1800,title:'پیشنهاد شارژ: '+item.station.name}).addTo(state.layer);
   var box=document.createElement('div');box.style.cssText='font:12px/1.8 Tahoma,sans-serif;min-width:190px;direction:rtl';
   var title=document.createElement('strong');title.textContent=(index+1)+'. '+item.station.name;box.appendChild(title);
   var info=document.createElement('div');info.textContent='فاصله تخمینی جاده‌ای: '+item.distanceKm.toFixed(1)+' کیلومتر';box.appendChild(info);
   var soc=document.createElement('div');soc.textContent='شارژ تخمینی هنگام رسیدن: '+Math.round(item.arrivalSoc)+'٪';soc.style.color=item.reachable?'#187547':'#b42318';soc.style.fontWeight='bold';box.appendChild(soc);
   if(item.station.power>0){var power=document.createElement('div');power.textContent='توان ثبت‌شده: '+item.station.power+' kW';box.appendChild(power);}
+  var __pk=Object.keys(item.station.ports||{});if(__pk.length){var portsRow=document.createElement('div');portsRow.textContent='\u067E\u0648\u0631\u062A\u200C\u0647\u0627: '+__pk.join('\u060C ')+(myPortOf()&&item.station.ports[myPortOf()]?' \u2014 \u2713 \u0633\u0627\u0632\u06AF\u0627\u0631 \u0628\u0627 \u062E\u0648\u062F\u0631\u0648\u06CC \u062A\u0648':(myPortOf()?' \u2014 \u067E\u0648\u0631\u062A \u062E\u0648\u062F\u0631\u0648\u06CC \u062A\u0648 \u0631\u0627 \u0646\u062F\u0627\u0631\u062F':''));portsRow.style.fontWeight='bold';portsRow.style.color=item.compat===false?'#8a6414':'#087b48';box.appendChild(portsRow);}
   if(item.station.address){var address=document.createElement('div');address.textContent=item.station.address;box.appendChild(address);}
   var note=document.createElement('small');note.textContent='برآورد تقریبی؛ قبل از انحراف از مسیر، وضعیت و دسترس‌پذیری جایگاه را بررسی کن.';note.style.color='#65758b';box.appendChild(note);
   marker.bindPopup(box,{maxWidth:280});
