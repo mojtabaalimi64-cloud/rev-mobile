@@ -135,7 +135,7 @@ async function update(lat,lon,progress){
  state.lat=lat;state.lon=lon;state.progress=num(progress)||0;state.active=!!document.body.classList.contains('rev-navigating');
  if(!state.active)return;
  var now=Date.now();if(now-state.lastPaint<12000&&now-state.lastPaint>=0)return;state.lastPaint=now;
- var profile=vehicle(),route=activeRoute(),cap=num(profile.battery_kwh),cons=num(profile.consumption),soc=num(profile.soc_pct),reserve=num(profile.reserve_soc);
+ var profile=vehicle(),route=activeRoute(),cap=num(profile.battery_kwh),cons=num(profile.consumption),soc=num(profile.soc_pct),reserve=num(profile.reserve_soc),live=null;try{live=JSON.parse(sessionStorage.getItem('rev_energy_live_state_v1')||'null')}catch(e){}
  if(!Number.isFinite(reserve))reserve=15;
  if(!(cap>0&&cons>0&&soc>=0&&soc<=100)){
   showBanner('⚡ دستیار انرژی زنده','برای پیشنهاد دقیق، یک‌بار در دستیار انرژی ظرفیت باتری، مصرف و درصد شارژ فعلی را ثبت کن. GPS و مسیریابی بدون تغییر ادامه دارند.','info');
