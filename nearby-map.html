@@ -1165,7 +1165,7 @@ body.rev-navigating #tripLivePanel.rev-trip-expanded .trip-live-head{display:fle
  function expanded(on){panel.classList.toggle('rev-trip-expanded',!!on);grip.setAttribute('aria-expanded',String(!!on));$('revTripExpandLabel').textContent=on?'برای دیدن نقشه پایین بکشید ⌄':'برای جزئیات بالا بکشید ⌃';$('revTripEnergy').hidden=!on;try{if(window.revMap&&window.revMap.invalidateSize)window.revMap.invalidateSize({pan:false})}catch(e){}}
  grip.addEventListener('click',()=>expanded(!panel.classList.contains('rev-trip-expanded')));
  grip.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();expanded(!panel.classList.contains('rev-trip-expanded'))}});
- let startY=0,lastY=0;
+ let startY=0,lastY=0,drivenKm=0; const originalEnvironment=window.revUpdateNavEnvironment; if(typeof originalEnvironment==='function'){window.revUpdateNavEnvironment=function(lat,lon,progressMeters,force){if(Number.isFinite(Number(progressMeters)))drivenKm=Math.max(0,Number(progressMeters)/1000);const result=originalEnvironment.apply(this,arguments);update();return result;};}
  grip.addEventListener('touchstart',e=>{startY=lastY=e.touches[0].clientY},{passive:true});
  grip.addEventListener('touchmove',e=>{lastY=e.touches[0].clientY},{passive:true});
  grip.addEventListener('touchend',()=>{const d=lastY-startY;if(d< -24)expanded(true);else if(d>24)expanded(false)});
@@ -1176,7 +1176,7 @@ body.rev-navigating #tripLivePanel.rev-trip-expanded .trip-live-head{display:fle
    const capacity=Math.max(1,Math.min(300,Number($('revEnergyCapacity').value)||60));
    const soc=Math.max(0,Math.min(100,Number($('revEnergySoc').value)||0));
    const rate=Math.max(1,Math.min(100,Number($('revEnergyRate').value)||18));
-   const done=Number.isFinite(kmDone)?kmDone:0;
+   const done=Number.isFinite(drivenKm)?drivenKm:(Number.isFinite(kmDone)?kmDone:0);
    const remain=Number.isFinite(rem)?rem:NaN;
    const used=done*rate/100,forecast=Number.isFinite(remain)?remain*rate/100:NaN;
    $('revPeekRemaining').textContent='مسافت باقی‌مانده: '+(Number.isFinite(remain)?fmt(remain)+' km':'در انتظار مسیر');
