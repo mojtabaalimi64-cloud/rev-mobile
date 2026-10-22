@@ -21,6 +21,8 @@
     #rev-app-bottom-nav a span{font-size:11px;line-height:1.2}#rev-app-bottom-nav a svg{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     #rev-app-bottom-nav a[aria-current="page"]{color:#087fcb!important;background:#edf7ff!important}
     #rev-app-bottom-nav a:focus-visible{outline:2px solid #0887a7;outline-offset:2px}
+    html[data-rev-app="1"] body.rev-navigating #rev-app-bottom-nav{display:none!important}
+    html[data-rev-app="1"] body.rev-navigating{padding-bottom:0!important}
     @media(min-width:700px){html[data-rev-app="1"] body{padding-bottom:82px!important}#rev-app-bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(560px,100%);border:1px solid #e2eaf4;border-bottom:0;border-radius:16px 16px 0 0}}
   `;
   document.head.appendChild(style);
