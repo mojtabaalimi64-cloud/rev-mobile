@@ -78,6 +78,10 @@
 .toast{position:fixed;z-index:60;bottom:calc(170px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#14293b;color:#fff;font-size:13px;font-weight:700;border-radius:13px;padding:11px 18px;opacity:0;pointer-events:none;transition:all .25s;max-width:88vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .gps-ok{font-size:11px;color:var(--green);font-weight:800;margin-top:5px;display:none}
+.service-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 16px;padding:5px;background:#edf3f8;border:1px solid #dce6ef;border-radius:16px}
+.service-tabs a{display:flex;align-items:center;justify-content:center;gap:7px;min-height:43px;padding:9px 8px;border-radius:12px;text-decoration:none;font-size:12px;font-weight:850;color:#35516b;text-align:center}
+.service-tabs a.active{background:#fff;color:#1769c2;box-shadow:0 2px 8px rgba(28,73,112,.10);border:1px solid #d8e7f7}
+.service-tabs a .tab-ico{font-size:17px}
 .sec-anchor{scroll-margin-top:76px}
 </style>
 <script src="./rev-auth-guard.js?v=20261019-1"></script>
@@ -99,6 +103,11 @@
 </div></header>
 
 <main class="wrap">
+
+  <nav class="service-tabs" aria-label="بخش‌های خدمات REV">
+    <a class="active" href="./businesses.html" aria-current="page"><span class="tab-ico">🛠️</span> خدمات مشتریان</a>
+    <a href="./tow-driver.html?app=1" target="_blank" rel="noopener"><span class="tab-ico">🚛</span> پنل راننده یدک‌کش ↗</a>
+  </nav>
 
   <section class="hero-card" aria-labelledby="heroTitle">
     <div class="bolt" aria-hidden="true">🛎️</div>
@@ -126,7 +135,6 @@
     </div>
   </section>
 
-  <section class="section"><a class="card row-item" href="./tow-driver.html" style="display:flex"><span class="ico">🚛</span><span class="copy"><b>پنل راننده یدک‌کش</b><small>ویژه راننده‌های همکار REV — دریافت و پذیرش درخواست امداد</small></span><span class="chev" aria-hidden="true">‹</span></a></section>
    <!-- ============ 2) قطعات ضروری ============ -->
   <section class="section sec-anchor" id="parts" aria-labelledby="partsTitle">
     <div class="section-head"><h2 id="partsTitle">قطعات ضروری</h2><a href="#cart" id="openCartLink">سبد سفارش</a></div>
