@@ -943,6 +943,7 @@ function evpGuardedStart(inp,route,res){
 
 /* ---------- داده و محاسبه ---------- */
 var stationsCache=null,statusCache=null,lastPlan=null,overrides={};
+var pendingAutoStart=false;
 function geocode(txt,el){
   if(el&&el.dataset&&el.dataset.lat)return Promise.resolve({lat:+el.dataset.lat,lng:+el.dataset.lng,name:txt});
   return fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=fa&q='+encodeURIComponent(txt),{headers:{Accept:'application/json'}})
@@ -1123,7 +1124,10 @@ function render(inp,route,res){
   $('evpSave').addEventListener('click',function(){
     try{
       var arr=JSON.parse(localStorage.getItem('rev_saved_trip_plans_v1')||'[]');if(!Array.isArray(arr))arr=[];
-      arr.unshift({id:'p'+Date.now(),createdAt:Date.now(),params:{origin:inp.originName,destination:inp.destName,routeKm:Math.round(res.totalKm)},stops:res.stops.map(function(s){return {name:s.station.name,routeKm:Math.round(s.routeKm)}})});
+      arr.unshift({id:'p'+Date.now(),createdAt:Date.now(),origin:inp.originName,destination:inp.destName,
+        params:{origin:inp.originName,destination:inp.destName,routeKm:Math.round(res.totalKm),originLat:route.origin.lat,originLng:route.origin.lng,destLat:route.dest.lat,destLng:route.dest.lng},
+        inp:{batt:inp.batt,cons:inp.cons,maxKw:inp.maxKw,startSoc:inp.startSoc,minSoc:inp.minSoc,destSoc:inp.destSoc,style:inp.style,minKw:inp.minKw,departMin:inp.departMin,jdate:(lastPlan&&lastPlan.jdate)||''},
+        stops:res.stops.map(function(s){return {name:s.station.name,lat:s.station.lat,lon:s.station.lng,routeKm:Math.round(s.routeKm),arrivalSoc:s.arrivalSoc,targetSoc:s.targetSoc,chargeMinutes:s.chargeMinutes,power:s.station.power||null}})});
       localStorage.setItem('rev_saved_trip_plans_v1',JSON.stringify(arr.slice(0,20)));
       $('planStatus').textContent='برنامه ذخیره شد ✓ (پایین صفحه، بخش «برنامه‌های ذخیره‌شده»)';
     }catch(e){$('planStatus').textContent='ذخیره نشد؛ حافظه مرورگر در دسترس نیست.'}
@@ -1191,10 +1195,66 @@ function runPlan(){
         $('planStatus').textContent=res.ok?'برنامه آماده شد ✓':'';
         render(inp,route,res);
         checkStale();
+        if(pendingAutoStart){pendingAutoStart=false;if(res.ok){evpGuardedStart(lastPlan.inp,lastPlan.route,lastPlan.res)}}
       });
     });
-  }).catch(function(err){ $('planStatus').textContent='خطا: '+(err&&err.message?err.message:'مشکلی پیش آمد؛ دوباره تلاش کن.'); });
+  }).catch(function(err){ pendingAutoStart=false; $('planStatus').textContent='خطا: '+(err&&err.message?err.message:'مشکلی پیش آمد؛ دوباره تلاش کن.'); });
 }
+
+/* ---------- بازسازی برنامه ذخیره‌شده و شروع مسیریابی ---------- */
+function geoLoose(txt){
+  var m=/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/.exec(String(txt).trim());
+  if(m&&Math.abs(+m[1])<=90&&Math.abs(+m[2])<=180)return Promise.resolve({lat:+m[1],lng:+m[2]});
+  return geocode(txt,null);
+}
+function restoreSavedPlan(p){
+  var pr=p.params||{};
+  var oName=pr.origin||p.origin||'', dName=pr.destination||p.destination||'';
+  if(!oName||!dName){$('planStatus').textContent='اطلاعات این برنامه ناقص است.';return}
+  if(p.inp){
+    var ip=p.inp, oEl=$('planOrigin'), dEl=$('planDest');
+    oEl.value=oName; dEl.value=dName;
+    if(isFinite(+pr.originLat)){oEl.dataset.lat=pr.originLat;oEl.dataset.lng=pr.originLng}else{oEl.removeAttribute('data-lat');oEl.removeAttribute('data-lng')}
+    if(isFinite(+pr.destLat)){dEl.dataset.lat=pr.destLat;dEl.dataset.lng=pr.destLng}else{dEl.removeAttribute('data-lat');dEl.removeAttribute('data-lng')}
+    if(ip.batt)$('evpBatt').value=ip.batt;
+    if(ip.cons)$('evpCons').value=ip.cons;
+    if(ip.maxKw)$('evpMaxKw').value=ip.maxKw;
+    if(ip.startSoc)$('evpStartSoc').value=ip.startSoc;
+    if(ip.minSoc)$('evpMinSoc').value=ip.minSoc;
+    if(ip.destSoc)$('evpDestSoc').value=ip.destSoc;
+    if(ip.style!=null)$('evpStyle').value=ip.style;
+    if(ip.minKw!=null)$('evpMinKw').value=ip.minKw;
+    if(ip.departMin!=null)$('planTime').value=String(Math.floor(ip.departMin/60)).padStart(2,'0')+':'+String(ip.departMin%60).padStart(2,'0');
+    if(ip.jdate){if($('planDate'))$('planDate').value=ip.jdate;if($('planDateDisplay'))$('planDateDisplay').value=fa(ip.jdate)}
+    syncOut();
+    pendingAutoStart=true;
+    $('planStatus').textContent='در حال بازسازی برنامه ذخیره‌شده…';
+    window.scrollTo({top:0,behavior:'smooth'});
+    runPlan();
+    return;
+  }
+  $('planStatus').textContent='در حال آماده‌سازی مسیریابی…';
+  Promise.all([geoLoose(oName),geoLoose(dName)]).then(function(r){
+    var navStart={origin:oName,destination:dName,originLat:r[0].lat,originLng:r[0].lng,destLat:r[1].lat,destLng:r[1].lng};
+    var plan={origin:oName,destination:dName,createdAt:Date.now(),stops:[]};
+    try{localStorage.setItem('rev_planned_route',JSON.stringify(plan));sessionStorage.setItem('rev_planned_route',JSON.stringify(plan));localStorage.setItem('rev_nav_start',JSON.stringify(navStart));sessionStorage.setItem('rev_nav_start',JSON.stringify(navStart))}catch(e){}
+    location.href='./nearby-map.html?navstart=1&olat='+r[0].lat+'&olng='+r[0].lng+'&dlat='+r[1].lat+'&dlng='+r[1].lng+'&oname='+encodeURIComponent(oName)+'&dname='+encodeURIComponent(dName);
+  }).catch(function(){ $('planStatus').textContent='مکان مبدأ یا مقصد این برنامه پیدا نشد؛ آن را دستی دوباره بساز.' });
+}
+var splBox=$('savedPlansList');
+if(splBox){
+  splBox.addEventListener('click',function(ev){
+    var a=ev.target&&ev.target.closest?ev.target.closest('a'):null;
+    if(!a||!splBox.contains(a))return;
+    ev.preventDefault();
+    var idx=Array.prototype.indexOf.call(splBox.children,a);
+    if(idx<0)return;
+    var arr=[];try{arr=JSON.parse(localStorage.getItem('rev_saved_trip_plans_v1')||'[]')}catch(e){}
+    var p=Array.isArray(arr)?arr.slice(0,10)[idx]:null;
+    if(p)restoreSavedPlan(p);
+  });
+}
+
 /* جایگزینی دکمه: حذف هندلر قدیمی (رفتن به برنامه‌ریز سایت) با کلون بدون هندلر */
 var oldBtn=$('planGo');
 if(oldBtn){var nb=oldBtn.cloneNode(true);nb.textContent='🗺️ برنامه‌ریزی سفر';oldBtn.parentNode.replaceChild(nb,oldBtn);nb.addEventListener('click',runPlan)}
