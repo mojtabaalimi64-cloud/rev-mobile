@@ -117,6 +117,16 @@
       <select id="pRadius"><option value="50">۵۰ کیلومتر</option><option value="80">۸۰ کیلومتر</option><option value="100">۱۰۰ کیلومتر</option></select>
       <div class="ok" id="radiusOk"></div>
     </div>
+    <div class="field" style="margin-top:12px;border:1px solid #dce6ee;border-radius:12px;padding:12px;background:#f8fbfd">
+      <h3 style="margin-top:0">🔐 مدیریت رمز عبور</h3>
+      <p class="note">هر زمان خواستی از همین بخش رمز حسابت را عوض کن. رمز فعلی برای تأیید لازم است.</p>
+      <div class="field"><label for="currentPassword">رمز عبور فعلی</label><input id="currentPassword" type="password" autocomplete="current-password" dir="ltr" style="text-align:left" placeholder="رمز فعلی"></div>
+      <div class="field"><label for="newPassword">رمز عبور جدید (حداقل ۸ نویسه)</label><input id="newPassword" type="password" autocomplete="new-password" dir="ltr" style="text-align:left" placeholder="رمز جدید"></div>
+      <div class="field"><label for="confirmNewPassword">تکرار رمز جدید</label><input id="confirmNewPassword" type="password" autocomplete="new-password" dir="ltr" style="text-align:left" placeholder="تکرار رمز جدید"></div>
+      <button class="btn btn-teal" id="dChangePassword" type="button">تغییر رمز عبور</button>
+      <div class="err" id="passwordErr"></div>
+      <div class="ok" id="passwordOk"></div>
+    </div>
     <p class="note">این صفحه هر چند ثانیه درخواست تازه را چک می‌کند و موقعیتت را به‌روز نگه می‌دارد. صفحه را نبند.</p>
     <button class="btn btn-ghost" id="dRefresh" type="button">🔄 بررسی فوری درخواست</button>
   </section>
@@ -300,6 +310,26 @@
       if(d.approved){showApproved();startPolling()}else if(d.id){showPending()}else{showReg()}
     });
   }
+
+  /* ---------- مدیریت رمز شخصی راننده ---------- */
+  $('dChangePassword').addEventListener('click',function(){
+    var driver=load(),current=$('currentPassword').value,newPass=$('newPassword').value,confirmPass=$('confirmNewPassword').value;
+    $('passwordErr').textContent='';$('passwordOk').textContent='';
+    if(!driver||!driver.token){$('passwordErr').textContent='نشست ورود پیدا نشد؛ دوباره وارد شو.';return}
+    if(!current){$('passwordErr').textContent='رمز فعلی را وارد کن.';return}
+    if(newPass.length<8){$('passwordErr').textContent='رمز جدید باید حداقل ۸ نویسه داشته باشد.';return}
+    if(newPass!==confirmPass){$('passwordErr').textContent='تکرار رمز جدید یکسان نیست.';return}
+    var btn=this;btn.disabled=true;btn.textContent='در حال ذخیره…';
+    fetch(API+'/api/driver/password/change',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:driver.token,currentPassword:current,newPassword:newPass}),cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(res){
+      if(!res||!res.ok)throw new Error(res&&res.err||'تغییر رمز انجام نشد.');
+      $('currentPassword').value='';$('newPassword').value='';$('confirmNewPassword').value='';
+      $('passwordOk').textContent='رمز عبور با موفقیت تغییر کرد.';
+    })
+    .catch(function(e){$('passwordErr').textContent=e.message||'خطا در تغییر رمز عبور.'})
+    .finally(function(){btn.disabled=false;btn.textContent='تغییر رمز عبور'});
+  });
 
   /* ---------- آماده‌باش ---------- */
   function heartbeat(){
