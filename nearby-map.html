@@ -1117,4 +1117,16 @@ body.rev-navigating #navStartFloat{display:none!important}
   }
 }
 </style>
+
+<style id="rev-navdash-lift-fix">
+/* فیکس ۳۰ مهر: داشبورد هدایت بالای نوار تب‌ها بنشیند تا دکمه‌هایش (به‌ویژه پایان مسیریابی) زیر نوار نمانند */
+@media (max-width:900px){
+  html body.rev-navigating #navDash{
+    bottom:calc(92px + env(safe-area-inset-bottom))!important;
+    max-height:min(52dvh,360px)!important;
+    overflow-y:auto!important;
+    z-index:6001!important;
+  }
+}
+</style>
 </body></html>
