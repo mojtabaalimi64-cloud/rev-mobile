@@ -292,7 +292,7 @@
       // وضعیت لغو ثبت‌نام باید قبل از مسیرهای عادی نمایش بررسی شود.
       var drv=res&&res.driver;
       var revoked=!!(res&&res.registrationRevoked===true) || !!(drv&&drv.registrationRevoked===true)
-        || !!(drv&&drv.approved===false&&drv.active===false&&drv.registrationRevokedAt);
+        || !!(drv&&drv.approved===false&&drv.active===false);
       if(revoked){
         try{localStorage.removeItem(KEY)}catch(e){}
         clearInterval(pendInt);clearInterval(pollInt);clearInterval(timerInt);
