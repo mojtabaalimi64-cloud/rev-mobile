@@ -301,7 +301,7 @@
       if(res&&res.ok){
         onShift=!!res.onShift;setShiftUI();$('shiftErr').textContent='';
         $('shiftOk').textContent=onShift?'✓ شیفت شروع شد — درخواست‌ها مستقیم برات میاد':'✓ شیفت تمام شد';
-        if(onShift){heartbeat();poll();startPolling()}
+        if(onShift){startPolling()}
         else{clearInterval(pollInt);pollInt=null;}
       }else{
         $('shiftErr').textContent=(res&&res.err)||'تغییر وضعیت شیفت نشد.';
@@ -314,7 +314,7 @@
 
   /* ---------- آماده‌باش ---------- */
   function heartbeat(){
-    var d=load();if(!d)return;
+    var d=load();if(!d||!onShift)return;
     var body={token:d.token,radius:d.radius};
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(p){
@@ -329,7 +329,7 @@
   }
 
   function poll(){
-    var d=load();if(!d||!d.approved)return;
+    var d=load();if(!d||!d.approved||!onShift)return;
     fetch(API+'/api/driver/offers?token='+encodeURIComponent(d.token),{cache:'no-store'})
     .then(function(r){return r.json()})
     .then(function(res){
