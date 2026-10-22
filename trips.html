@@ -67,6 +67,55 @@
 </style>
 <!-- صفحه سفر مستقیماً از نوار ابزار قابل دسترسی است؛ ورود نباید باعث برگشت بی‌صدا به خانه شود. -->
 <script src="./rev-auth-guard.js?v=20261019-1"></script>
+<style id="evp-style">
+.evp-settings{margin:4px 0 12px;display:grid;gap:9px}
+.evp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.evp-settings label{display:block;font-size:11.5px;color:#d3ecf4;margin-bottom:4px;font-weight:700}
+.evp-settings input[type=number],.evp-settings select{width:100%;min-height:40px}
+.evp-slider{display:flex;align-items:center;gap:9px}
+.evp-slider label{flex:0 0 128px;margin:0}
+.evp-slider output{flex:0 0 46px;text-align:center;font-weight:900;font-size:12.5px;color:#fff}
+.evp-slider input[type=range]{flex:1;accent-color:#fff}
+.evp-labels{display:flex;justify-content:space-between;font-size:10px;color:#bfe3ee;margin-top:-4px}
+.evp-card{background:#fff;border:1px solid #e2eaf0;border-radius:18px;padding:13px 14px;box-shadow:0 3px 10px rgba(20,41,59,.05);margin-bottom:10px;color:#14293b}
+.evp-card h3{font-size:13px;margin-bottom:10px}
+.evp-card h3 small{color:#7e93a6;font-weight:600;font-size:11px}
+.evp-total{font-size:20px;font-weight:900}
+.evp-total small{font-size:12px;color:#7e93a6}
+.evp-totalsub{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:#5b7183;margin-top:5px}
+.evp-totalsub b{color:#14293b}
+.evp-costrow{display:flex;justify-content:space-between;font-size:12.5px;margin-top:9px;background:#f8fafc;border:1px dashed #cfdde6;border-radius:10px;padding:7px 10px}
+.evp-depart{display:flex;gap:7px}
+.evp-depart .opt{flex:1;border:1.5px solid #d5e2ec;border-radius:12px;padding:8px 6px;text-align:center;font-size:11px;color:#5b7183;background:#f8fafc}
+.evp-depart .opt b{display:block;font-size:14px;color:#14293b}
+.evp-depart .opt.best{border-color:#0887a7;background:#eaf7fb;color:#066d88}
+.evp-tag{display:inline-block;background:#e9f8f0;color:#087b48;border-radius:99px;font-size:9.5px;padding:1px 7px;font-weight:800}
+.evp-warn{background:#fff7e8;border:1px solid #f0c36d;color:#8a6d1f;border-radius:10px;font-size:11.5px;padding:7px 10px;margin-top:7px;line-height:1.9}
+.evp-stop{display:flex;gap:10px}
+.evp-rail{display:flex;flex-direction:column;align-items:center;width:26px;flex:0 0 26px}
+.evp-node{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;flex:0 0 24px;z-index:1}
+.evp-node.origin{background:#0866ff}.evp-node.dest{background:#fff;border:3px solid #e5484d;font-size:10px}
+.evp-node.charge{background:#e5484d}
+.evp-line{width:3px;flex:1;background:#cfdde6;border-radius:2px;min-height:12px}
+.evp-leg{font-size:11.5px;color:#5b7183;padding-right:36px;margin:-1px 0 7px}
+.evp-scard{flex:1;background:#fbfcfd;border:1px solid #e6edf2;border-radius:14px;padding:10px 12px;margin-bottom:4px}
+.evp-scard .name{font-weight:800;font-size:13.5px}
+.evp-scard .meta{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:11.5px;color:#5b7183;margin-top:5px}
+.evp-scard .meta .bat{color:#14293b;font-weight:800}
+.evp-badge{display:inline-block;border-radius:99px;font-size:10px;padding:1px 8px;font-weight:800;background:#e5f3f8;color:#066d88}
+.evp-badge.live{background:#eef7ee;color:#2e7d32}
+.evp-badge.warn{background:#fff7e8;color:#8a6d1f}
+.evp-editrow{display:flex;gap:7px;margin-top:8px}
+.evp-editrow button{flex:1;min-height:30px;border-radius:9px;border:1px solid #cbe6f0;background:#f2f9fc;color:#066d88;font:700 11px Tahoma,sans-serif;cursor:pointer}
+.evp-editrow button.on{background:#0887a7;color:#fff;border-color:#0887a7}
+.evp-startbtn{width:100%;min-height:50px;border:0;border-radius:14px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 10px 24px rgba(8,135,167,.35);font-family:inherit}
+.evp-subactions{display:flex;gap:7px;margin-top:8px}
+.evp-subactions button,.evp-subactions a{flex:1;min-height:38px;border-radius:11px;border:1px solid #d5e2ec;background:#fff;color:#3c5266;font:700 11.5px Tahoma,sans-serif;cursor:pointer;display:grid;place-items:center;text-decoration:none}
+.evp-check{font-size:12.5px;line-height:2.15;color:#3c5266}
+.evp-fail{background:#fff3f3;border:1px solid #f0b4b4;border-radius:18px;padding:14px;color:#7a2020;margin-bottom:10px;font-size:13px;line-height:2}
+.evp-fail button{margin-top:8px;min-height:38px;border-radius:11px;border:0;background:#c62f35;color:#fff;font:800 12.5px Tahoma,sans-serif;padding:0 14px;cursor:pointer}
+</style>
+
 </head>
 <body class="has-bottom-nav">
 
@@ -94,6 +143,12 @@
     </div>
     <p id="planStatus" role="status" aria-live="polite" style="min-height:20px;font-size:12px;margin:8px 0 0;color:#ffe9a8"></p>
   </section>
+
+  <section class="section" id="evpResult" hidden aria-labelledby="evpResultTitle">
+  <div class="section-head"><h2 id="evpResultTitle">برنامه سفر تو</h2></div>
+  <div id="evpResultBody"></div>
+</section>
+
 
   <section class="section" id="meetupPlanningSection" aria-labelledby="meetupTitle">
     <div class="section-head"><h2 id="meetupTitle">برنامه‌ریزی گروهی</h2></div>
@@ -671,5 +726,335 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 </script>
+<script>
+/* برنامه‌ریز سفر برقی REV — داخل صفحه سفر موبایل؛ اقتباس از ABRP/Chargemap/PlugShare/Tesla/Chargeway */
+(function(){
+"use strict";
+var API_STATIONS='https://rev-api.mojtaba-alimi64.workers.dev/api/stations';
+var API_STATUS='https://rev-status-api.mojtaba-alimi64.workers.dev/status';
+var TARIF_DC=1254, TARIF_AC=807.8; // تومان به‌ازای kWh — تعرفه خدمات شارژ تهران (تقریبی)
+var VEHICLES=[
+ {n:'اسکای‌ول ET5',b:72,c:19.5,kw:100},
+ {n:'فولکس‌واگن ID.4',b:77,c:18.5,kw:135},
+ {n:'آئودی Q4 e-tron',b:77,c:19,kw:135},
+ {n:'هیوندای کونا EV',b:64,c:16.5,kw:100},
+ {n:'کیا EV5',b:68,c:18,kw:140},
+ {n:'تویوتا bZ4X',b:71,c:18.5,kw:150},
+ {n:'هونگچی E-QM5',b:60,c:17,kw:90},
+ {n:'سفارشی (دستی)',b:60,c:18,kw:120}
+];
+function $(id){return document.getElementById(id)}
+function fa(x){return String(x).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[+d]})}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fmtKm(km){return fa(Math.round(km))+' کیلومتر'}
+function fmtDur(min){min=Math.round(min);var h=Math.floor(min/60),m=min%60;if(h&&m)return fa(h)+' ساعت و '+fa(m)+' دقیقه';if(h)return fa(h)+' ساعت';return fa(m)+' دقیقه'}
+function fmtClock(mins){mins=((Math.round(mins)%1440)+1440)%1440;var h=Math.floor(mins/60),m=mins%60;return fa(String(h).padStart(2,'0'))+':'+fa(String(m).padStart(2,'0'))}
+function dayWrap(mins){return Math.floor(mins/1440)>0?' (روز بعد)':''}
+function hav(a,b,c,d){var R=6371,t=Math.PI/180;var x=(c-a)*t,y=(d-b)*t*Math.cos((a+c)/2*t);return Math.sqrt(x*x+y*y)*R}
+
+/* ---------- تزریق تنظیمات خودرو و باتری به کارت فرم ---------- */
+var heroSettings=document.createElement('div');
+heroSettings.className='evp-settings';
+heroSettings.innerHTML=
+ '<div class="field" style="margin:0"><label for="evpVehicle">خودرو (مشخصات تقریبی — قابل ویرایش)</label>'+
+ '<select id="evpVehicle" class="trip-input">'+VEHICLES.map(function(v,i){return '<option value="'+i+'">'+esc(v.n)+'</option>'}).join('')+'</select></div>'+
+ '<div class="evp-grid3">'+
+ '<div><label for="evpBatt">باتری (kWh)</label><input id="evpBatt" class="trip-input" type="number" min="10" max="200" step="1"></div>'+
+ '<div><label for="evpCons">مصرف (kWh/100km)</label><input id="evpCons" class="trip-input" type="number" min="8" max="40" step="0.1"></div>'+
+ '<div><label for="evpMaxKw">حداکثر شارژ (kW)</label><input id="evpMaxKw" class="trip-input" type="number" min="20" max="400" step="5"></div></div>'+
+ '<div class="evp-slider"><label for="evpStartSoc">🔋 باتری شروع</label><input type="range" id="evpStartSoc" min="20" max="100" value="90"><output id="evpStartSocOut"></output></div>'+
+ '<div class="evp-slider"><label for="evpMinSoc">🛡 حداقل باتری در شارژر</label><input type="range" id="evpMinSoc" min="5" max="50" value="20"><output id="evpMinSocOut"></output></div>'+
+ '<div class="evp-slider"><label for="evpDestSoc">🏁 باتری رسیدن به مقصد</label><input type="range" id="evpDestSoc" min="5" max="80" value="30"><output id="evpDestSocOut"></output></div>'+
+ '<div class="evp-slider"><label for="evpStyle">⚡ سبک سفر</label><input type="range" id="evpStyle" min="0" max="100" value="35"><output></output></div>'+
+ '<div class="evp-labels"><span>توقف کمتر</span><span>شارژ سریع‌تر</span></div>'+
+ '<div class="field" style="margin:0"><label for="evpMinKw">🔌 حداقل توان شارژر</label><select id="evpMinKw" class="trip-input"><option value="0">هر توانی</option><option value="50">حداقل ۵۰ kW</option><option value="60">حداقل ۶۰ kW</option><option value="120">حداقل ۱۲۰ kW (سریع)</option></select></div>';
+var recentBox=$('recentDests');
+if(recentBox&&recentBox.parentNode)recentBox.parentNode.insertBefore(heroSettings,recentBox);
+function syncVehicle(){var v=VEHICLES[+$('evpVehicle').value||0];$('evpBatt').value=v.b;$('evpCons').value=v.c;$('evpMaxKw').value=v.kw}
+function syncOut(){ $('evpStartSocOut').textContent=fa($('evpStartSoc').value)+'٪'; $('evpMinSocOut').textContent=fa($('evpMinSoc').value)+'٪'; $('evpDestSocOut').textContent=fa($('evpDestSoc').value)+'٪'; }
+$('evpVehicle').addEventListener('change',syncVehicle);
+['evpStartSoc','evpMinSoc','evpDestSoc'].forEach(function(id){$(id).addEventListener('input',syncOut)});
+syncVehicle();syncOut();
+
+/* دکمه مکان فعلی */
+var locBtn=document.createElement('button');
+locBtn.type='button';locBtn.textContent='📍 مکان فعلی من به‌عنوان مبدأ';
+locBtn.style.cssText='background:none;border:0;color:#bfe3ee;font:700 12px Tahoma,sans-serif;cursor:pointer;text-align:right;padding:0';
+locBtn.addEventListener('click',function(){
+  if(!navigator.geolocation){$('planStatus').textContent='مکان‌یابی روی این دستگاه پشتیبانی نمی‌شود.';return}
+  $('planStatus').textContent='در حال گرفتن مکان فعلی…';
+  navigator.geolocation.getCurrentPosition(function(p){
+    var o=$('planOrigin');o.value='مکان فعلی من';o.dataset.lat=p.coords.latitude;o.dataset.lng=p.coords.longitude;
+    $('planStatus').textContent='مکان فعلی ثبت شد ✓';
+  },function(){ $('planStatus').textContent='دسترسی مکان داده نشد؛ مبدأ را دستی بنویس.' },{enableHighAccuracy:true,timeout:10000});
+});
+var originField=$('planOrigin');if(originField&&originField.parentNode)originField.parentNode.appendChild(locBtn);
+$('planDest').addEventListener('input',function(){this.removeAttribute('data-lat');this.removeAttribute('data-lng')});
+originField.addEventListener('input',function(){this.removeAttribute('data-lat');this.removeAttribute('data-lng')});
+
+/* ---------- داده و محاسبه ---------- */
+var stationsCache=null,statusCache=null,lastPlan=null,overrides={};
+function geocode(txt,el){
+  if(el&&el.dataset&&el.dataset.lat)return Promise.resolve({lat:+el.dataset.lat,lng:+el.dataset.lng,name:txt});
+  return fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=fa&q='+encodeURIComponent(txt),{headers:{Accept:'application/json'}})
+    .then(function(r){return r.json()}).then(function(j){
+      if(!j||!j.length)throw new Error('مکان «'+txt+'» پیدا نشد؛ دقیق‌تر بنویس (مثلاً: قم، بلوار امین).');
+      return {lat:+j[0].lat,lng:+j[0].lon,name:txt};
+    });
+}
+function loadStations(){
+  if(stationsCache)return Promise.resolve(stationsCache);
+  return fetch(API_STATIONS,{cache:'no-store'}).then(function(r){return r.json()}).then(function(e){
+    var arr=[e&&e.stations,e&&e.data,e&&e.data&&e.data.stations,e&&e.data&&e.data.data,e&&e.result&&e.result.stations,e&&e.result&&e.result.data,e&&e.result].find(Array.isArray)||[];
+    stationsCache=arr.map(function(s){
+      var lat=+(s.lat!=null?s.lat:s.latitude), lng=+(s.lng!=null?s.lng:(s.lon!=null?s.lon:s.longitude));
+      var pw=+(s.power_kw||s.power||s.max_power||0);
+      if(!pw&&Array.isArray(s.connectors)){s.connectors.forEach(function(c){var k=+(c&&(c.power_kw||c.power||c.kw)||0);if(k>pw)pw=k})}
+      return {id:String(s.id||s.code||(lat+','+lng)),name:String(s.name||s.title||'ایستگاه شارژ'),city:String(s.city||''),lat:lat,lng:lng,power:pw,
+              connectors:Array.isArray(s.connectors)?s.connectors.map(function(c){return typeof c==='string'?c:(c.type||c.name||'')}).filter(Boolean):[],
+              amenities:s.amenities||s.features||null};
+    }).filter(function(s){return isFinite(s.lat)&&isFinite(s.lng)});
+    return stationsCache;
+  });
+}
+function loadStatus(){
+  if(statusCache)return Promise.resolve(statusCache);
+  return fetch(API_STATUS,{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){statusCache=d||{};return statusCache}).catch(function(){statusCache={};return statusCache});
+}
+function routeKmOf(coords,cum,lat,lng){
+  var best=1e18,bkm=0;
+  for(var i=0;i<coords.length;i++){var d=hav(lat,lng,coords[i][1],coords[i][0]);if(d<best){best=d;bkm=cum[i]}}
+  return {km:bkm,off:best};
+}
+function chargeMinutes(arrSoc,tgtSoc,batt,effKw){
+  var soc=arrSoc,mins=0,guard=0;
+  while(soc<tgtSoc&&guard++<10){
+    var top=soc<60?60:(soc<80?80:100), to=Math.min(tgtSoc,top);
+    var kwh=(to-soc)/100*batt, f=soc<60?1:(soc<80?0.72:0.42);
+    mins+=kwh/(effKw*f)*60; soc=to;
+  }
+  return Math.round(mins+4);
+}
+function socAfterMinutes(arrSoc,minutes,batt,effKw){
+  var soc=arrSoc,left=Math.max(0,minutes-4),guard=0;
+  while(left>0&&soc<97&&guard++<10){
+    var top=soc<60?60:(soc<80?80:100), f=soc<60?1:(soc<80?0.72:0.42);
+    var kwhInBand=(top-soc)/100*batt, minsInBand=kwhInBand/(effKw*f)*60;
+    if(left>=minsInBand){soc=top;left-=minsInBand}else{soc+= (left*effKw*f/60)/batt*100;left=0}
+  }
+  return Math.min(97,Math.round(soc));
+}
+function simulate(inp,route,corridor){
+  var batt=inp.batt;
+  var perKm=inp.cons/100;
+  var totalKm=route.km, totalDriveMin=route.min;
+  var soc=inp.startSoc, km=0, clock=inp.departMin, stops=[], legs=[], used={};
+  var targetBase=Math.round(88-(88-65)*(inp.style/100));
+  var legFactor=function(fromKm,toKm){ return route.factorAt?route.factorAt(fromKm,toKm):1 };
+  function driveMin(a,b){return totalDriveMin*(b-a)/totalKm}
+  function energyPct(a,b){ var e=(b-a)*perKm*legFactor(a,b); return e/batt*100 }
+  var guard=0;
+  while(guard++<24){
+    var reachDest=energyPct(km,totalKm);
+    if(soc-reachDest>=inp.destSoc){
+      var arrD=Math.round(soc-reachDest);
+      legs.push({from:km,to:totalKm,drive:driveMin(km,totalKm),socFrom:soc,socTo:arrD});
+      clock+=driveMin(km,totalKm);
+      return {ok:true,stops:stops,legs:legs,totalKm:totalKm,driveMin:totalDriveMin,chargeMin:stops.reduce(function(a,s){return a+s.chargeMinutes},0),totalMin:clock-inp.departMin,arriveMin:clock,arriveSoc:arrD,startSoc:inp.startSoc};
+    }
+    var maxReach=km+(soc-inp.minSoc)/100*batt/perKm/(legFactor(km,totalKm)||1);
+    var idx=stops.length;
+    var ov=overrides[idx]||{};
+    var cand=corridor.filter(function(s){return s.routeKm>km+3&&s.routeKm<=maxReach&&!used[s.id]});
+    var st=null;
+    if(ov.stationId){ st=corridor.find(function(s){return s.id===ov.stationId})||null; if(st&&(st.routeKm<=km+3||used[st.id]))st=null; }
+    if(!st&&cand.length){ cand.sort(function(a,b){return b.routeKm-a.routeKm}); st=cand[0]; }
+    if(!st){ return {ok:false,atKm:km,soc:Math.round(soc),stops:stops}; }
+    var arrSoc=soc-energyPct(km,st.routeKm);
+    var effKw=Math.max(7,Math.min(st.power||50,inp.maxKw));
+    var tgt;
+    if(ov.minutes)tgt=socAfterMinutes(arrSoc,ov.minutes,batt,effKw);
+    else if(ov.targetSoc)tgt=ov.targetSoc;
+    else tgt=targetBase;
+    if(!ov.minutes&&!ov.targetSoc){
+      var needDest=energyPct(st.routeKm,totalKm)+inp.destSoc;
+      if(needDest>tgt&&needDest<=95)tgt=Math.ceil(needDest);
+    }
+    tgt=Math.max(Math.round(arrSoc)+3,Math.min(95,tgt));
+    var cm=chargeMinutes(arrSoc,tgt,batt,effKw);
+    var kwhAdded=(tgt-arrSoc)/100*batt;
+    var leg={from:km,to:st.routeKm,drive:driveMin(km,st.routeKm),socFrom:soc,socTo:Math.round(arrSoc)};
+    legs.push(leg);
+    clock+=leg.drive;
+    var arrClock=clock; clock+=cm;
+    stops.push({station:st,routeKm:st.routeKm,arrivalSoc:Math.round(arrSoc),targetSoc:Math.round(tgt),chargeMinutes:cm,kwh:kwhAdded,arriveClock:arrClock,departClock:clock,override:ov});
+    used[st.id]=1; soc=tgt; km=st.routeKm;
+  }
+  return {ok:false,atKm:km,soc:Math.round(soc),stops:stops};
+}
+
+/* ---------- رندر ---------- */
+function speedBadge(pw){ if(pw>=100)return '🚀 شارژ سریع'; if(pw>=40)return '⚡ شارژ متوسط'; if(pw>0)return '🐢 شارژ کند'; return '⚡ توان نامشخص' }
+function statusBadge(st){
+  if(!statusCache)return '';
+  var key='g:'+st.lat.toFixed(6)+','+st.lng.toFixed(6);
+  var rec=statusCache[key]||(statusCache.stations&&statusCache.stations[key]);
+  if(!rec||!rec.status)return '';
+  var lbl={free:'آزاد',busy:'شلوغ',broken:'خراب'}[rec.status]||rec.status;
+  var t=rec.updatedAt||rec.ts||rec.time; var when='';
+  if(t){var h=Math.max(0,Math.round((Date.now()-new Date(t).getTime())/3600000));when=h<1?'کمتر از یک ساعت پیش':(h<24?fa(h)+' ساعت پیش':fa(Math.round(h/24))+' روز پیش')}
+  return '<span class="evp-badge '+(rec.status==='broken'?'warn':'live')+'">گزارش کاربران: '+esc(lbl)+(when?' · '+when:'')+'</span>';
+}
+function render(inp,route,res){
+  var body=$('evpResultBody');
+  if(!res.ok){
+    body.innerHTML='<div class="evp-fail"><b>⚠️ با این تنظیمات، این مسیر شارژر کافی ندارد.</b><br>در کیلومتر '+fa(Math.round(res.atKm))+' باتری به '+fa(res.soc)+'٪ می‌رسد و تا شارژر بعدی نمی‌رسد. حداقل باتری را کمتر کن، یا مبدأ/مقصد را نزدیک‌تر بگیر.<br><button type="button" id="evpRetryLoose">حداقل باتری را ۱۰٪ کن و دوباره حساب کن</button></div>';
+    $('evpResult').hidden=false;
+    $('evpRetryLoose').addEventListener('click',function(){$('evpMinSoc').value=10;syncOut();runPlan()});
+    $('evpResult').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  var cost=res.stops.reduce(function(a,s){return a+s.kwh*((s.station.power>=40)?TARIF_DC:TARIF_AC)},0);
+  var depOpts=[inp.departMin-120,inp.departMin,inp.departMin+180].map(function(dm){
+    var arr=dm+res.totalMin; var h=Math.floor(((dm%1440)+1440)%1440/60);
+    var lbl=h>=5&&h<10?'صبح خنک · مصرف کمتر':(h>=10&&h<16?'ظهر گرم · کولر بیشتر':'عادی');
+    return {dm:dm,arr:arr,lbl:lbl,cool:h>=5&&h<10};
+  });
+  var bestIdx=depOpts.findIndex(function(o){return o.cool}); if(bestIdx<0)bestIdx=0;
+  var html='';
+  html+='<div class="evp-card"><div class="evp-total">'+fmtDur(res.totalMin)+' <small>('+fmtKm(res.totalKm)+')</small></div>'+
+    '<div class="evp-totalsub"><span>🚗 رانندگی <b>'+fmtDur(res.driveMin)+'</b></span><span>⚡ شارژ <b>'+fmtDur(res.chargeMin)+'</b></span><span><b>'+fa(res.stops.length)+'</b> توقف شارژ</span><span>🏁 رسیدن <b>'+fmtClock(res.arriveMin)+dayWrap(res.arriveMin)+'</b> با باتری <b>'+fa(res.arriveSoc)+'٪</b></span></div>'+
+    (res.stops.length?'<div class="evp-costrow"><span>💰 هزینه شارژ این سفر (تقریبی، تعرفه خدمات)</span><b>≈ '+fa(Math.round(cost/1000)*1000)+' تومان</b></div>':'')+'</div>';
+  html+='<div class="evp-card"><h3>🕐 ساعت‌های حرکت دیگر <small>— رسیدن هرکدام با همین برنامه</small></h3><div class="evp-depart">'+
+    depOpts.map(function(o,i){return '<div class="opt'+(i===bestIdx?' best':'')+'"><b>'+fmtClock(o.dm)+'</b>رسیدن '+fmtClock(o.arr)+dayWrap(o.arr)+(i===bestIdx?'<br><span class="evp-tag">پیشنهاد ما</span>':'')+'<br>'+o.lbl+'</div>'}).join('')+'</div></div>';
+  if(route.elevSvg){
+    html+='<div class="evp-card"><h3>⛰ پروفایل ارتفاع مسیر <small>— قله '+fa(route.elevMax)+' متر</small></h3>'+route.elevSvg+
+      (route.elevWarn?'<div class="evp-warn">⚠️ '+esc(route.elevWarn)+'</div>':'')+'</div>';
+  }
+  html+='<div class="evp-card"><h3>🗺 برنامه سفر <small>— '+esc(inp.originName)+' ← '+esc(inp.destName)+'</small></h3>';
+  html+='<div class="evp-stop"><div class="evp-rail"><div class="evp-node origin">➤</div><div class="evp-line"></div></div><div class="evp-scard"><div class="name">'+esc(inp.originName)+' — مبدأ</div><div class="meta"><span>🕐 حرکت '+fmtClock(inp.departMin)+'</span><span class="bat">🔋 '+fa(inp.startSoc)+'٪</span></div></div></div>';
+  res.legs.forEach(function(leg,i){
+    html+='<div class="evp-leg">'+fmtDur(leg.drive)+' ('+fmtKm(leg.to-leg.from)+')</div>';
+    if(i<res.stops.length){
+      var s=res.stops[i],st=s.station;
+      html+='<div class="evp-stop"><div class="evp-rail"><div class="evp-node charge">⚡</div><div class="evp-line"></div></div><div class="evp-scard">'+
+        '<div class="name">'+esc(st.name)+(st.city?' — '+esc(st.city):'')+' <span class="evp-badge">'+speedBadge(st.power)+' · سازگار با خودروی شما</span></div>'+
+        '<div class="meta"><span>🕐 '+fmtClock(s.arriveClock)+' ← '+fmtClock(s.departClock)+' (⚡ '+fa(s.chargeMinutes)+' دقیقه)</span><span class="bat">🔋 '+fa(s.arrivalSoc)+'٪ ← '+fa(s.targetSoc)+'٪</span>'+(st.power?'<span>⚡ '+fa(st.power)+' kW</span>':'')+'</div>'+
+        '<div class="meta">'+statusBadge(st)+(Array.isArray(st.amenities)&&st.amenities.length?'<span>'+esc(st.amenities.slice(0,3).join(' · '))+'</span>':'')+'</div>'+
+        '<div class="evp-editrow"><button type="button" data-act="minutes" data-i="'+i+'" class="'+(s.override.minutes?'on':'')+'">⏱ توقف '+fa(s.override.minutes||30)+' دقیقه‌ای</button>'+
+        '<button type="button" data-act="target" data-i="'+i+'" class="'+(s.override.targetSoc?'on':'')+'">🔋 شارژ تا '+fa(s.override.targetSoc||80)+'٪</button>'+
+        '<button type="button" data-act="swap" data-i="'+i+'">🔀 تغییر ایستگاه</button></div>'+
+        '</div></div>';
+    }
+  });
+  html+='<div class="evp-stop"><div class="evp-rail"><div class="evp-node dest">🏁</div></div><div class="evp-scard"><div class="name">'+esc(inp.destName)+' — مقصد</div><div class="meta"><span>🕐 رسیدن '+fmtClock(res.arriveMin)+dayWrap(res.arriveMin)+'</span><span class="bat">🔋 '+fa(res.arriveSoc)+'٪</span></div></div></div>';
+  html+='</div>';
+  html+='<div class="evp-card"><button type="button" class="evp-startbtn" id="evpStartNav">➤ شروع مسیریابی با این برنامه</button>'+
+    '<div class="evp-subactions"><button type="button" id="evpSave">💾 ذخیره برنامه</button><button type="button" id="evpShare">📤 اشتراک‌گذاری</button><a id="evpExternal" target="_blank" rel="noopener">🧭 گوگل‌مپ</a></div></div>';
+  html+='<div class="evp-card"><h3>✅ قبل از حرکت</h3><p class="evp-check">🔌 باتری را تا <b>'+fa(inp.startSoc)+'٪</b> شارژ کن (شروع برنامه)<br>🕐 حرکت ساعت <b>'+fmtClock(inp.departMin)+'</b> — رسیدن <b>'+fmtClock(res.arriveMin)+dayWrap(res.arriveMin)+'</b><br>📍 در هر توقف، وضعیت لحظه‌ای ایستگاه را روی نقشه REV چک کن</p></div>';
+  body.innerHTML=html;
+  $('evpResult').hidden=false;
+  var wp=res.stops.map(function(s){return s.station.lat+','+s.station.lng}).join('|');
+  $('evpExternal').href='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(route.origin.lat+','+route.origin.lng)+'&destination='+encodeURIComponent(route.dest.lat+','+route.dest.lng)+(wp?'&waypoints='+encodeURIComponent(wp):'')+'&travelmode=driving';
+  body.querySelectorAll('[data-act]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var i=+btn.getAttribute('data-i'),act=btn.getAttribute('data-act');overrides[i]=overrides[i]||{};
+      if(act==='minutes'){ overrides[i].minutes=overrides[i].minutes?0:30; if(!overrides[i].minutes)delete overrides[i].minutes; delete overrides[i].targetSoc; }
+      if(act==='target'){ overrides[i].targetSoc=overrides[i].targetSoc?0:80; if(!overrides[i].targetSoc)delete overrides[i].targetSoc; delete overrides[i].minutes; }
+      if(act==='swap'){
+        var cur=res.stops[i].station, kmC=res.stops[i].routeKm;
+        var alts=lastPlan.corridor.filter(function(s){return s.id!==cur.id&&Math.abs(s.routeKm-kmC)<=40}).sort(function(a,b){return Math.abs(a.routeKm-kmC)-Math.abs(b.routeKm-kmC)});
+        if(!alts.length){$('planStatus').textContent='ایستگاه جایگزینی نزدیک این توقف نیست.';return}
+        overrides[i].stationId=alts[0].id;
+      }
+      rerun();
+    });
+  });
+  $('evpStartNav').addEventListener('click',function(){
+    var plan={origin:inp.originName,destination:inp.destName,distance:Math.round(res.totalKm*1000),duration:Math.round(res.totalMin*60),createdAt:Date.now(),
+      stops:res.stops.map(function(s){return {name:s.station.name,lat:s.station.lat,lon:s.station.lng,routeKm:Math.round(s.routeKm),arrivalSoc:s.arrivalSoc,targetSoc:s.targetSoc,chargeMinutes:s.chargeMinutes,power:s.station.power||null}})};
+    try{localStorage.setItem('rev_planned_route',JSON.stringify(plan));sessionStorage.setItem('rev_planned_route',JSON.stringify(plan));
+        sessionStorage.setItem('rev_nav_start',JSON.stringify({origin:inp.originName,destination:inp.destName}));}catch(e){}
+    location.href='./nearby-map.html?navstart=1';
+  });
+  $('evpSave').addEventListener('click',function(){
+    try{
+      var arr=JSON.parse(localStorage.getItem('rev_saved_trip_plans_v1')||'[]');if(!Array.isArray(arr))arr=[];
+      arr.unshift({id:'p'+Date.now(),createdAt:Date.now(),params:{origin:inp.originName,destination:inp.destName,routeKm:Math.round(res.totalKm)},stops:res.stops.map(function(s){return {name:s.station.name,routeKm:Math.round(s.routeKm)}})});
+      localStorage.setItem('rev_saved_trip_plans_v1',JSON.stringify(arr.slice(0,20)));
+      $('planStatus').textContent='برنامه ذخیره شد ✓ (پایین صفحه، بخش «برنامه‌های ذخیره‌شده»)';
+    }catch(e){$('planStatus').textContent='ذخیره نشد؛ حافظه مرورگر در دسترس نیست.'}
+  });
+  $('evpShare').addEventListener('click',function(){
+    var lines=['🚗⚡ برنامه سفر REV: '+inp.originName+' ← '+inp.destName,'⏱ '+fmtDur(res.totalMin)+' · '+fmtKm(res.totalKm)+' · رسیدن '+fmtClock(res.arriveMin)];
+    res.stops.forEach(function(s,i){lines.push('⚡ توقف '+(i+1)+': '+s.station.name+' — 🔋 '+s.arrivalSoc+'٪ ← '+s.targetSoc+'٪ ('+s.chargeMinutes+' دقیقه)')});
+    var txt=lines.join('\n');
+    if(navigator.share){navigator.share({title:'برنامه سفر REV',text:txt}).catch(function(){})}
+    else if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){$('planStatus').textContent='متن برنامه کپی شد ✓'})}
+  });
+  $('evpResult').scrollIntoView({behavior:'smooth'});
+}
+function rerun(){ if(!lastPlan)return; var res=simulate(lastPlan.inp,lastPlan.route,lastPlan.corridor); lastPlan.res=res; render(lastPlan.inp,lastPlan.route,res); }
+
+/* ---------- اجرای برنامه‌ریزی ---------- */
+function runPlan(){
+  var oTxt=$('planOrigin').value.trim(), dTxt=$('planDest').value.trim();
+  if(!oTxt||!dTxt){$('planStatus').textContent='مبدأ و مقصد را وارد کن.';return}
+  var tm=$('planTime').value; var departMin;
+  if(tm){var p=tm.split(':');departMin=(+p[0])*60+(+p[1]||0)}else{var now=new Date();departMin=now.getHours()*60+now.getMinutes()+15}
+  var inp={originName:oTxt,destName:dTxt,departMin:departMin,
+    batt:Math.max(10,+($('evpBatt').value||60)), cons:Math.max(5,+($('evpCons').value||18)), maxKw:Math.max(20,+($('evpMaxKw').value||120)),
+    startSoc:+$('evpStartSoc').value, minSoc:+$('evpMinSoc').value, destSoc:+$('evpDestSoc').value, style:+$('evpStyle').value, minKw:+$('evpMinKw').value};
+  overrides={};
+  $('planStatus').textContent='در حال محاسبه مسیر و توقف‌های شارژ…';
+  Promise.all([geocode(oTxt,$('planOrigin')),geocode(dTxt,$('planDest')),loadStations(),loadStatus()]).then(function(r){
+    var org=r[0],dst=r[1],stations=r[2];
+    var url='https://router.project-osrm.org/route/v1/driving/'+org.lng+','+org.lat+';'+dst.lng+','+dst.lat+'?overview=full&geometries=geojson';
+    return fetch(url).then(function(x){return x.json()}).then(function(j){
+      if(!j.routes||!j.routes.length)throw new Error('مسیری بین این دو نقطه پیدا نشد.');
+      var rt=j.routes[0], coords=rt.geometry.coordinates, cum=[0];
+      for(var i=1;i<coords.length;i++){cum.push(cum[i-1]+hav(coords[i-1][1],coords[i-1][0],coords[i][1],coords[i][0]))}
+      var totalKm=rt.distance/1000;
+      var step=Math.max(1,Math.floor(coords.length/400));
+      var sampled=[],sampleKm=[];
+      for(var k=0;k<coords.length;k+=step){sampled.push(coords[k]);sampleKm.push(cum[k])}
+      var corridor=stations.map(function(s){var pr=routeKmOf(sampled,sampleKm,s.lat,s.lng);return Object.assign({},s,{routeKm:pr.km,offKm:pr.off})})
+        .filter(function(s){return s.offKm<=25&&s.routeKm>2&&s.routeKm<totalKm-2&&(inp.minKw===0||s.power===0||s.power>=inp.minKw)})
+        .sort(function(a,b){return a.routeKm-b.routeKm});
+      var route={km:totalKm,min:rt.duration/60,origin:org,dest:dst,coords:coords};
+      var eIdx=[],ePts=[];
+      for(var e=0;e<sampled.length;e+=Math.max(1,Math.floor(sampled.length/22))){ePts.push(sampled[e]);eIdx.push(sampleKm[e])}
+      var elevPromise=fetch('https://api.open-meteo.com/v1/elevation?latitude='+ePts.map(function(c){return c[1]}).join(',')+'&longitude='+ePts.map(function(c){return c[0]}).join(','))
+        .then(function(x){return x.json()}).then(function(ej){
+          var els=Array.isArray(ej.elevation)?ej.elevation:[];
+          if(els.length>2){
+            var mx=Math.max.apply(null,els),mn=Math.min.apply(null,els);
+            route.elevMax=Math.round(mx);
+            var pts=els.map(function(v,i){var x=(eIdx[i]/totalKm*340).toFixed(1);var y=(64-((v-mn)/Math.max(1,(mx-mn)))*52).toFixed(1);return x+','+y}).join(' ');
+            route.elevSvg='<svg viewBox="0 0 340 74" width="100%" height="74" aria-hidden="true"><polygon points="0,74 '+pts+' 340,74" fill="#cfe8f2"/><polyline points="'+pts+'" fill="none" stroke="#0887a7" stroke-width="2.5"/></svg>';
+            route.factorAt=function(a,b){
+              var gain=0,loss=0;
+              for(var i=1;i<els.length;i++){ if(eIdx[i]>=a&&eIdx[i]<=b){var d=els[i]-els[i-1]; if(d>0)gain+=d; else loss-=d; } }
+              var f=1+gain*0.000045-loss*0.00002; return Math.min(1.22,Math.max(0.92,f));
+            };
+            var bigClimb=0;for(var q=1;q<els.length;q++){if(els[q]-els[q-1]>350)bigClimb=els[q]-els[q-1]}
+            if(bigClimb>350)route.elevWarn='این مسیر گردنه و سربالایی سنگین دارد؛ برنامه با حاشیه اطمینان بیشتری چیده شد.';
+          }
+        }).catch(function(){});
+      return elevPromise.then(function(){
+        var res=simulate(inp,route,corridor);
+        lastPlan={inp:inp,route:route,corridor:corridor,res:res};
+        $('planStatus').textContent=res.ok?'برنامه آماده شد ✓':'';
+        render(inp,route,res);
+      });
+    });
+  }).catch(function(err){ $('planStatus').textContent='خطا: '+(err&&err.message?err.message:'مشکلی پیش آمد؛ دوباره تلاش کن.'); });
+}
+/* جایگزینی دکمه: حذف هندلر قدیمی (رفتن به برنامه‌ریز سایت) با کلون بدون هندلر */
+var oldBtn=$('planGo');
+if(oldBtn){var nb=oldBtn.cloneNode(true);nb.textContent='🗺️ برنامه‌ریزی سفر';oldBtn.parentNode.replaceChild(nb,oldBtn);nb.addEventListener('click',runPlan)}
+})();
+</script>
+
 </body>
 </html>
