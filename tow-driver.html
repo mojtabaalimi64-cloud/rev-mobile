@@ -488,9 +488,11 @@ function startAlarm(){
   alarmInt=setInterval(cycle,1500);
 }
 function stopAlarm(){
-  alarmOn=false;
+  var wasOn=alarmOn;alarmOn=false;
   if(alarmInt)clearInterval(alarmInt);alarmInt=null;
-  var card=$('offerCard');if(card)card.classList.remove('tm-ringing');
+  var card=$('offerCard');
+  if(card&&card.classList.contains('tm-ringing'))card.classList.remove('tm-ringing');
+  return wasOn;
 }
 var offerCard=$('offerCard');
 if(offerCard){
@@ -561,7 +563,7 @@ function tick(){
   var last=getLast();
   if(!last||!last.reqId){card.hidden=true;if(watchId!=null){try{navigator.geolocation.clearWatch(watchId)}catch(e){}watchId=null}return}
   card.hidden=false;
-  var dc=$('doneCard');if(dc)dc.classList.add('hidden');
+  var dc=$('doneCard');if(dc&&!dc.classList.contains('hidden'))dc.classList.add('hidden');
   $('tmInfo').innerHTML='<b>مشکل:</b> '+esc(last.problem||'—')+(last.car?'<br><b>خودرو:</b> '+esc(last.car):'')+(last.name?'<br><b>مشتری:</b> '+esc(last.name):'')+'<br><b>موقعیت:</b> '+esc(last.loc||'ثبت نشده')+(last.phone?'<br><b>تلفن:</b> <span dir="ltr">'+esc(last.phone)+'</span>':'');
   if(last.phone)$('tmCall').href='tel:'+last.phone;
   if(last.serviceCode){$('tmCode').hidden=false;$('tmCodeVal').textContent=last.serviceCode}

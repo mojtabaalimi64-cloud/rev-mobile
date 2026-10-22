@@ -377,8 +377,8 @@ function renderTow(){
     .then(function(d){
       if(!d||!d.ok)return;
       var l=load(TOW_KEY,[]);var cur=l.find(function(x){return x.id===r.id});
-      if(cur&&(cur.status!==d.status||JSON.stringify(cur.driver||null)!==JSON.stringify(d.driver||null)||(cur.serviceCode||null)!==(d.serviceCode||null))){
-        cur.status=d.status;cur.driver=d.driver||null;cur.serviceCode=d.serviceCode||null;save(TOW_KEY,l);renderTow();
+      if(cur&&(cur.status!==d.status||JSON.stringify({n:(cur.driver||{}).name||null,p:(cur.driver||{}).phone||null})!==JSON.stringify({n:(d.driver||{}).name||null,p:(d.driver||{}).phone||null})||(cur.serviceCode||null)!==(d.serviceCode||null))){
+        cur.status=d.status;cur.driver=d.driver?{name:d.driver.name||null,phone:d.driver.phone||null}:null;cur.serviceCode=d.serviceCode||null;save(TOW_KEY,l);renderTow();
       }
     }).catch(function(){});
   });
@@ -651,8 +651,8 @@ function tick(){
   .then(function(r){return r.json()}).then(function(d){
     if(!d||!d.ok)return;
     var l=loadReq();var cur=l.find(function(x){return x.id===active.id});
-    if(cur&&(cur.status!==d.status||JSON.stringify(cur.driver||null)!==JSON.stringify(d.driver||null)||(cur.serviceCode||null)!==(d.serviceCode||null))){
-      cur.status=d.status;cur.driver=d.driver||null;cur.serviceCode=d.serviceCode||null;saveReq(l);
+    if(cur&&(cur.status!==d.status||JSON.stringify({n:(cur.driver||{}).name||null,p:(cur.driver||{}).phone||null})!==JSON.stringify({n:(d.driver||{}).name||null,p:(d.driver||{}).phone||null})||(cur.serviceCode||null)!==(d.serviceCode||null))){
+      cur.status=d.status;cur.driver=d.driver?{name:d.driver.name||null,phone:d.driver.phone||null}:null;cur.serviceCode=d.serviceCode||null;saveReq(l);
     }
     if(d.status!=='راننده در راه'){wrap.hidden=true;return}
     var drv=d.driver||{};
