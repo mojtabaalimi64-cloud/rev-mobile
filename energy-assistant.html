@@ -23,7 +23,7 @@ button,.linkbtn{font:inherit;cursor:pointer}.primary{width:100%;min-height:48px;
 @media(max-width:480px){.grid{gap:9px}.card{padding:13px}.field label{font-size:11px}.metrics{gap:7px}.metric strong{font-size:17px}.visual-summary{grid-template-columns:88px minmax(0,1fr);gap:10px;padding:11px}.soc-ring{width:84px;height:84px}.soc-ring:before{inset:6px}.soc-ring-inner strong{font-size:20px}.bar-row{grid-template-columns:78px minmax(0,1fr) 49px;gap:6px;font-size:10px}.bar-value{font-size:10px}.intro:after{left:10px;font-size:32px}}@media(prefers-reduced-motion:reduce){.bar-fill{transition:none}}
 </style>
 <script src="./rev-auth-guard.js?v=20261019-1"></script>
-<script src="./rev-energy-core.js?v=1"></script>
+<script src="./rev-energy-core.js?v=20261023-1"></script>
 </head>
 <body>
 <header><div class="head"><div class="logo" aria-hidden="true">⚡</div><div><h1>دستیار انرژی REV</h1><p>پیش‌بینی برد، مصرف و شارژ مقصد</p></div><div style="margin-inline-start:auto"><a class="secondary" id="backLink" href="./nearby-map.html?app=1">بازگشت</a></div></div></header>
@@ -119,7 +119,7 @@ function calculate(){
   $('ringSoc').textContent=fmt(arrivalVisual)+'٪';
   $('socRing').setAttribute('aria-label','شارژ تخمینی هنگام رسیدن '+fmt(arrivalVisual)+' درصد');
   $('summaryTitle').textContent=result.reachable?'ذخیره امن قابل حفظ است':'نیاز به بررسی شارژ در مسیر';
-  $('summaryText').textContent=result.arrivalSoc<0?'انرژی محاسبه‌شده برای این مسیر از شارژ فعلی بیشتر است.':(result.reachable?'پس از رسیدن، حدود '+fmt(result.arrivalSoc)+'٪ شارژ باقی می‌ماند.':'شارژ مقصد از ذخیره امن انتخاب‌شده کمتر می‌شود.');
+  $('summaryText').textContent=result.arrivalSoc<0?'انرژی محاسبه‌شده برای این مسیر از شارژ فعلی بیشتر است.':(result.reachable?'پس از رسیدن، حدود '+fmt(result.arrivalSoc)+'٪ شارژ باقی می‌ماند.':'شارژ پیش‌بینی‌شده از ذخیره امن به‌علاوه حاشیه اطمینان کمتر است؛ شارژ مسیر را بررسی کن.');
   var usable=Math.max(result.usableEnergyKwh,0.01), maxEnergy=Math.max(result.usableEnergyKwh,result.energyKwh,result.capacityKwh*result.reserveSoc/100,0.01);
   $('usableBar').style.width=(result.usableEnergyKwh/maxEnergy*100)+'%';
   $('tripBar').style.width=(Math.min(result.energyKwh,maxEnergy)/maxEnergy*100)+'%';
