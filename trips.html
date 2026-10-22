@@ -1283,5 +1283,61 @@ if(oldBtn){var nb=oldBtn.cloneNode(true);nb.textContent='🗺️ برنامه‌
 </script>
 
 <div id="evpExecModal" hidden><div class="evp-exec-card"><h3 id="evpExecTitle"></h3><p id="evpExecText"></p><div id="evpExecBtns"></div></div></div>
+<script>
+/* حذف برنامه‌های ذخیره‌شده (تکی و همه) */
+(function(){
+  var KEY='rev_saved_trip_plans_v1';
+  function getArr(){try{var a=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+  function augment(){
+    var box=document.getElementById('savedPlansList');if(!box)return;
+    var sec=document.getElementById('savedPlansSection');
+    if(sec&&getArr().length&&!document.getElementById('evpClearSaved')){
+      var head=sec.querySelector('.section-head');
+      if(head){
+        var b=document.createElement('button');
+        b.type='button';b.id='evpClearSaved';b.textContent='🗑 پاک‌کردن همه';
+        b.style.cssText='background:none;border:1px solid #e5b4b4;color:#c62f35;border-radius:99px;padding:5px 12px;font:700 11.5px Tahoma,sans-serif;cursor:pointer';
+        b.addEventListener('click',function(){
+          if(!confirm('همه برنامه‌های ذخیره‌شده پاک شوند؟'))return;
+          try{localStorage.setItem(KEY,'[]')}catch(e){}
+          box.innerHTML='';sec.hidden=true;b.remove();
+        });
+        head.appendChild(b);
+      }
+    }
+    Array.prototype.forEach.call(box.children,function(a){
+      if(!a||a.nodeType!==1||(a.dataset&&a.dataset.evpDel))return;
+      a.dataset.evpDel='1';
+      var del=document.createElement('span');
+      del.className='evp-del';del.textContent='🗑';del.setAttribute('role','button');del.setAttribute('aria-label','حذف این برنامه');
+      del.style.cssText='flex:0 0 auto;align-self:center;font-size:15px;padding:8px 6px;cursor:pointer;opacity:.8';
+      a.appendChild(del);
+    });
+  }
+  var box=document.getElementById('savedPlansList');
+  if(box){
+    box.addEventListener('click',function(ev){
+      var del=ev.target&&ev.target.closest?ev.target.closest('.evp-del'):null;
+      if(!del)return;
+      ev.preventDefault();ev.stopPropagation();
+      var a=del.closest?del.closest('a'):null;if(!a)return;
+      var idx=Array.prototype.indexOf.call(box.children,a);if(idx<0)return;
+      if(!confirm('این برنامه ذخیره‌شده پاک شود؟'))return;
+      var arr=getArr();
+      arr.splice(idx,1);
+      try{localStorage.setItem(KEY,JSON.stringify(arr))}catch(e){}
+      a.remove();
+      if(!getArr().length){
+        var sec=document.getElementById('savedPlansSection');if(sec)sec.hidden=true;
+        var cs=document.getElementById('evpClearSaved');if(cs)cs.remove();
+      }
+    },true);
+  }
+  augment();
+  setTimeout(augment,600);
+  setTimeout(augment,1800);
+})();
+</script>
+
 </body>
 </html>
