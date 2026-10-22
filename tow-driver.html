@@ -487,6 +487,8 @@
 
   function startPolling(){
     clearInterval(pollInt);clearInterval(pendInt);
+    // بررسی وضعیت تأیید باید حتی خارج از شیفت هم ادامه یابد؛ مدیر ممکن است تأیید را لغو کند.
+    pendInt=setInterval(function(){syncFromServer();},20000);
     var d=load();
     if(!d||d.approved!==true||d.active===false||d.onShift!==true){
       clearInterval(timerInt);curOffer=null;
@@ -495,7 +497,6 @@
     }
     heartbeat();poll();
     pollInt=setInterval(function(){heartbeat();poll();},15000);
-    pendInt=setInterval(function(){syncFromServer();},45000);
   }
   function startPendingPoll(){
     clearInterval(pendInt);
