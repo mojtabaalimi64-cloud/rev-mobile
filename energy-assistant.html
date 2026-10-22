@@ -103,6 +103,8 @@ function saveProfile(){
   old.vehicle_name=$('vehicleName').value.trim()||old.vehicle_name||'خودروی من';
   old.battery_kwh=parse($('capacity').value);
   old.consumption=parse($('consumption').value);
+  old.soc_pct=parse($('soc').value);
+  old.reserve_soc=parse($('reserve').value);
   localStorage.setItem(profileKey,JSON.stringify(old));
  }catch(e){}
 }

@@ -39,3 +39,131 @@ function init(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
+
+
+/* Live energy safety assistant: estimates reserve against verified REV chargers while navigation is active. */
+(function(){
+'use strict';
+var API='https://rev-api.mojtaba-alimi64.workers.dev/api/stations';
+var state={lat:null,lon:null,progress:0,lastPaint:0,lastFetch:0,stations:[],layer:null,banner:null,active:false,routeKey:'rev_energy_resume_route_v1'};
+function num(v){var n=Number(v);return Number.isFinite(n)?n:NaN;}
+function dist(a,b){var rad=Math.PI/180,R=6371000,dl=(b[0]-a[0])*rad,dn=(b[1]-a[1])*rad,x=Math.sin(dl/2)**2+Math.cos(a[0]*rad)*Math.cos(b[0]*rad)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(x)));}
+function vehicle(){try{return JSON.parse(localStorage.getItem('rev_driver_vehicle_profile')||'null')||{};}catch(e){return {};}}
+function activeRoute(){try{return JSON.parse(sessionStorage.getItem(state.routeKey)||'null');}catch(e){return null;}}
+function verified(s){
+ var a=String(s.approval_status||s.approvalStatus||'').toLowerCase();
+ var st=String(s.status||s.status_name||'').toLowerCase();
+ if(a)return /^(approved|verified|active|published|تاییدشده|تأییدشده|فعال)$/.test(a);
+ return /^(approved|verified|active|published|تاییدشده|تأییدشده|فعال)$/.test(st);
+}
+function normalize(raw){
+ var list=Array.isArray(raw)?raw:(raw&&[raw.stations,raw.data,raw.data&&raw.data.stations,raw.result&&raw.result.stations,raw.result&&raw.result.data].find(Array.isArray))||[];
+ return list.map(function(s){
+  var lat=num(s.latitude??s.lat??s.Latitude),lon=num(s.longitude??s.lng??s.lon??s.Longitude);
+  return {raw:s,lat:lat,lon:lon,name:String(s.name||s.title||s.station_name||'جایگاه شارژ REV'),power:num(s.power_kw??s.power??s.powerKw),address:String(s.address||s.location||s.city||''),status:String(s.status||s.status_name||''),approval_status:String(s.approval_status||s.approvalStatus||'')};
+ }).filter(function(s){return Number.isFinite(s.lat)&&Number.isFinite(s.lon)&&Math.abs(s.lat)<=90&&Math.abs(s.lon)<=180&&verified(s.raw);});
+}
+function ensureBanner(){
+ if(state.banner)return;
+ var el=document.createElement('div');el.id='rev-live-energy-advice';el.setAttribute('role','status');el.style.cssText='position:fixed;z-index:1250;top:calc(10px + env(safe-area-inset-top));left:12px;right:12px;max-width:460px;margin:auto;background:#fff;border:1px solid #d6e7ef;border-radius:15px;box-shadow:0 6px 24px #102a3d22;padding:10px 13px;direction:rtl;color:#17253b;font:12px/1.65 Tahoma,Vazirmatn,sans-serif;display:none;pointer-events:auto';
+ document.body.appendChild(el);state.banner=el;
+}
+function showBanner(title,detail,kind){
+ ensureBanner();var colors={good:'#187547',warn:'#9a650b',bad:'#b42318',info:'#087e9c'};
+ state.banner.style.display='block';state.banner.style.borderRight='4px solid '+(colors[kind]||colors.info);
+ state.banner.replaceChildren();
+ var h=document.createElement('strong');h.textContent=title;h.style.cssText='display:block;font-size:13px;margin-bottom:2px';h.style.color=colors[kind]||colors.info;
+ var p=document.createElement('div');p.textContent=detail;p.style.cssText='color:#536579';
+ state.banner.appendChild(h);state.banner.appendChild(p);
+}
+function routeDistanceAlong(route,lat,lon){
+ var coords=route&&route.coords;if(!Array.isArray(coords)||coords.length<2)return null;
+ var best=Infinity,idx=0;
+ for(var i=0;i<coords.length;i++){var d=dist([lat,lon],[Number(coords[i][1]),Number(coords[i][0])]);if(d<best){best=d;idx=i;}}
+ var remaining=0;
+ for(var j=idx;j<coords.length-1;j++)remaining+=dist([Number(coords[j][1]),Number(coords[j][0])],[Number(coords[j+1][1]),Number(coords[j+1][0])]);
+ return {offRoute:best,remaining:remaining,index:idx};
+}
+function candidates(profile,route){
+ var cap=num(profile.battery_kwh),cons=num(profile.consumption),soc=num(profile.soc_pct),reserve=num(profile.reserve_soc);
+ if(!Number.isFinite(reserve))reserve=15;
+ if(!(cap>0&&cons>0&&soc>=0&&soc<=100))return [];
+ var routePos=routeDistanceAlong(route,state.lat,state.lon);if(!routePos)return [];
+ var energyAvailable=cap*Math.max(0,soc-reserve)/100;
+ var out=[];
+ state.stations.forEach(function(s){
+  var from=dist([state.lat,state.lon],[s.lat,s.lon])/1000*1.35;
+  if(from<0.15||from>350)return;
+  var nearest=routeDistanceAlong(route,s.lat,s.lon);
+  if(!nearest||nearest.offRoute>5000)return;
+  var ahead=routePos.remaining-nearest.remaining;
+  if(ahead < -1500)return;
+  var energyNeed=from*cons/100*1.2;
+  var arrival=soc-energyNeed/cap*100;
+  var usableKm=Math.max(0,(soc-reserve)/100*cap/cons*100);
+  if(from>usableKm*0.8)return;
+  out.push({station:s,distanceKm:from,offRouteKm:nearest.offRoute/1000,arrivalSoc:arrival,routeKm:Math.max(0,ahead/1000),energyKwh:energyNeed,reachable:arrival>=reserve});
+ });
+ out.sort(function(a,b){return a.distanceKm-b.distanceKm;});
+ return out.slice(0,3);
+}
+function drawPins(items,profile){
+ var map=window.revMap,L=window.L;if(!map||!L)return;
+ if(state.layer){try{map.removeLayer(state.layer)}catch(e){}}
+ state.layer=L.layerGroup().addTo(map);
+ items.forEach(function(item,index){
+  var color=item.reachable?'#0b9b73':'#d94841';
+  var html='<div style="width:32px;height:38px;position:relative;filter:drop-shadow(0 2px 3px #102a3d55)"><div style="width:30px;height:30px;border:2px solid #fff;border-radius:50% 50% 50% 5px;transform:rotate(-45deg);background:'+color+';display:grid;place-items:center;color:#fff;font:bold 13px Tahoma"><span style="transform:rotate(45deg)">'+(index+1)+'</span></div></div>';
+  var marker=L.marker([item.station.lat,item.station.lon],{icon:L.divIcon({className:'rev-energy-recommendation-pin',html:html,iconSize:[32,38],iconAnchor:[15,35]}),zIndexOffset:1800,title:'پیشنهاد شارژ: '+item.station.name}).addTo(state.layer);
+  var box=document.createElement('div');box.style.cssText='font:12px/1.8 Tahoma,sans-serif;min-width:190px;direction:rtl';
+  var title=document.createElement('strong');title.textContent=(index+1)+'. '+item.station.name;box.appendChild(title);
+  var info=document.createElement('div');info.textContent='فاصله تخمینی جاده‌ای: '+item.distanceKm.toFixed(1)+' کیلومتر';box.appendChild(info);
+  var soc=document.createElement('div');soc.textContent='شارژ تخمینی هنگام رسیدن: '+Math.round(item.arrivalSoc)+'٪';soc.style.color=item.reachable?'#187547':'#b42318';soc.style.fontWeight='bold';box.appendChild(soc);
+  if(item.station.power>0){var power=document.createElement('div');power.textContent='توان ثبت‌شده: '+item.station.power+' kW';box.appendChild(power);}
+  if(item.station.address){var address=document.createElement('div');address.textContent=item.station.address;box.appendChild(address);}
+  var note=document.createElement('small');note.textContent='برآورد تقریبی؛ قبل از انحراف از مسیر، وضعیت و دسترس‌پذیری جایگاه را بررسی کن.';note.style.color='#65758b';box.appendChild(note);
+  marker.bindPopup(box,{maxWidth:280});
+ });
+}
+async function loadStations(){
+ var now=Date.now();if(state.stations.length&&now-state.lastFetch<5*60*1000)return state.stations;
+ try{var r=await fetch(API,{cache:'no-store'});if(!r.ok)throw new Error('stations');var d=await r.json();state.stations=normalize(d);state.lastFetch=now;}catch(e){state.stations=[];}
+ return state.stations;
+}
+async function update(lat,lon,progress){
+ if(!Number.isFinite(lat)||!Number.isFinite(lon))return;
+ state.lat=lat;state.lon=lon;state.progress=num(progress)||0;state.active=!!document.body.classList.contains('rev-navigating');
+ if(!state.active)return;
+ var now=Date.now();if(now-state.lastPaint<12000&&now-state.lastPaint>=0)return;state.lastPaint=now;
+ var profile=vehicle(),route=activeRoute(),cap=num(profile.battery_kwh),cons=num(profile.consumption),soc=num(profile.soc_pct),reserve=num(profile.reserve_soc),live=null;try{live=JSON.parse(sessionStorage.getItem('rev_energy_live_state_v1')||'null')}catch(e){}
+ if(!Number.isFinite(reserve))reserve=15;
+ if(!(cap>0&&cons>0&&soc>=0&&soc<=100)){
+  showBanner('⚡ دستیار انرژی زنده','برای پیشنهاد دقیق، یک‌بار در دستیار انرژی ظرفیت باتری، مصرف و درصد شارژ فعلی را ثبت کن. GPS و مسیریابی بدون تغییر ادامه دارند.','info');
+  return;
+ }
+ var remainingKm=Math.max(0,routeDistanceAlong(route,lat,lon)?.remaining/1000||0);
+ var effective=cons*1.2,arrivalSoc=soc-(remainingKm*effective/100)/cap*100;
+ if(arrivalSoc<reserve){
+  showBanner('⚠️ ذخیره امن مقصد در خطر است','برآورد شارژ مقصد '+Math.round(arrivalSoc)+'٪ است؛ ذخیره امن '+reserve+'٪ حفظ نمی‌شود. پین‌های سبز روی نقشه جایگاه‌های پیشنهادی قابل‌دسترسی را نشان می‌دهند.','bad');
+ }else if(arrivalSoc<reserve+10){
+  showBanner('🔋 شارژ مقصد نزدیک به حد امن است','شارژ تخمینی مقصد '+Math.round(arrivalSoc)+'٪؛ برای حاشیه امن بیشتر، پین‌های سبز شارژرهای بین راه را بررسی کن.','warn');
+ }else{
+  showBanner('⚡ پایش زنده انرژی فعال است','شارژ مقصد حدود '+Math.round(arrivalSoc)+'٪ برآورد می‌شود؛ این محاسبه تقریبی است و تغییر مصرف، دما، سرعت و شیب را کامل اندازه نمی‌گیرد.','good');
+ }
+ await loadStations();
+ var items=candidates(profile,route);
+ if(items.length)drawPins(items,profile);
+ else if(window.revMap&&state.layer){try{window.revMap.removeLayer(state.layer)}catch(e){}state.layer=null;}
+ if(arrivalSoc<reserve&&!items.some(function(x){return x.reachable;})){
+  showBanner('🚨 شارژ مقصد کافی به نظر نمی‌رسد','در داده‌های تأییدشده REV شارژری که با ذخیره امن فعلی قابل‌دسترسی باشد پیدا نشد. با رانندگی ایمن، نزدیک‌ترین محل امن/شارژر را بررسی کن؛ پیشنهادها تضمین دسترسی یا موجودی نیستند.','bad');
+ }
+}
+function hook(){
+ if(typeof window.revUpdateNavEnvironment!=='function'){setTimeout(hook,250);return;}
+ if(window.revUpdateNavEnvironment.__revLiveEnergyHook)return;
+ var original=window.revUpdateNavEnvironment;
+ var wrapped=function(lat,lon,progress,force){var result=original.apply(this,arguments);update(num(lat),num(lon),num(progress));return result;};
+ wrapped.__revLiveEnergyHook=true;window.revUpdateNavEnvironment=wrapped;
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hook,{once:true});else hook();
+})();
