@@ -92,7 +92,7 @@ function loadProfile(){
 function applyQuery(){
  var qmap={capacity:'capacity',soc:'soc',consumption:'consumption',distance:'distance',destination:'destination',reserve:'reserve'};
  Object.keys(qmap).forEach(function(key){var v=params.get(key);if(v!==null&&v!==''&&$(qmap[key]))$(qmap[key]).value=v;});
- if(params.get('from')==='map')$('backLink').href='./nearby-map.html?app=1';
+ if(params.get('from')==='map')$('backLink').href='./nearby-map.html?app=1&resumeNav=1';
  else if(params.get('from')==='trips')$('backLink').href='./trips.html?app=1';
 }
 function saveProfile(){
