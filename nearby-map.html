@@ -134,10 +134,21 @@ revRouteOptions=routes.map((route,index)=>({route,index,coords:route.geometry.co
   var marker=window.revNavManualMarker?"موقعیت انتخاب‌شده":"موقعیت خودرو";
   var envBox=document.getElementById("navEnv");if(!envBox)return;
   var km=Math.max(0,Number(progressMeters)||0)/1000;
-  var energy=km*.18;var pct=energy/60*100;
+  var vehicleProfile=null,capacityKwh=NaN,consumptionKwh100=NaN,energy=NaN,pct=NaN;
+  try{vehicleProfile=JSON.parse(localStorage.getItem("rev_driver_vehicle_profile")||"null");}catch(profileErr){}
+  if(vehicleProfile){
+    capacityKwh=Number(vehicleProfile.battery_kwh);
+    consumptionKwh100=Number(vehicleProfile.consumption);
+    if(Number.isFinite(km)&&km>=0&&Number.isFinite(capacityKwh)&&capacityKwh>0&&Number.isFinite(consumptionKwh100)&&consumptionKwh100>0){
+      energy=km*consumptionKwh100/100;
+      pct=energy/capacityKwh*100;
+    }
+  }
   var weatherText="🌤 آب‌وهوا در حال دریافت…";   var windText="💨 باد در حال دریافت…";
   var elevationText="⛰ ارتفاع در حال دریافت…";
-  var batteryText="🔋 مصرف تخمینی "+energy.toFixed(1)+" kWh · "+pct.toFixed(1)+"٪ از باتری ۶۰ kWh";
+  var batteryText=Number.isFinite(energy)&&Number.isFinite(pct)
+    ?"🔋 مصرف تخمینی مسیر طی‌شده "+energy.toFixed(1)+" kWh · "+pct.toFixed(1)+"٪ از باتری "+capacityKwh.toLocaleString("fa-IR")+" kWh"
+    :"🔋 برای برآورد مصرف، ظرفیت باتری و مصرف خودرو را در پروفایل خودرو ثبت کن";
   var render=function(){var wEl=envBox.querySelector(".env-weather"),bEl=envBox.querySelector(".env-battery"),eEl=envBox.querySelector(".env-elevation");if(wEl)wEl.textContent=weatherText;var nEl=envBox.querySelector(".env-wind");if(nEl)nEl.textContent=windText;if(bEl)bEl.textContent=batteryText;if(eEl)eEl.textContent=elevationText;};
   render();
   var now=Date.now(),prev=window.__revNavEnvPoint;
