@@ -77,8 +77,9 @@ const guard = fs.readFileSync(path.join(root, "rev-auth-guard.js"), "utf8");
 if (!guard.includes("showConnectionError") || !guard.includes("10000")) {
   failures.push("Authentication guard must provide a timeout and visible recovery state");
 }
-if (!guard.includes("path === 'tow-driver.html'")) {
-  failures.push("Tow-driver page must bypass the consumer-account auth guard and keep its own token login");
+if (!guard.split("\n").some(line => line.trim().startsWith("if (path === 'index.html'") &&
+    line.includes("path === 'tow-driver.html'"))) {
+  failures.push("Auth guard bypass must be executable code, not text inside a comment");
 }
 
 
