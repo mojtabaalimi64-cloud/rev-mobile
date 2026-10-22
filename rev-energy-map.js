@@ -141,8 +141,18 @@ async function update(lat,lon,progress){
   showBanner('⚡ دستیار انرژی زنده','برای پیشنهاد دقیق، یک‌بار در دستیار انرژی ظرفیت باتری، مصرف و درصد شارژ فعلی را ثبت کن. GPS و مسیریابی بدون تغییر ادامه دارند.','info');
   return;
  }
- var remainingKm=Math.max(0,routeDistanceAlong(route,lat,lon)?.remaining/1000||0);
- var effective=cons*1.2,arrivalSoc=soc-(remainingKm*effective/100)/cap*100;
+ var routePos=routeDistanceAlong(route,lat,lon);
+ if(!routePos){showBanner('⚡ برآورد انرژی موقتاً در دسترس نیست','مسیر فعال برای محاسبه فاصله باقی‌مانده پیدا نشد؛ تا زمان بازیابی مسیر، به این برآورد برای تصمیم‌گیری درباره شارژ اتکا نکن.','info');return;}
+ var remainingKm=Math.max(0,routePos.remaining/1000),effective=cons*1.2;
+ var coords=route&&Array.isArray(route.coords)?route.coords:[],signature=coords.length>1?[coords[0].join(','),coords[coords.length-1].join(',')].join('|'):'';
+ var liveFresh=live&&Number.isFinite(num(live.updatedAt))&&Date.now()-num(live.updatedAt)<8*60*60*1000;
+ var sameRoute=!!(liveFresh&&live.routeSignature===signature&&Number.isFinite(num(live.initialRemainingKm))&&Number.isFinite(num(live.initialSocPct)));
+ var baselineSoc=sameRoute?num(live.initialSocPct):(liveFresh&&Number.isFinite(num(live.currentSocPct))?num(live.currentSocPct):soc);
+ var baselineRemaining=sameRoute?num(live.initialRemainingKm):remainingKm;
+ var estimatedUsedKm=Math.max(0,baselineRemaining-remainingKm);
+ soc=Math.max(0,Math.min(100,baselineSoc-(estimatedUsedKm*effective/100)/cap*100));
+ try{sessionStorage.setItem('rev_energy_live_state_v1',JSON.stringify({routeSignature:signature,initialRemainingKm:baselineRemaining,initialSocPct:baselineSoc,currentSocPct:soc,remainingKm:remainingKm,updatedAt:Date.now()}));}catch(e){}
+ var arrivalSoc=soc-(remainingKm*effective/100)/cap*100;
  if(arrivalSoc<reserve){
   showBanner('⚠️ ذخیره امن مقصد در خطر است','برآورد شارژ مقصد '+Math.round(arrivalSoc)+'٪ است؛ ذخیره امن '+reserve+'٪ حفظ نمی‌شود. پین‌های سبز روی نقشه جایگاه‌های پیشنهادی قابل‌دسترسی را نشان می‌دهند.','bad');
  }else if(arrivalSoc<reserve+10){
@@ -151,7 +161,7 @@ async function update(lat,lon,progress){
   showBanner('⚡ پایش زنده انرژی فعال است','شارژ مقصد حدود '+Math.round(arrivalSoc)+'٪ برآورد می‌شود؛ این محاسبه تقریبی است و تغییر مصرف، دما، سرعت و شیب را کامل اندازه نمی‌گیرد.','good');
  }
  await loadStations();
- var items=candidates(profile,route);
+ var items=candidates(Object.assign({},profile,{soc_pct:soc}),route);
  if(items.length)drawPins(items,profile);
  else if(window.revMap&&state.layer){try{window.revMap.removeLayer(state.layer)}catch(e){}state.layer=null;}
  if(arrivalSoc<reserve&&!items.some(function(x){return x.reachable;})){
