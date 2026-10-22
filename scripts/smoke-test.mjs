@@ -6,7 +6,7 @@ const root = process.cwd();
 const required = [
   "index.html", "experiences.html", "trips.html", "nearby-map.html",
   "profile.html", "businesses.html", "manifest.webmanifest", "sw.js",
-  "register-sw.js", "rev-app-icon.svg", "rev-auth-guard.js", "rev-app-mode.js"
+  "register-sw.js", "rev-app-icon.svg", "rev-auth-guard.js", "rev-app-mode.js", "tow-driver.html", "rev-mobile-theme.css"
 ];
 const failures = [];
 const htmlFiles = fs.readdirSync(root).filter(file => file.endsWith(".html"));
@@ -93,4 +93,21 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);
 }
+
+const towPage = fs.readFileSync(path.join(root, "tow-driver.html"), "utf8");
+if (!towPage.includes("function shiftCall(on)") ||
+    !towPage.includes("if(onShift){heartbeat();poll();startPolling()}") ||
+    !towPage.includes("shiftCall(!onShift)")) {
+  failures.push("Tow-driver shift must start polling only after server confirmation");
+}
+if (!sw.includes('"./nearby-map.html"') || !sw.includes('"./profile.html"') ||
+    !sw.includes("rev-mobile-shell-v76")) {
+  failures.push("Service-worker shell must include core mobile pages and use a fresh cache version");
+}
+if (!mapPage.includes('id="details-drag-handle"') ||
+    !mapPage.includes("rev-details-expanded") ||
+    !mapPage.includes("bottom:calc(74px + env(safe-area-inset-bottom))")) {
+  failures.push("Mobile map details must use an accessible, expandable bottom drawer");
+}
+
 console.log("REV mobile checks passed; " + required.length + " required files; " + htmlFiles.length + " HTML pages parsed; " + linksChecked + " local links checked.");
