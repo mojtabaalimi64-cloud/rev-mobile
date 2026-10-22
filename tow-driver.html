@@ -57,11 +57,23 @@
   <div class="hello">🚛 پنل راننده یدک‌کش</div>
   <div class="sub">درخواست‌های امداد نزدیک تو اینجا میاد؛ ۳ دقیقه فرصت داری قبول یا رد کنی.</div>
 
+  <!-- ورود راننده با شماره موبایل و رمز شخصی -->
+  <section class="card" id="loginCard">
+    <h3>🔐 ورود راننده همکار</h3>
+    <div class="field"><label for="loginPhone">شماره موبایل</label><input id="loginPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789" autocomplete="username"></div>
+    <div class="field"><label for="loginPassword">رمز عبور شخصی</label><input id="loginPassword" type="password" dir="ltr" style="text-align:left" placeholder="رمز عبور" autocomplete="current-password"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-teal" id="dLogin" type="button">ورود به پنل</button>
+    <p class="note">اگر رمز را فراموش کرده‌ای، با مدیر REV تماس بگیر تا رمز موقت جدید صادر کند.</p>
+  </section>
+
   <!-- ثبت‌نام راننده -->
   <section class="card" id="regCard">
     <h3>ثبت‌نام راننده همکار</h3>
     <div class="field"><label for="dName">نام و نام خانوادگی</label><input id="dName" placeholder="مثلاً محمد کریمی"></div>
-    <div class="field"><label for="dPhone">شماره موبایل</label><input id="dPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789"></div>
+    <div class="field"><label for="dPhone">شماره موبایل</label><input id="dPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789" autocomplete="username"></div>
+    <div class="field"><label for="dPassword">رمز عبور شخصی (حداقل ۸ نویسه)</label><input id="dPassword" type="password" dir="ltr" style="text-align:left" placeholder="رمز دلخواه" autocomplete="new-password"></div>
+    <div class="field"><label for="dPasswordConfirm">تکرار رمز عبور</label><input id="dPasswordConfirm" type="password" dir="ltr" style="text-align:left" placeholder="تکرار رمز" autocomplete="new-password"></div>
     <div class="field"><label for="dVehicle">خودروبر و پلاک</label><input id="dVehicle" placeholder="مثلاً کفی نیسان — ۲۲ ب ۳۴۵ ایران ۶۶"></div>
     <div class="field"><label for="dCity">شهر محل خدمت</label><input id="dCity" placeholder="مثلاً تهران"></div>
     <div class="field"><label for="dRadius">شعاع پوشش (کیلومتر)</label>
@@ -168,9 +180,12 @@
     var name=$('dName').value.trim(),phone=$('dPhone').value.trim(),radius=$('dRadius').value;
     if(name.length<2){$('regErr').textContent='نام را کامل وارد کن.';return}
     if(!/^09\d{9}$/.test(phone)){$('regErr').textContent='شماره موبایل معتبر وارد کن.';return}
+    var password=$('dPassword').value,confirmPassword=$('dPasswordConfirm').value;
+    if(password.length<8){$('regErr').textContent='رمز عبور باید حداقل ۸ نویسه داشته باشد.';return}
+    if(password!==confirmPassword){$('regErr').textContent='تکرار رمز عبور یکسان نیست.';return}
     if(!gpsPos){$('regErr').textContent='اول موقعیت پایگاه را با GPS ثبت کن.';return}
     var btn=this;btn.disabled=true;btn.textContent='در حال ثبت‌نام…';
-    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,vehicle:$('dVehicle').value.trim(),city:$('dCity').value.trim(),lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
+    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,password:password,vehicle:$('dVehicle').value.trim(),city:$('dCity').value.trim(),lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
     .then(function(r){return r.json()})
     .then(function(d){
       btn.disabled=false;btn.textContent='ثبت‌نام راننده';
@@ -181,7 +196,25 @@
     .catch(function(){btn.disabled=false;btn.textContent='ثبت‌نام راننده';$('regErr').textContent='اتصال به سرور برقرار نشد.';});
   });
 
-  /* ---------- بازیابی با توکن ---------- */
+  /* ---------- ورود با شماره موبایل و رمز عبور ---------- */
+  $('dLogin').addEventListener('click',function(){
+    var phone=$('loginPhone').value.trim(),password=$('loginPassword').value;
+    if(!/^09\d{9}$/.test(phone)){$('loginErr').textContent='شماره موبایل معتبر وارد کن.';return}
+    if(!password){$('loginErr').textContent='رمز عبور را وارد کن.';return}
+    var btn=this;btn.disabled=true;btn.textContent='در حال ورود…';$('loginErr').textContent='';
+    fetch(API+'/api/driver/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,password:password}),cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(res){
+      btn.disabled=false;btn.textContent='ورود به پنل';
+      if(!res||!res.ok){$('loginErr').textContent=(res&&res.err)||'ورود انجام نشد.';return}
+      save({id:res.id,token:res.token,name:res.name,phone:res.phone,radius:res.radius,approved:res.approved===true});
+      $('loginPassword').value='';
+      syncFromServer();
+    })
+    .catch(function(){btn.disabled=false;btn.textContent='ورود به پنل';$('loginErr').textContent='اتصال به سرور برقرار نشد.';});
+  });
+
+  /* ---------- بازیابی قدیمی با توکن ---------- */
   $('dRestore').addEventListener('click',function(){
     var t=$('dTokenRestore').value.trim();
     if(t.length<16){$('restoreErr').textContent='توکن را کامل وارد کن.';return}
@@ -197,6 +230,7 @@
 
   /* ---------- وضعیت و نما ---------- */
   function showApproved(){
+    $('loginCard').classList.add('hidden');
     $('regCard').classList.add('hidden');
     $('pendingCard').classList.add('hidden');
     $('panelCard').classList.remove('hidden');
@@ -204,6 +238,7 @@
   }
   function showPending(){
     var d=load();
+    $('loginCard').classList.add('hidden');
     $('regCard').classList.add('hidden');
     $('panelCard').classList.add('hidden');
     $('statsCard').classList.add('hidden');
@@ -211,6 +246,7 @@
     if(d)$('pendingText').textContent='ثبت‌نام «'+d.name+'» رسیده و در صف بررسی مدیر REV است. به محض تأیید، این پنل فعال می‌شود و درخواست‌های امداد را می‌گیری.';
   }
   function showReg(){
+    $('loginCard').classList.remove('hidden');
     $('regCard').classList.remove('hidden');
     $('pendingCard').classList.add('hidden');
     $('panelCard').classList.add('hidden');
