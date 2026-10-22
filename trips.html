@@ -74,7 +74,7 @@
 .evp-settings input[type=number],.evp-settings select{width:100%;min-height:40px}
 .evp-slider{display:flex;align-items:center;gap:9px}
 .evp-slider label{flex:0 0 128px;margin:0}
-.evp-slider output{flex:0 0 46px;text-align:center;font-weight:900;font-size:12.5px;color:#fff}
+.evp-slider output{flex:0 0 44px;text-align:center;font-weight:700;font-size:11px;color:#e8f6fb}
 .evp-slider input[type=range]{flex:1;accent-color:#fff}
 .evp-labels{display:flex;justify-content:space-between;font-size:10px;color:#bfe3ee;margin-top:-4px}
 .evp-card{background:#fff;border:1px solid #e2eaf0;border-radius:18px;padding:13px 14px;box-shadow:0 3px 10px rgba(20,41,59,.05);margin-bottom:10px;color:#14293b}
@@ -113,6 +113,10 @@
 .evp-subactions button,.evp-subactions a{flex:1;min-height:38px;border-radius:11px;border:1px solid #d5e2ec;background:#fff;color:#3c5266;font:700 11.5px Tahoma,sans-serif;cursor:pointer;display:grid;place-items:center;text-decoration:none}
 .evp-check{font-size:12.5px;line-height:2.15;color:#3c5266}
 .evp-fail{background:#fff3f3;border:1px solid #f0b4b4;border-radius:18px;padding:14px;color:#7a2020;margin-bottom:10px;font-size:13px;line-height:2}
+.evp-socbar{height:6px;background:#e6edf2;border-radius:99px;margin-top:7px;position:relative;overflow:hidden}
+.evp-socbar i{position:absolute;top:0;bottom:0;right:0;background:linear-gradient(90deg,#57b6cf,#0887a7)}
+.evp-socbar b{position:absolute;top:0;bottom:0;width:2px;background:#e5484d}
+.evp-soclbl{display:flex;justify-content:space-between;font-size:9.5px;color:#7e93a6;margin-top:3px}
 .evp-fail button{margin-top:8px;min-height:38px;border-radius:11px;border:0;background:#c62f35;color:#fff;font:800 12.5px Tahoma,sans-serif;padding:0 14px;cursor:pointer}
 </style>
 
@@ -793,15 +797,15 @@ heroSettings.innerHTML=
  '<div class="evp-slider"><label for="evpStartSoc">🔋 باتری شروع</label><input type="range" id="evpStartSoc" min="20" max="100" value="90"><output id="evpStartSocOut"></output></div>'+
  '<div class="evp-slider"><label for="evpMinSoc">🛡 حداقل باتری در شارژر</label><input type="range" id="evpMinSoc" min="5" max="50" value="20"><output id="evpMinSocOut"></output></div>'+
  '<div class="evp-slider"><label for="evpDestSoc">🏁 باتری رسیدن به مقصد</label><input type="range" id="evpDestSoc" min="5" max="80" value="30"><output id="evpDestSocOut"></output></div>'+
- '<div class="evp-slider"><label for="evpStyle">⚡ سبک سفر</label><input type="range" id="evpStyle" min="0" max="100" value="35"><output></output></div>'+
+ '<div class="evp-slider"><label for="evpStyle">⚡ سبک سفر</label><input type="range" id="evpStyle" min="0" max="100" value="35"><output id="evpStyleOut"></output></div>'+
  '<div class="evp-labels"><span>توقف کمتر</span><span>شارژ سریع‌تر</span></div>'+
  '<div class="field" style="margin:0"><label for="evpMinKw">🔌 حداقل توان شارژر</label><select id="evpMinKw" class="trip-input"><option value="0">هر توانی</option><option value="50">حداقل ۵۰ kW</option><option value="60">حداقل ۶۰ kW</option><option value="120">حداقل ۱۲۰ kW (سریع)</option></select></div>';
 var recentBox=$('recentDests');
 if(recentBox&&recentBox.parentNode)recentBox.parentNode.insertBefore(heroSettings,recentBox);
 function syncVehicle(){var v=VEHICLES[+$('evpVehicle').value||0];$('evpBatt').value=v.b;$('evpCons').value=v.c;$('evpMaxKw').value=v.kw}
-function syncOut(){ $('evpStartSocOut').textContent=fa($('evpStartSoc').value)+'٪'; $('evpMinSocOut').textContent=fa($('evpMinSoc').value)+'٪'; $('evpDestSocOut').textContent=fa($('evpDestSoc').value)+'٪'; }
+function syncOut(){ $('evpStartSocOut').textContent=fa($('evpStartSoc').value)+'٪'; $('evpMinSocOut').textContent=fa($('evpMinSoc').value)+'٪'; $('evpDestSocOut').textContent=fa($('evpDestSoc').value)+'٪'; var so=$('evpStyleOut'); if(so)so.textContent=fa($('evpStyle').value)+'٪'; }
 $('evpVehicle').addEventListener('change',syncVehicle);
-['evpStartSoc','evpMinSoc','evpDestSoc'].forEach(function(id){$(id).addEventListener('input',syncOut)});
+['evpStartSoc','evpMinSoc','evpDestSoc','evpStyle'].forEach(function(id){$(id).addEventListener('input',syncOut)});
 syncVehicle();syncOut();
 
 /* دکمه مکان فعلی */
@@ -980,7 +984,7 @@ function chargeMinutes(arrSoc,tgtSoc,batt,effKw){
   var soc=arrSoc,mins=0,guard=0;
   while(soc<tgtSoc&&guard++<10){
     var top=soc<60?60:(soc<80?80:100), to=Math.min(tgtSoc,top);
-    var kwh=(to-soc)/100*batt, f=soc<60?1:(soc<80?0.72:0.42);
+    var kwh=(to-soc)/100*batt, f=soc<60?1:(soc<80?0.75:0.5);
     mins+=kwh/(effKw*f)*60; soc=to;
   }
   return Math.round(mins+4);
@@ -988,7 +992,7 @@ function chargeMinutes(arrSoc,tgtSoc,batt,effKw){
 function socAfterMinutes(arrSoc,minutes,batt,effKw){
   var soc=arrSoc,left=Math.max(0,minutes-4),guard=0;
   while(left>0&&soc<97&&guard++<10){
-    var top=soc<60?60:(soc<80?80:100), f=soc<60?1:(soc<80?0.72:0.42);
+    var top=soc<60?60:(soc<80?80:100), f=soc<60?1:(soc<80?0.75:0.5);
     var kwhInBand=(top-soc)/100*batt, minsInBand=kwhInBand/(effKw*f)*60;
     if(left>=minsInBand){soc=top;left-=minsInBand}else{soc+= (left*effKw*f/60)/batt*100;left=0}
   }
@@ -1012,6 +1016,12 @@ function simulate(inp,route,corridor){
       clock+=driveMin(km,totalKm);
       return {ok:true,stops:stops,legs:legs,totalKm:totalKm,driveMin:totalDriveMin,chargeMin:stops.reduce(function(a,s){return a+s.chargeMinutes},0),totalMin:clock-inp.departMin,arriveMin:clock,arriveSoc:arrD,startSoc:inp.startSoc};
     }
+    if(soc-reachDest>=5){
+      var arrL=Math.round(soc-reachDest);
+      legs.push({from:km,to:totalKm,drive:driveMin(km,totalKm),socFrom:soc,socTo:arrL});
+      clock+=driveMin(km,totalKm);
+      return {ok:true,lowArrive:true,stops:stops,legs:legs,totalKm:totalKm,driveMin:totalDriveMin,chargeMin:stops.reduce(function(a,s){return a+s.chargeMinutes},0),totalMin:clock-inp.departMin,arriveMin:clock,arriveSoc:arrL,startSoc:inp.startSoc};
+    }
     var maxReach=km+(soc-inp.minSoc)/100*batt/perKm/(legFactor(km,totalKm)||1);
     var idx=stops.length;
     var ov=overrides[idx]||{};
@@ -1019,6 +1029,12 @@ function simulate(inp,route,corridor){
     var st=null;
     if(ov.stationId){ st=corridor.find(function(s){return s.id===ov.stationId})||null; if(st&&(st.routeKm<=km+3||used[st.id]))st=null; }
     if(!st&&cand.length){ cand.sort(function(a,b){return b.routeKm-a.routeKm}); st=cand[0]; }
+    var lowStop=false;
+    if(!st){
+      var hardReach=km+(soc-8)/100*batt/perKm/(legFactor(km,totalKm)||1);
+      var cand2=corridor.filter(function(s){return s.routeKm>km+3&&s.routeKm<=hardReach&&!used[s.id]});
+      if(cand2.length){ cand2.sort(function(a,b){return b.routeKm-a.routeKm}); st=cand2[0]; lowStop=true; }
+    }
     if(!st){ return {ok:false,atKm:km,soc:Math.round(soc),stops:stops}; }
     var arrSoc=soc-energyPct(km,st.routeKm);
     var effKw=Math.max(7,Math.min(st.power||50,inp.maxKw));
@@ -1028,7 +1044,8 @@ function simulate(inp,route,corridor){
     else tgt=targetBase;
     if(!ov.minutes&&!ov.targetSoc){
       var needDest=energyPct(st.routeKm,totalKm)+inp.destSoc;
-      if(needDest>tgt&&needDest<=95)tgt=Math.ceil(needDest);
+      if(needDest+5<=tgt)tgt=Math.ceil(needDest+5);
+      else if(needDest>tgt&&needDest<=95)tgt=Math.ceil(needDest);
     }
     tgt=Math.max(Math.round(arrSoc)+3,Math.min(95,tgt));
     var cm=chargeMinutes(arrSoc,tgt,batt,effKw);
@@ -1037,7 +1054,7 @@ function simulate(inp,route,corridor){
     legs.push(leg);
     clock+=leg.drive;
     var arrClock=clock; clock+=cm;
-    stops.push({station:st,routeKm:st.routeKm,arrivalSoc:Math.round(arrSoc),targetSoc:Math.round(tgt),chargeMinutes:cm,kwh:kwhAdded,arriveClock:arrClock,departClock:clock,override:ov});
+    stops.push({station:st,lowArrival:lowStop,routeKm:st.routeKm,arrivalSoc:Math.round(arrSoc),targetSoc:Math.round(tgt),chargeMinutes:cm,kwh:kwhAdded,arriveClock:arrClock,departClock:clock,override:ov});
     used[st.id]=1; soc=tgt; km=st.routeKm;
   }
   return {ok:false,atKm:km,soc:Math.round(soc),stops:stops};
@@ -1058,9 +1075,9 @@ function statusBadge(st){
 function render(inp,route,res){
   var body=$('evpResultBody');
   if(!res.ok){
-    body.innerHTML='<div class="evp-fail"><b>⚠️ با این تنظیمات، این مسیر شارژر کافی ندارد.</b><br>در کیلومتر '+fa(Math.round(res.atKm))+' باتری به '+fa(res.soc)+'٪ می‌رسد و تا شارژر بعدی نمی‌رسد. حداقل باتری را کمتر کن، یا مبدأ/مقصد را نزدیک‌تر بگیر.<br><button type="button" id="evpRetryLoose">حداقل باتری را ۱۰٪ کن و دوباره حساب کن</button></div>';
+    body.innerHTML='<div class="evp-fail"><b>⚠️ با این تنظیمات، این مسیر شارژر کافی ندارد.</b><br>در کیلومتر '+fa(Math.round(res.atKm))+' باتری به '+fa(res.soc)+'٪ می‌رسد و تا شارژر بعدی نمی‌رسد. شارژ شروع را بیشتر کن، یا حداقل باتری و باتری رسیدن به مقصد را کمتر کن.<br><button type="button" id="evpRetryLoose">حداقل ۱۰٪ و رسیدن ۱۵٪ — دوباره حساب کن</button></div>';
     $('evpResult').hidden=false;
-    $('evpRetryLoose').addEventListener('click',function(){$('evpMinSoc').value=10;syncOut();runPlan()});
+    $('evpRetryLoose').addEventListener('click',function(){$('evpMinSoc').value=10;if(+$('evpDestSoc').value>15)$('evpDestSoc').value=15;syncOut();runPlan()});
     $('evpResult').scrollIntoView({behavior:'smooth'});
     return;
   }
@@ -1074,7 +1091,7 @@ function render(inp,route,res){
   var html='';
   html+='<div class="evp-card"><div class="evp-total">'+fmtDur(res.totalMin)+' <small>('+fmtKm(res.totalKm)+')</small></div>'+
     '<div class="evp-totalsub"><span>🚗 رانندگی <b>'+fmtDur(res.driveMin)+'</b></span><span>⚡ شارژ <b>'+fmtDur(res.chargeMin)+'</b></span><span><b>'+fa(res.stops.length)+'</b> توقف شارژ</span><span>🏁 رسیدن <b>'+fmtClock(res.arriveMin)+dayWrap(res.arriveMin)+'</b> با باتری <b>'+fa(res.arriveSoc)+'٪</b></span></div>'+
-    (res.stops.length?'<div class="evp-costrow"><span>💰 هزینه شارژ این سفر (تقریبی، تعرفه خدمات)</span><b>≈ '+fa(Math.round(cost/1000)*1000)+' تومان</b></div>':'')+'</div>';
+    (res.lowArrive?'<div class="evp-warn">🏁 با '+fa(res.arriveSoc)+'٪ به مقصد می‌رسی — کمتر از هدف '+fa(inp.destSoc)+'٪ توست؛ برنامه شدنی است، ولی در مقصد زود شارژ کن.</div>':'')+(res.stops.length?'<div class="evp-costrow"><span>💰 هزینه شارژ این سفر (تقریبی، تعرفه خدمات)</span><b>≈ '+fa(Math.round(cost/1000)*1000)+' تومان</b></div>':'')+'</div>';
   html+='<div class="evp-card"><h3>🕐 ساعت‌های حرکت دیگر <small>— رسیدن هرکدام با همین برنامه</small></h3><div class="evp-depart">'+
     depOpts.map(function(o,i){return '<div class="opt'+(i===bestIdx?' best':'')+'"><b>'+fmtClock(o.dm)+'</b>رسیدن '+fmtClock(o.arr)+dayWrap(o.arr)+(i===bestIdx?'<br><span class="evp-tag">پیشنهاد ما</span>':'')+'<br>'+o.lbl+'</div>'}).join('')+'</div></div>';
   if(route.elevSvg){
@@ -1090,14 +1107,15 @@ function render(inp,route,res){
       html+='<div class="evp-stop"><div class="evp-rail"><div class="evp-node charge">⚡</div><div class="evp-line"></div></div><div class="evp-scard">'+
         '<div class="name">'+esc(st.name)+(st.city?' — '+esc(st.city):'')+' <span class="evp-badge">'+speedBadge(st.power)+' · سازگار با خودروی شما</span></div>'+
         '<div class="meta"><span>🕐 '+fmtClock(s.arriveClock)+' ← '+fmtClock(s.departClock)+' (⚡ '+fa(s.chargeMinutes)+' دقیقه)</span><span class="bat">🔋 '+fa(s.arrivalSoc)+'٪ ← '+fa(s.targetSoc)+'٪</span>'+(st.power?'<span>⚡ '+fa(st.power)+' kW</span>':'')+'</div>'+
-        '<div class="meta">'+statusBadge(st)+(Array.isArray(st.amenities)&&st.amenities.length?'<span>'+esc(st.amenities.slice(0,3).join(' · '))+'</span>':'')+'</div>'+
+        '<div class="evp-socbar"><i style="width:'+s.targetSoc+'%"></i><b style="right:'+s.arrivalSoc+'%"></b></div><div class="evp-soclbl"><span>ورود '+fa(s.arrivalSoc)+'٪</span><span>خروج '+fa(s.targetSoc)+'٪</span></div>'+
+        '<div class="meta">'+(s.lowArrival?'<span class="evp-badge warn">⚠️ رسیدن با باتری کم — زیر حداقل تنظیم‌شده</span>':'')+statusBadge(st)+(Array.isArray(st.amenities)&&st.amenities.length?'<span>'+esc(st.amenities.slice(0,3).join(' · '))+'</span>':'')+'</div>'+
         '<div class="evp-editrow"><button type="button" data-act="minutes" data-i="'+i+'" class="'+(s.override.minutes?'on':'')+'">⏱ توقف '+fa(s.override.minutes||30)+' دقیقه‌ای</button>'+
         '<button type="button" data-act="target" data-i="'+i+'" class="'+(s.override.targetSoc?'on':'')+'">🔋 شارژ تا '+fa(s.override.targetSoc||80)+'٪</button>'+
         '<button type="button" data-act="swap" data-i="'+i+'">🔀 تغییر ایستگاه</button></div>'+
         '</div></div>';
     }
   });
-  html+='<div class="evp-stop"><div class="evp-rail"><div class="evp-node dest">🏁</div></div><div class="evp-scard"><div class="name">'+esc(inp.destName)+' — مقصد</div><div class="meta"><span>🕐 رسیدن '+fmtClock(res.arriveMin)+dayWrap(res.arriveMin)+'</span><span class="bat">🔋 '+fa(res.arriveSoc)+'٪</span></div></div></div>';
+  html+='<div class="evp-stop"><div class="evp-rail"><div class="evp-node dest">🏁</div></div><div class="evp-scard"><div class="name">'+esc(inp.destName)+' — مقصد</div><div class="meta"><span>🕐 رسیدن '+fmtClock(res.arriveMin)+dayWrap(res.arriveMin)+'</span><span class="bat">🔋 '+fa(res.arriveSoc)+'٪</span></div><div class="evp-socbar"><i style="width:'+res.arriveSoc+'%"></i></div><div class="evp-soclbl"><span>باتری در مقصد</span><span>'+fa(res.arriveSoc)+'٪</span></div></div></div>';
   html+='</div>';
   html+='<div class="evp-card"><button type="button" class="evp-startbtn" id="evpStartNav">➤ شروع مسیریابی با این برنامه</button>'+
     '<div class="evp-subactions"><button type="button" id="evpSave">💾 ذخیره برنامه</button><button type="button" id="evpShare">📤 اشتراک‌گذاری</button><a id="evpExternal" target="_blank" rel="noopener">🧭 گوگل‌مپ</a></div></div>';
