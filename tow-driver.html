@@ -51,6 +51,30 @@
   .mission .mmeta{font-size:12px;color:#687b8d;line-height:1.9;margin-top:3px}
   .codebox{background:#eaf7fb;border:1px solid #cbe6f0;border-radius:10px;padding:10px;margin-top:8px;text-align:center;line-height:1.9}
 </style>
+<style id="tm-style">
+#missionCard{border:1.5px solid #bfe3ee;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(8,135,167,.14);margin-top:14px}
+#missionCard .tm-head{padding:12px 15px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;font-weight:900;font-size:15px;display:flex;gap:9px;align-items:center}
+#tmMap{height:250px;background:#e7eff4}
+.tm-body{padding:12px 15px}
+.tm-eta{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.tm-eta .big{font-size:23px;font-weight:900;color:#066d88}
+.tm-eta .sub{font-size:12.5px;color:#5b7183}
+.tm-info{background:#f4f9fb;border:1px solid #e2eef4;border-radius:13px;padding:10px 12px;margin-top:10px;font-size:13px;line-height:2}
+.tm-code{background:#eef7ee;border:1.5px dashed #57a773;border-radius:13px;padding:8px 12px;margin-top:10px;text-align:center;font-size:12.5px;color:#2e5d3a}
+.tm-code b{font-size:21px;letter-spacing:4px;color:#066d88;direction:ltr;display:inline-block}
+.tm-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.tm-btns a,.tm-btns button{flex:1;min-width:100px;min-height:46px;border-radius:12px;display:grid;place-items:center;font:800 13px Tahoma,sans-serif;text-decoration:none;cursor:pointer;border:0}
+.tm-call{background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff}
+.tm-nav{background:#fff;border:1.5px solid #bfe3ee!important;color:#066d88}
+.tm-done{background:#e9f8f0;color:#087b48;border:1.5px solid #a9dfc0!important}
+.tm-tips{margin-top:12px;background:#fff7e8;border:1px solid #f0c36d;border-radius:13px;padding:10px 13px;font-size:12.5px;line-height:2.05;color:#6b5518}
+.tm-tips ul{margin:0;padding-right:17px}
+@keyframes tmFlash{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}50%{box-shadow:0 0 0 6px rgba(229,72,77,.45)}}
+#offerCard.tm-ringing{animation:tmFlash 1s infinite;border-color:#e5484d!important}
+.tm-alarm-note{display:none;background:#fdecec;color:#a12327;border:1px solid #f0b4b4;border-radius:10px;padding:7px 10px;font-size:12px;margin-top:9px;text-align:center;font-weight:800}
+#offerCard.tm-ringing .tm-alarm-note{display:block}
+</style>
+
 </head>
 <body>
 <main class="wrap">
@@ -343,7 +367,7 @@
       var r=curOffer.request;curOffer=null;clearInterval(timerInt);
       $('offerCard').classList.add('hidden');
       if(accept){
-        var last={reqId:reqId,serviceCode:res.serviceCode||'',problem:r.problem,phone:r.phone,loc:r.loc||''};
+        var last={reqId:reqId,serviceCode:res.serviceCode||'',problem:r.problem,phone:r.phone,loc:r.loc||'',gps:r.gps||null,name:r.name||'',car:r.car||''};
         try{localStorage.setItem(KEY+'_last',JSON.stringify(last))}catch(e){}
         showDone(last);
       }
@@ -413,5 +437,156 @@
   })();
 })();
 </script>
+<script>
+/* آلارم صوتی پیشنهاد + نمای مأموریت راننده (نقشه، فاصله، تماس، ایمنی) */
+(function(){
+"use strict";
+var KEY='rev_tow_driver_v1';
+function $(id){return document.getElementById(id)}
+function fa(x){return String(x).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[+d]})}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function hav(a,b,c,d){var R=6371,t=Math.PI/180;var x=(c-a)*t,y=(d-b)*t*Math.cos((a+c)/2*t);return Math.sqrt(x*x+y*y)*R}
+function loadLeaflet(cb){
+  if(window.L)return cb();
+  if(!document.getElementById('tmLeafletCss')){var l=document.createElement('link');l.id='tmLeafletCss';l.rel='stylesheet';l.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(l)}
+  var sc=document.createElement('script');sc.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';sc.onload=cb;sc.onerror=function(){};document.head.appendChild(sc);
+}
+
+/* ---------- آلارم پیشنهاد ---------- */
+var actx=null,alarmOn=false,alarmInt=null,vibInt=null,alarmStart=0;
+function ensureAudio(){
+  try{
+    if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended')actx.resume();
+  }catch(e){}
+}
+document.addEventListener('pointerdown',ensureAudio);
+function beep(freq,t0,dur){
+  if(!actx)return;
+  try{
+    var o=actx.createOscillator(),g=actx.createGain();
+    o.type='square';o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(0.12,t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    o.connect(g);g.connect(actx.destination);
+    o.start(t0);o.stop(t0+dur+0.05);
+  }catch(e){}
+}
+function startAlarm(){
+  if(alarmOn)return;
+  ensureAudio();
+  alarmOn=true;alarmStart=Date.now();
+  var card=$('offerCard');if(card)card.classList.add('tm-ringing');
+  var cycle=function(){
+    if(!alarmOn)return;
+    if(Date.now()-alarmStart>170000){stopAlarm();return}
+    if(actx){var t=actx.currentTime;beep(950,t,0.22);beep(700,t+0.26,0.22);beep(950,t+0.52,0.22)}
+    try{navigator.vibrate&&navigator.vibrate([250,90,250])}catch(e){}
+  };
+  cycle();
+  alarmInt=setInterval(cycle,1500);
+}
+function stopAlarm(){
+  alarmOn=false;
+  if(alarmInt)clearInterval(alarmInt);alarmInt=null;
+  var card=$('offerCard');if(card)card.classList.remove('tm-ringing');
+}
+var offerCard=$('offerCard');
+if(offerCard){
+  var note=document.createElement('div');
+  note.className='tm-alarm-note';note.textContent='🔔 پیشنهاد جدید! برای قطع صدا، قبول یا رد کن.';
+  offerCard.appendChild(note);
+  var obs=new MutationObserver(function(){
+    var visible=!offerCard.classList.contains('hidden');
+    if(visible)startAlarm();else stopAlarm();
+  });
+  obs.observe(offerCard,{attributes:true,attributeFilter:['class']});
+  if(!offerCard.classList.contains('hidden'))startAlarm();
+}
+
+/* ---------- نمای مأموریت ---------- */
+var card=document.createElement('section');
+card.id='missionCard';card.hidden=true;
+card.innerHTML='<div class="tm-head">🚛 مأموریت فعال — در راه مشتری</div><div id="tmMap"></div><div class="tm-body">'+
+  '<div class="tm-eta"><span class="big" id="tmEta">در حال محاسبه فاصله…</span><span class="sub" id="tmDist"></span></div>'+
+  '<div class="tm-info" id="tmInfo"></div>'+
+  '<div class="tm-code" id="tmCode" hidden>🔐 کد اختصاصی امداد<br><b id="tmCodeVal"></b></div>'+
+  '<div class="tm-btns"><a class="tm-call" id="tmCall" href="#">📞 تماس با مشتری</a><a class="tm-nav" id="tmNav" href="#" target="_blank" rel="noopener">🧭 مسیریابی</a><button type="button" class="tm-done" id="tmDone">✔️ پایان مأموریت</button></div>'+
+  '<div class="tm-tips"><b>⚠️ توصیه‌های ایمنی قبل از بارگیری:</b><ul>'+
+    '<li>در محل امن توقف کن؛ فلاشر و چراغ‌گردان روشن، مثلث/مخروط هشدار با فاصله مناسب و جلیقه شبرنگ.</li>'+
+    '<li>هرگز در خط کشش وینچ یا پشت خودرو در سراشیبی نایست و هنگام کشیدن، کسی بین خودرو و کفی نباشد.</li>'+
+    '<li>کد امداد را با مشتری تطبیق بده و از وضعیت خودرو قبل از بارگیری عکس بگیر.</li>'+
+    '<li>ترمز دستی را آزاد کن و خودرو را طبق دستورالعمل همان مدل در حالت حمل قرار بده؛ بعد از بارگیری هر چهار چرخ را با تسمه/زنجیر مهار و قبل از حرکت دوباره چک کن.</li>'+
+    '<li>در مسیر، یک توقف کوتاه برای بازبینی مهاربندی انجام بده.</li>'+
+  '</ul></div></div>';
+var doneCard=$('doneCard');
+if(doneCard&&doneCard.parentNode)doneCard.parentNode.insertBefore(card,doneCard.nextSibling);
+$('tmDone').addEventListener('click',function(){
+  var b=$('btnDoneClose');
+  if(b){b.click()}
+});
+var map=null,meMark=null,cuMark=null,routeLine=null,myPos=null,lastRouteAt=0,etaBusy=false,watchId=null;
+function getLast(){try{return JSON.parse(localStorage.getItem(KEY+'_last')||'null')}catch(e){return null}}
+function ensureMap(lat,lng){
+  loadLeaflet(function(){
+    if(!window.L)return;
+    if(!map){
+      map=L.map('tmMap',{scrollWheelZoom:false}).setView([lat,lng],13);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    }
+    setTimeout(function(){try{map.invalidateSize()}catch(e){}},120);
+  });
+}
+function updateRoute(cu){
+  if(!map||!window.L||!myPos)return;
+  if(meMark)meMark.setLatLng([myPos.lat,myPos.lng]);else meMark=L.marker([myPos.lat,myPos.lng]).addTo(map).bindPopup('🚛 موقعیت تو');
+  if(cuMark)cuMark.setLatLng([cu.lat,cu.lng]);else cuMark=L.marker([cu.lat,cu.lng]).addTo(map).bindPopup('📍 مشتری');
+  var now=Date.now();
+  if(etaBusy||now-lastRouteAt<20000)return;
+  lastRouteAt=now;etaBusy=true;
+  fetch('https://router.project-osrm.org/route/v1/driving/'+myPos.lng+','+myPos.lat+';'+cu.lng+','+cu.lat+'?overview=full&geometries=geojson')
+  .then(function(r){return r.json()}).then(function(j){
+    etaBusy=false;
+    if(!j.routes||!j.routes.length)return;
+    var r0=j.routes[0];
+    $('tmEta').textContent='حدود '+fa(Math.max(1,Math.round(r0.duration/60)))+' دقیقه تا مشتری';
+    $('tmDist').textContent='فاصله جاده‌ای: '+fa(Math.round(r0.distance/100)/10)+' کیلومتر';
+    var coords=r0.geometry.coordinates.map(function(c){return [c[1],c[0]]});
+    if(routeLine)routeLine.setLatLngs(coords);else routeLine=L.polyline(coords,{color:'#0887a7',weight:5,opacity:.85}).addTo(map);
+    try{map.fitBounds(routeLine.getBounds(),{padding:[28,28]})}catch(e){}
+  }).catch(function(){etaBusy=false});
+}
+function tick(){
+  var last=getLast();
+  if(!last||!last.reqId){card.hidden=true;if(watchId!=null){try{navigator.geolocation.clearWatch(watchId)}catch(e){}watchId=null}return}
+  card.hidden=false;
+  var dc=$('doneCard');if(dc)dc.classList.add('hidden');
+  $('tmInfo').innerHTML='<b>مشکل:</b> '+esc(last.problem||'—')+(last.car?'<br><b>خودرو:</b> '+esc(last.car):'')+(last.name?'<br><b>مشتری:</b> '+esc(last.name):'')+'<br><b>موقعیت:</b> '+esc(last.loc||'ثبت نشده')+(last.phone?'<br><b>تلفن:</b> <span dir="ltr">'+esc(last.phone)+'</span>':'');
+  if(last.phone)$('tmCall').href='tel:'+last.phone;
+  if(last.serviceCode){$('tmCode').hidden=false;$('tmCodeVal').textContent=last.serviceCode}
+  var cu=(last.gps&&isFinite(last.gps.lat)&&isFinite(last.gps.lng))?{lat:+last.gps.lat,lng:+last.gps.lng}:null;
+  if(cu){
+    $('tmNav').href='https://www.google.com/maps/dir/?api=1&destination='+cu.lat+','+cu.lng+'&travelmode=driving';
+    ensureMap(cu.lat,cu.lng);
+    if(watchId==null&&navigator.geolocation){
+      watchId=navigator.geolocation.watchPosition(function(p){
+        myPos={lat:p.coords.latitude,lng:p.coords.longitude};
+        updateRoute(cu);
+      },function(){},{enableHighAccuracy:true,maximumAge:15000,timeout:20000});
+    }else if(myPos){updateRoute(cu)}
+    if(!myPos)$('tmEta').textContent='در انتظار موقعیت GPS تو…';
+  }else{
+    $('tmMap').style.display='none';
+    $('tmEta').textContent='مشتری منتظر توست';
+    $('tmDist').textContent='موقعیت GPS مشتری در این مأموریت ثبت نشده؛ از روی نشانی متنی برو';
+    $('tmNav').style.display='none';
+  }
+}
+tick();
+setInterval(tick,5000);
+})();
+</script>
+
 </body>
 </html>

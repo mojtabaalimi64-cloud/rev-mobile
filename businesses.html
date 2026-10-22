@@ -85,6 +85,32 @@
 .sec-anchor{scroll-margin-top:76px}
 </style>
 <script src="./rev-auth-guard.js?v=20261019-1"></script>
+<style id="tt-style">
+#towTrackWrap{margin-top:16px}
+.tt-card{background:#fff;border:1.5px solid #bfe3ee;border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(8,135,167,.14)}
+.tt-head{display:flex;align-items:center;gap:10px;padding:13px 15px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff}
+.tt-head .t1{font-weight:900;font-size:16px}
+.tt-head .t2{font-size:11.5px;opacity:.9}
+.tt-pulse{width:11px;height:11px;border-radius:50%;background:#7ed321;flex:0 0 11px;animation:ttPulse 1.6s infinite}
+@keyframes ttPulse{0%{box-shadow:0 0 0 0 rgba(126,211,33,.5)}70%{box-shadow:0 0 0 9px rgba(126,211,33,0)}100%{box-shadow:0 0 0 0 rgba(126,211,33,0)}}
+#ttMap{height:260px;background:#e7eff4}
+.tt-body{padding:13px 15px}
+.tt-eta{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.tt-eta .big{font-size:24px;font-weight:900;color:#066d88}
+.tt-eta .sub{font-size:12.5px;color:#5b7183}
+.tt-driver{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#f4f9fb;border:1px solid #e2eef4;border-radius:13px;padding:10px 12px;margin-top:11px;font-size:13px}
+.tt-code{background:#eef7ee;border:1.5px dashed #57a773;border-radius:13px;padding:9px 12px;margin-top:10px;text-align:center;font-size:12.5px;color:#2e5d3a}
+.tt-code b{font-size:22px;letter-spacing:4px;color:#066d88;direction:ltr;display:inline-block}
+.tt-btns{display:flex;gap:8px;margin-top:12px}
+.tt-btns a,.tt-btns button{flex:1;min-height:46px;border-radius:12px;display:grid;place-items:center;font:800 13px Tahoma,sans-serif;text-decoration:none;cursor:pointer;border:0}
+.tt-call{background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff}
+.tt-support{background:#fff;border:1.5px solid #bfe3ee!important;color:#066d88}
+.tt-cancel{flex:0 0 auto!important;padding:0 14px;background:#fff;border:1.5px solid #f0b4b4!important;color:#c62f35}
+.tt-tips{margin-top:12px;background:#fff7e8;border:1px solid #f0c36d;border-radius:13px;padding:10px 13px;font-size:12.5px;line-height:2.05;color:#6b5518}
+.tt-tips b{color:#8a6d1f}
+.tt-tips ul{margin:0;padding-right:17px}
+</style>
+
 </head>
 <body class="has-bottom-nav">
 <div class="app-shell">
@@ -539,5 +565,130 @@ renderServices();renderSvcReqs();
 })();
 </script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
+<script>
+/* نمای ردیابی زنده یدک‌کش برای مشتری — ظاهرشدن خودکار بعد از قبول راننده */
+(function(){
+"use strict";
+var TOW_API='https://rev-tow-dispatch.mojtaba-alimi64.workers.dev';
+var TOW_KEY='rev_tow_requests_v1';
+function $(id){return document.getElementById(id)}
+function fa(x){return String(x).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[+d]})}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function hav(a,b,c,d){var R=6371,t=Math.PI/180;var x=(c-a)*t,y=(d-b)*t*Math.cos((a+c)/2*t);return Math.sqrt(x*x+y*y)*R}
+function loadReq(){try{var a=JSON.parse(localStorage.getItem(TOW_KEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+function saveReq(a){try{localStorage.setItem(TOW_KEY,JSON.stringify(a))}catch(e){}}
+function loadLeaflet(cb){
+  if(window.L)return cb();
+  if(!document.getElementById('ttLeafletCss')){var l=document.createElement('link');l.id='ttLeafletCss';l.rel='stylesheet';l.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(l)}
+  var sc=document.createElement('script');sc.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';sc.onload=cb;sc.onerror=function(){};document.head.appendChild(sc);
+}
+/* ساخت کارت */
+var wrap=document.createElement('section');
+wrap.id='towTrackWrap';wrap.hidden=true;
+wrap.innerHTML='<div class="tt-card">'+
+  '<div class="tt-head"><span class="tt-pulse"></span><div><div class="t1">🚛 یدک‌کش در راه است</div><div class="t2" id="ttHeadSub">راننده درخواستت را قبول کرد</div></div></div>'+
+  '<div id="ttMap"></div>'+
+  '<div class="tt-body">'+
+    '<div class="tt-eta"><span class="big" id="ttEta">در حال حرکت به سمت شما</span><span class="sub" id="ttDist"></span></div>'+
+    '<div class="tt-driver" id="ttDriver"></div>'+
+    '<div class="tt-code" id="ttCode" hidden>🔐 کد اختصاصی امداد تو<br><b id="ttCodeVal"></b><br>این کد را فقط به همین راننده بگو.</div>'+
+    '<div class="tt-btns"><a class="tt-call" id="ttCallDriver" href="#">📞 تماس با راننده</a><a class="tt-support" id="ttCallSupport" href="#">📞 پشتیبانی REV</a><button type="button" class="tt-cancel" id="ttCancel">لغو</button></div>'+
+    '<div class="tt-tips"><b>⚠️ توصیه‌های ایمنی تا رسیدن یدک‌کش:</b><ul>'+
+      '<li>فلاشرها را روشن کن و مثلث خطر را ۳۰ تا ۵۰ متر پشت خودرو بگذار (در بزرگراه دورتر).</li>'+
+      '<li>خودت و سرنشین‌ها پیاده شوید و پشت گاردریل یا در محل امن، دور از مسیر عبور بایستید؛ داخل خودرو نمانید.</li>'+
+      '<li>مدارک و وسایل قیمتی را بردار و از وضعیت خودرو قبل از بارگیری عکس بگیر.</li>'+
+      '<li>قبل از سوار کردن خودرو، نام راننده و کد امداد را با همین صفحه تطبیق بده و مقصد و هزینه را شفاف توافق کن.</li>'+
+      '<li>خودروی برقی فقط با کفی (خودروبر) جابه‌جا می‌شود؛ بکسل چرخ‌روی‌زمین به موتور و باتری آسیب می‌زند.</li>'+
+    '</ul></div>'+
+  '</div></div>';
+var towListEl=$('towList');
+if(towListEl){
+  var sec=towListEl.closest?towListEl.closest('.section'):towListEl.parentNode;
+  if(sec&&sec.parentNode)sec.parentNode.insertBefore(wrap,sec);
+}
+var supportPhone='';
+fetch(TOW_API+'/api/support',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
+  if(d&&d.ok&&d.phone){supportPhone=d.phone;$('ttCallSupport').href='tel:'+d.phone}
+}).catch(function(){});
+var map=null,meMark=null,drvMark=null,routeLine=null,lastReqId='',etaBusy=false;
+function ensureMap(cLat,cLng){
+  loadLeaflet(function(){
+    if(!window.L)return;
+    if(!map){
+      map=L.map('ttMap',{scrollWheelZoom:false}).setView([cLat,cLng],14);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+      meMark=L.marker([cLat,cLng]).addTo(map).bindPopup('📍 موقعیت تو');
+    }
+    setTimeout(function(){try{map.invalidateSize()}catch(e){}},120);
+  });
+}
+function updateRoute(me,drv){
+  if(!map||!window.L)return;
+  if(drvMark){drvMark.setLatLng([drv.lat,drv.lng])}else{drvMark=L.marker([drv.lat,drv.lng]).addTo(map).bindPopup('🚛 یدک‌کش')}
+  if(!etaBusy){
+    etaBusy=true;
+    fetch('https://router.project-osrm.org/route/v1/driving/'+drv.lng+','+drv.lat+';'+me.lng+','+me.lat+'?overview=full&geometries=geojson')
+    .then(function(r){return r.json()}).then(function(j){
+      etaBusy=false;
+      if(!j.routes||!j.routes.length)return;
+      var r0=j.routes[0];
+      $('ttEta').textContent='حدود '+fa(Math.max(1,Math.round(r0.duration/60)))+' دقیقه تا رسیدن';
+      $('ttDist').textContent='فاصله جاده‌ای: '+fa(Math.round(r0.distance/100)/10)+' کیلومتر';
+      var coords=r0.geometry.coordinates.map(function(c){return [c[1],c[0]]});
+      if(routeLine){routeLine.setLatLngs(coords)}else{routeLine=L.polyline(coords,{color:'#0887a7',weight:5,opacity:.85}).addTo(map)}
+      try{map.fitBounds(routeLine.getBounds(),{padding:[28,28]})}catch(e){}
+    }).catch(function(){etaBusy=false});
+  }
+}
+function tick(){
+  var list=loadReq();
+  var active=list.find(function(r){return r.status==='راننده در راه'});
+  if(!active){wrap.hidden=true;lastReqId='';return}
+  wrap.hidden=false;
+  if(lastReqId&&lastReqId!==active.id){try{navigator.vibrate&&navigator.vibrate([150,80,150])}catch(e){}}
+  lastReqId=active.id;
+  fetch(TOW_API+'/api/tow/status?id='+encodeURIComponent(active.id),{cache:'no-store'})
+  .then(function(r){return r.json()}).then(function(d){
+    if(!d||!d.ok)return;
+    var l=loadReq();var cur=l.find(function(x){return x.id===active.id});
+    if(cur&&(cur.status!==d.status||JSON.stringify(cur.driver||null)!==JSON.stringify(d.driver||null)||(cur.serviceCode||null)!==(d.serviceCode||null))){
+      cur.status=d.status;cur.driver=d.driver||null;cur.serviceCode=d.serviceCode||null;saveReq(l);
+    }
+    if(d.status!=='راننده در راه'){wrap.hidden=true;return}
+    var drv=d.driver||{};
+    $('ttDriver').innerHTML='<span>راننده: <b>'+esc(drv.name||'راننده REV')+'</b></span>'+(active.car?'<span>خودروی تو: '+esc(active.car)+'</span>':'')+'<span>وضعیت: <b>در راه 🚛</b></span>';
+    if(drv.phone){$('ttCallDriver').href='tel:'+drv.phone;$('ttCallDriver').style.display=''}else{$('ttCallDriver').style.display='none'}
+    if(d.serviceCode){$('ttCode').hidden=false;$('ttCodeVal').textContent=d.serviceCode}
+    var me=active.gps;
+    if(me&&isFinite(me.lat)&&isFinite(me.lng)){
+      ensureMap(me.lat,me.lng);
+      if(isFinite(+drv.lat)&&isFinite(+drv.lng)){
+        var drvPos={lat:+drv.lat,lng:+drv.lng};
+        setTimeout(function(){updateRoute(me,drvPos)},map?0:600);
+        if(drv.locAt){var age=Math.round((Date.now()-drv.locAt)/60000);if(age>=3)$('ttDist').textContent='آخرین موقعیت راننده: '+fa(age)+' دقیقه پیش'}
+      }else{
+        $('ttEta').textContent='راننده در مسیر شماست';
+        $('ttDist').textContent='به‌محض نزدیک‌شدن، زمان رسیدن اینجا نمایش داده می‌شود';
+      }
+    }else{
+      $('ttMap').style.display='none';
+    }
+  }).catch(function(){});
+}
+$('ttCancel').addEventListener('click',function(){
+  var list=loadReq();
+  var active=list.find(function(r){return r.status==='راننده در راه'})||list.find(function(r){return r.status!=='لغو شد'&&r.status!=='انجام شد'});
+  if(!active)return;
+  if(!confirm('درخواست یدک‌کش لغو شود؟'))return;
+  fetch(TOW_API+'/api/tow/cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:active.id,phone:active.phone})})
+  .then(function(r){return r.json()}).then(function(d){
+    if(d&&d.ok){active.status='لغو شد';saveReq(list);wrap.hidden=true}
+  }).catch(function(){});
+});
+tick();
+setInterval(tick,12000);
+})();
+</script>
+
 </body>
 </html>
