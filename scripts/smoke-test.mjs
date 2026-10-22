@@ -93,11 +93,6 @@ if (!mapPage.includes("revChargingStopsLayer") || !mapPage.includes("plan.stops"
   failures.push("Mobile navigation map must render saved EV charging stops");
 }
 
-if (failures.length) {
-  console.error(failures.join("\n"));
-  process.exit(1);
-}
-
 const towPage = fs.readFileSync(path.join(root, "tow-driver.html"), "utf8");
 if (!towPage.includes("function shiftCall(on)") ||
     !towPage.includes("if(onShift){startPolling()}") ||
@@ -112,6 +107,11 @@ if (!mapPage.includes('id="details-drag-handle"') ||
     !mapPage.includes("rev-details-expanded") ||
     !mapPage.includes("bottom:calc(74px + env(safe-area-inset-bottom))")) {
   failures.push("Mobile map details must use an accessible, expandable bottom drawer");
+}
+
+if (failures.length) {
+  console.error(failures.join("\n"));
+  process.exit(1);
 }
 
 console.log("REV mobile checks passed; " + required.length + " required files; " + htmlFiles.length + " HTML pages parsed; " + linksChecked + " local links checked.");
