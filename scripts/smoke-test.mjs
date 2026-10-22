@@ -100,7 +100,7 @@ if (failures.length) {
 
 const towPage = fs.readFileSync(path.join(root, "tow-driver.html"), "utf8");
 if (!towPage.includes("function shiftCall(on)") ||
-    !towPage.includes("if(onShift){heartbeat();poll();startPolling()}") ||
+    !towPage.includes("if(onShift){startPolling()}") ||
     !towPage.includes("shiftCall(!onShift)")) {
   failures.push("Tow-driver shift must start polling only after server confirmation");
 }
