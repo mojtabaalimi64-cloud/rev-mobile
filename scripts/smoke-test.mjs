@@ -6,7 +6,7 @@ const root = process.cwd();
 const required = [
   "index.html", "experiences.html", "trips.html", "nearby-map.html",
   "profile.html", "businesses.html", "manifest.webmanifest", "sw.js",
-  "register-sw.js", "rev-app-icon.svg", "rev-auth-guard.js", "rev-app-mode.js"
+  "register-sw.js", "rev-app-icon.svg", "rev-auth-guard.js", "rev-app-mode.js", "tow-driver.html", "rev-mobile-theme.css"
 ];
 const failures = [];
 const htmlFiles = fs.readdirSync(root).filter(file => file.endsWith(".html"));
@@ -77,6 +77,10 @@ const guard = fs.readFileSync(path.join(root, "rev-auth-guard.js"), "utf8");
 if (!guard.includes("showConnectionError") || !guard.includes("10000")) {
   failures.push("Authentication guard must provide a timeout and visible recovery state");
 }
+if (!guard.split("\n").some(line => line.trim().startsWith("if (path === 'index.html'") &&
+    line.includes("path === 'tow-driver.html'"))) {
+  failures.push("Auth guard bypass must be executable code, not text inside a comment");
+}
 
 
 const tripPlannerPage = fs.readFileSync(path.join(root, "trips.html"), "utf8");
@@ -89,8 +93,25 @@ if (!mapPage.includes("revChargingStopsLayer") || !mapPage.includes("plan.stops"
   failures.push("Mobile navigation map must render saved EV charging stops");
 }
 
+const towPage = fs.readFileSync(path.join(root, "tow-driver.html"), "utf8");
+if (!towPage.includes("function shiftCall(on)") ||
+    !towPage.includes("if(onShift){startPolling()}") ||
+    !towPage.includes("shiftCall(!onShift)")) {
+  failures.push("Tow-driver shift must start polling only after server confirmation");
+}
+if (!sw.includes('"./nearby-map.html"') || !sw.includes('"./profile.html"') ||
+    !sw.includes("rev-mobile-shell-v76")) {
+  failures.push("Service-worker shell must include core mobile pages and use a fresh cache version");
+}
+if (!mapPage.includes('id="details-drag-handle"') ||
+    !mapPage.includes("rev-details-expanded") ||
+    !mapPage.includes("bottom:calc(74px + env(safe-area-inset-bottom))")) {
+  failures.push("Mobile map details must use an accessible, expandable bottom drawer");
+}
+
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);
 }
+
 console.log("REV mobile checks passed; " + required.length + " required files; " + htmlFiles.length + " HTML pages parsed; " + linksChecked + " local links checked.");

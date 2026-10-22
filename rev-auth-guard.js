@@ -5,7 +5,9 @@
   var API = 'https://rev-auth-api.mojtaba-alimi64.workers.dev';
   var allowed = /^(index\.html|profile\.html|trips\.html|nearby-map\.html|nearby-map-ml\.html|businesses\.html|experiences\.html)$/;
   var path = (location.pathname.split('/').pop() || 'index.html');
-  // The travel-experiences feed is public; write actions are authenticated by the API itself.\n  if (path === 'index.html' || path === '' || path === 'experiences.html') return;
+  // The travel-experiences feed is public; write actions are authenticated by the API itself.
+  // Tow drivers use their own driver token and must not be redirected by the consumer-account gate.
+  if (path === 'index.html' || path === '' || path === 'experiences.html' || path === 'tow-driver.html') return;
   var next = path + location.search + location.hash;
   if (!allowed.test(path)) next = 'index.html';
 
