@@ -68,6 +68,10 @@ function ensureBanner(){
  var el=document.createElement('div');el.id='rev-live-energy-advice';el.setAttribute('role','status');el.style.cssText='position:fixed;z-index:1250;top:calc(10px + env(safe-area-inset-top));left:12px;right:12px;max-width:460px;margin:auto;background:#fff;border:1px solid #d6e7ef;border-radius:15px;box-shadow:0 6px 24px #102a3d22;padding:10px 13px;direction:rtl;color:#17253b;font:12px/1.65 Tahoma,Vazirmatn,sans-serif;display:none;pointer-events:auto';
  document.body.appendChild(el);state.banner=el;
 }
+function hideBanner(){
+ if(state.banner)state.banner.style.display='none';
+ if(window.revMap&&state.layer){try{window.revMap.removeLayer(state.layer)}catch(e){}state.layer=null;}
+}
 function showBanner(title,detail,kind){
  ensureBanner();var colors={good:'#187547',warn:'#9a650b',bad:'#b42318',info:'#087e9c'};
  state.banner.style.display='block';state.banner.style.borderRight='4px solid '+(colors[kind]||colors.info);
@@ -133,7 +137,7 @@ async function loadStations(){
 async function update(lat,lon,progress){
  if(!Number.isFinite(lat)||!Number.isFinite(lon))return;
  state.lat=lat;state.lon=lon;state.progress=num(progress)||0;state.active=!!document.body.classList.contains('rev-navigating');
- if(!state.active)return;
+ if(!state.active){hideBanner();return;}
  var now=Date.now();if(now-state.lastPaint<12000&&now-state.lastPaint>=0)return;state.lastPaint=now;
  var profile=vehicle(),route=activeRoute(),cap=num(profile.battery_kwh),cons=num(profile.consumption),soc=num(profile.soc_pct),reserve=num(profile.reserve_soc),live=null;try{live=JSON.parse(sessionStorage.getItem('rev_energy_live_state_v1')||'null')}catch(e){}
  if(!Number.isFinite(reserve))reserve=15;
@@ -169,7 +173,18 @@ async function update(lat,lon,progress){
   showBanner('🚨 شارژ مقصد کافی به نظر نمی‌رسد','در داده‌های تأییدشده REV شارژری که با ذخیره امن فعلی قابل‌دسترسی باشد پیدا نشد. با رانندگی ایمن، نزدیک‌ترین محل امن/شارژر را بررسی کن؛ پیشنهادها تضمین دسترسی یا موجودی نیستند.','bad');
  }
 }
+var navWatchStarted=false;
+function watchNav(){
+ if(navWatchStarted||!document.body)return;navWatchStarted=true;
+ var was=document.body.classList.contains('rev-navigating');
+ new MutationObserver(function(){
+  var now=document.body.classList.contains('rev-navigating');
+  if(was&&!now)hideBanner();
+  was=now;
+ }).observe(document.body,{attributes:true,attributeFilter:['class']});
+}
 function hook(){
+ watchNav();
  if(typeof window.revUpdateNavEnvironment!=='function'){setTimeout(hook,250);return;}
  if(window.revUpdateNavEnvironment.__revLiveEnergyHook)return;
  var original=window.revUpdateNavEnvironment;
