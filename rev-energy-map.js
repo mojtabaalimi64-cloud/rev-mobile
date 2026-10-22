@@ -22,10 +22,20 @@ function addEnergyEntry(){
  });
  row.appendChild(btn);dash.appendChild(row);
 }
+function resumeNavigation(){
+ var params=new URLSearchParams(location.search);
+ if(params.get('resumeNav')!=='1')return;
+ try{var route=JSON.parse(sessionStorage.getItem('rev_energy_resume_route_v1')||'null');
+  if(!route||!Array.isArray(route.coords)||route.coords.length<2)return;
+  var start=function(){if(window.REVNav&&typeof window.REVNav.start==='function'){window.REVNav.start(route);var u=new URL(location.href);u.searchParams.delete('resumeNav');history.replaceState(null,'',u.pathname+u.search+u.hash);return true;}return false;};
+  if(!start()){var attempts=0;var timer=setInterval(function(){attempts++;if(start()||attempts>=30)clearInterval(timer);},200);}
+ }catch(e){}
+}
 function init(){
  addEnergyEntry();
  var dash=document.getElementById('navDash');
  if(dash){new MutationObserver(addEnergyEntry).observe(dash,{attributes:true,attributeFilter:['hidden']});}
+ resumeNavigation();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
