@@ -895,15 +895,16 @@ function setTimeToNow(){
   if($('planDate'))$('planDate').value=js;
   if($('planDateDisplay'))$('planDateDisplay').value=fa(js);
 }
-function evpDoStart(inp,res){
+function evpDoStart(inp,route,res){
   var plan={origin:inp.originName,destination:inp.destName,distance:Math.round(res.totalKm*1000),duration:Math.round(res.totalMin*60),createdAt:Date.now(),
     stops:res.stops.map(function(s){return {name:s.station.name,lat:s.station.lat,lon:s.station.lng,routeKm:Math.round(s.routeKm),arrivalSoc:s.arrivalSoc,targetSoc:s.targetSoc,chargeMinutes:s.chargeMinutes,power:s.station.power||null}})};
+  var navStart={origin:inp.originName,destination:inp.destName,originLat:route.origin.lat,originLng:route.origin.lng,destLat:route.dest.lat,destLng:route.dest.lng};
   try{localStorage.setItem('rev_planned_route',JSON.stringify(plan));sessionStorage.setItem('rev_planned_route',JSON.stringify(plan));
-      sessionStorage.setItem('rev_nav_start',JSON.stringify({origin:inp.originName,destination:inp.destName}));}catch(e){}
-  location.href='./nearby-map.html?navstart=1';
+      sessionStorage.setItem('rev_nav_start',JSON.stringify(navStart));localStorage.setItem('rev_nav_start',JSON.stringify(navStart));}catch(e){}
+  location.href='./nearby-map.html?navstart=1&olat='+route.origin.lat+'&olng='+route.origin.lng+'&dlat='+route.dest.lat+'&dlng='+route.dest.lng+'&oname='+encodeURIComponent(inp.originName)+'&dname='+encodeURIComponent(inp.destName);
 }
 function checkLocationThenStart(inp,route,res){
-  if(!navigator.geolocation){evpDoStart(inp,res);return}
+  if(!navigator.geolocation){evpDoStart(inp,route,res);return}
   $('planStatus').textContent='در حال بررسی موقعیت فعلی…';
   navigator.geolocation.getCurrentPosition(function(p){
     $('planStatus').textContent='';
@@ -913,11 +914,11 @@ function checkLocationThenStart(inp,route,res){
         text:'الان حدود '+fa(Math.round(d))+' کیلومتر از مبدأ برنامه («'+inp.originName+'») فاصله داری. از همین‌جا تا «'+inp.destName+'» دوباره برنامه‌ریزی کنم، یا برنامه را از مبدأ خودش اجرا کنم؟',
         buttons:[
           {label:'🧭 از همین‌جا دوباره برنامه‌ریزی کن',action:function(){var o=$('planOrigin');o.value='مکان فعلی من';o.dataset.lat=p.coords.latitude;o.dataset.lng=p.coords.longitude;runPlan()}},
-          {label:'▶ اجرا از مبدأ برنامه',action:function(){evpDoStart(inp,res)}},
+          {label:'▶ اجرا از مبدأ برنامه',action:function(){evpDoStart(inp,route,res)}},
           {label:'لغو',action:null}
         ]});
-    }else{evpDoStart(inp,res)}
-  },function(){$('planStatus').textContent='';evpDoStart(inp,res)},{enableHighAccuracy:true,timeout:6000,maximumAge:60000});
+    }else{evpDoStart(inp,route,res)}
+  },function(){$('planStatus').textContent='';evpDoStart(inp,route,res)},{enableHighAccuracy:true,timeout:6000,maximumAge:60000});
 }
 function evpGuardedStart(inp,route,res){
   if(lastPlan&&lastPlan.fingerprint&&currentFingerprint()!==lastPlan.fingerprint){
