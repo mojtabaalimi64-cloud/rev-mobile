@@ -92,7 +92,15 @@
   <section class="card hidden" id="panelCard">
     <h3 id="drvTitle">راننده</h3>
     <div class="note" id="drvMeta"></div>
-    <div style="margin-top:8px"><span class="pill green" id="livePill">● آماده دریافت درخواست</span></div>
+    <div class="field" id="shiftControls" style="border:1px solid #dce6ee;border-radius:12px;padding:12px;background:#f8fbfd">
+      <div style="font-weight:900;margin-bottom:5px">وضعیت شیفت کاری</div>
+      <div id="shiftState" class="pill grey">در حال بررسی وضعیت…</div>
+      <p class="note" id="shiftHint">برای دریافت درخواست امداد، شیفت را شروع کن.</p>
+      <button class="btn btn-green" id="btnStartShift" type="button">🟢 آماده فعالیت هستم — شروع شیفت</button>
+      <button class="btn btn-red hidden" id="btnEndShift" type="button">⏹️ اتمام شیفت کاری</button>
+      <div class="err" id="shiftErr"></div>
+    </div>
+    <div style="margin-top:8px"><span class="pill grey" id="livePill">● وضعیت آماده‌به‌کاری بررسی می‌شود</span></div>
     <div class="field"><label for="pRadius">شعاع پوشش من (کیلومتر)</label>
       <select id="pRadius"><option value="50">۵۰ کیلومتر</option><option value="80">۸۰ کیلومتر</option><option value="100">۱۰۰ کیلومتر</option></select>
       <div class="ok" id="radiusOk"></div>
@@ -138,7 +146,7 @@
 (function(){
   var API='https://rev-tow-dispatch.mojtaba-alimi64.workers.dev';
   var KEY='rev_tow_driver_v1';
-  var gpsPos=null, curOffer=null, timerInt=null, pollInt=null, pendInt=null;
+  var gpsPos=null, curOffer=null, timerInt=null, pollInt=null, pendInt=null, shiftBusy=false;
   function $(id){return document.getElementById(id)}
   function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
   function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
@@ -237,11 +245,12 @@
     .then(function(res){
       if(!res||!res.ok||!res.driver){showReg();return}
       var drv=res.driver;
-      d.name=drv.name;d.phone=drv.phone;d.radius=drv.radius;d.approved=drv.approved===true;save(d);
+      d.name=drv.name;d.phone=drv.phone;d.radius=drv.radius;d.approved=drv.approved===true;d.active=drv.active!==false;d.onShift=drv.onShift===true;save(d);
       if(!drv.approved){showPending();startPendingPoll();return}
       clearInterval(pendInt);
       $('drvTitle').textContent='🚛 '+drv.name;
       $('drvMeta').textContent='کد راننده: '+drv.id+(drv.vehicle?' · '+drv.vehicle:'')+(drv.city?' · '+drv.city:'')+' · '+drv.phone;
+      renderShift(drv);
       $('pRadius').value=String(drv.radius||80);
       $('stScore').textContent=faN(drv.score);
       $('stDone').textContent=faN(drv.stats.completed);
@@ -258,7 +267,7 @@
 
   /* ---------- آماده‌باش ---------- */
   function heartbeat(){
-    var d=load();if(!d)return;
+    var d=load();if(!d||d.approved!==true||d.active===false||d.onShift!==true)return;
     var body={token:d.token,radius:d.radius};
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(p){
@@ -273,7 +282,7 @@
   }
 
   function poll(){
-    var d=load();if(!d||!d.approved)return;
+    var d=load();if(!d||!d.approved||d.active===false||d.onShift!==true)return;
     fetch(API+'/api/driver/offers?token='+encodeURIComponent(d.token),{cache:'no-store'})
     .then(function(r){return r.json()})
     .then(function(res){
@@ -359,6 +368,37 @@
     else{$('doneCard').classList.add('hidden')}
   });
 
+  function renderShift(drv){
+    var on=drv.onShift===true, active=drv.active!==false, approved=drv.approved===true;
+    var state=$('shiftState'),hint=$('shiftHint'),start=$('btnStartShift'),end=$('btnEndShift');
+    state.className='pill '+(on&&active&&approved?'green':(!active?'grey':'amber'));
+    state.textContent=!active?'حساب توسط مدیریت غیرفعال شده':(!approved?'در انتظار تأیید مدیر':(on?'شیفت فعال — آماده دریافت درخواست':'شیفت پایان یافته'));
+    hint.textContent=!active?'برای فعال‌سازی با مدیر REV تماس بگیر.':(!approved?'پس از تأیید مدیر امکان شروع شیفت فعال می‌شود.':(on?'تا زمانی که شیفت فعال است، درخواست‌های جدید برایت ارسال می‌شوند.':'برای دریافت درخواست امداد، دکمه شروع شیفت را بزن.'));
+    start.classList.toggle('hidden',on);
+    end.classList.toggle('hidden',!on);
+    start.disabled=shiftBusy||!active||!approved;
+    end.disabled=shiftBusy||!on;
+    $('livePill').className='pill '+(on&&active&&approved?'green':'grey');
+    $('livePill').textContent=on&&active&&approved?'● آنلاین و آماده دریافت درخواست':'● آماده دریافت درخواست نیست';
+  }
+  function setShift(on){
+    var d=load();if(!d||!d.token||shiftBusy)return;
+    shiftBusy=true;$('btnStartShift').disabled=true;$('btnEndShift').disabled=true;$('shiftErr').textContent='';
+    $('btnStartShift').textContent=on?'در حال شروع شیفت…':'🟢 آماده فعالیت هستم — شروع شیفت';
+    $('btnEndShift').textContent=!on?'در حال پایان شیفت…':'⏹️ اتمام شیفت کاری';
+    fetch(API+'/api/driver/shift',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:d.token,onShift:on})})
+    .then(function(r){return r.json().then(function(j){if(!r.ok||!j||!j.ok)throw new Error((j&&j.err)||'ثبت وضعیت شیفت انجام نشد.');return j})})
+    .then(function(j){
+      d.onShift=j.onShift===true;save(d);
+      if(!d.onShift){clearInterval(pollInt);clearInterval(pendInt);clearInterval(timerInt);curOffer=null;$('offerCard').classList.add('hidden')}
+      syncFromServer();
+    })
+    .catch(function(e){$('shiftErr').textContent=(e&&e.message)||'ارتباط با سرور برقرار نشد.';renderShift({approved:d.approved,active:d.active!==false,onShift:d.onShift===true})})
+    .finally(function(){shiftBusy=false;var latest=load()||d;renderShift({approved:latest.approved,active:latest.active!==false,onShift:latest.onShift===true});$('btnStartShift').textContent='🟢 آماده فعالیت هستم — شروع شیفت';$('btnEndShift').textContent='⏹️ اتمام شیفت کاری'});
+  }
+  $('btnStartShift').addEventListener('click',function(){setShift(true)});
+  $('btnEndShift').addEventListener('click',function(){if(confirm('از پایان شیفت کاری مطمئنی؟ درخواست‌های جدید به تو ارسال نمی‌شوند.'))setShift(false)});
+
   $('pRadius').addEventListener('change',function(){
     var d=load();if(!d)return;
     d.radius=Number(this.value);save(d);
@@ -369,10 +409,15 @@
   $('btnCheckApproval').addEventListener('click',function(){syncFromServer();});
 
   function startPolling(){
+    clearInterval(pollInt);clearInterval(pendInt);
+    var d=load();
+    if(!d||d.approved!==true||d.active===false||d.onShift!==true){
+      clearInterval(timerInt);curOffer=null;
+      $('offerCard').classList.add('hidden');
+      return;
+    }
     heartbeat();poll();
-    clearInterval(pollInt);
     pollInt=setInterval(function(){heartbeat();poll();},15000);
-    clearInterval(pendInt);
     pendInt=setInterval(function(){syncFromServer();},45000);
   }
   function startPendingPoll(){
