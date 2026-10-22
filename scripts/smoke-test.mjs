@@ -116,7 +116,7 @@ vm.runInNewContext(fs.readFileSync(path.join(root, "rev-energy-core.js"), "utf8"
 const energy = energyContext.REVEnergy;
 if (!energy || energy.version !== "1.0.0" || !energyPage.includes('id="calculate"') ||
     !energyPage.includes("rev-energy-core.js") || !energyMap.includes("revEnergyLaunch") ||
-    !mapPage.includes("rev-energy-map.js") || !energyPage.includes("./rev-auth-guard.js")) {
+    !mapPage.includes("rev-energy-map.js") || !energyPage.includes("./rev-auth-guard.js") || !energyPage.includes("resumeNav=1") || !mapPage.includes("rev_energy_resume_route_v1") || !energyMap.includes("function resumeNavigation()")) {
   failures.push("REV energy assistant is not fully connected to its shared core and navigation entry point");
 }
 try {
