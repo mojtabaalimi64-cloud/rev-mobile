@@ -6,7 +6,7 @@ const root = process.cwd();
 const required = [
   "index.html", "experiences.html", "trips.html", "nearby-map.html",
   "profile.html", "businesses.html", "manifest.webmanifest", "sw.js",
-  "register-sw.js", "rev-app-icon.svg", "rev-auth-guard.js", "rev-app-mode.js", "tow-driver.html", "rev-mobile-theme.css"
+  "register-sw.js", "rev-app-icon.svg", "rev-auth-guard.js", "rev-app-mode.js", "tow-driver.html", "rev-mobile-theme.css", "energy-assistant.html", "rev-energy-core.js", "rev-energy-map.js"
 ];
 const failures = [];
 const htmlFiles = fs.readdirSync(root).filter(file => file.endsWith(".html"));
@@ -100,13 +100,40 @@ if (!towPage.includes("function shiftCall(on)") ||
   failures.push("Tow-driver shift must start polling only after server confirmation");
 }
 if (!sw.includes('"./nearby-map.html"') || !sw.includes('"./profile.html"') ||
-    !sw.includes("rev-mobile-shell-v76")) {
+    !sw.includes("rev-mobile-shell-v77") || !sw.includes('"./energy-assistant.html"') || !sw.includes('"./rev-energy-core.js"')) {
   failures.push("Service-worker shell must include core mobile pages and use a fresh cache version");
 }
 if (!mapPage.includes('id="details-drag-handle"') ||
     !mapPage.includes("rev-details-expanded") ||
     !mapPage.includes("bottom:calc(74px + env(safe-area-inset-bottom))")) {
   failures.push("Mobile map details must use an accessible, expandable bottom drawer");
+}
+
+const energyPage = fs.readFileSync(path.join(root, "energy-assistant.html"), "utf8");
+const energyMap = fs.readFileSync(path.join(root, "rev-energy-map.js"), "utf8");
+const energyContext = {};
+vm.runInNewContext(fs.readFileSync(path.join(root, "rev-energy-core.js"), "utf8"), energyContext);
+const energy = energyContext.REVEnergy;
+if (!energy || energy.version !== "1.0.0" || !energyPage.includes('id="calculate"') ||
+    !energyPage.includes("rev-energy-core.js") || !energyMap.includes("revEnergyLaunch") ||
+    !mapPage.includes("rev-energy-map.js") || !energyPage.includes("./rev-auth-guard.js")) {
+  failures.push("REV energy assistant is not fully connected to its shared core and navigation entry point");
+}
+try {
+  const result = energy.calculate({capacityKwh:60,soc:80,consumption:18,distanceKm:100,reserveSoc:15,factor:1});
+  if (Math.abs(result.energyKwh-18)>1e-9 || Math.abs(result.arrivalSoc-50)>1e-9 ||
+      Math.abs(result.totalRangeKm-(60*80/100/18*100))>1e-9 || result.reachable !== true) {
+    failures.push("REV energy calculation regression: expected 18 kWh, 50% arrival SOC and reachable route");
+  }
+  const unsafe = energy.calculate({capacityKwh:40,soc:30,consumption:25,distanceKm:50,reserveSoc:15,factor:1});
+  if (unsafe.reachable !== false || unsafe.arrivalSoc >= 15) {
+    failures.push("REV energy calculation must flag routes below the selected reserve");
+  }
+  let rejected = false;
+  try { energy.calculate({capacityKwh:0,soc:80,consumption:18,distanceKm:10,reserveSoc:15,factor:1}); } catch (_) { rejected = true; }
+  if (!rejected) failures.push("REV energy calculation must reject invalid battery capacity");
+} catch (error) {
+  failures.push("REV energy calculation tests threw: " + error.message);
 }
 
 if (failures.length) {

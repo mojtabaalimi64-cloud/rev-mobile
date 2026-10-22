@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<meta name="description" content="دستیار انرژی REV؛ تخمین برد خودرو برقی، انرژی مسیر و شارژ هنگام رسیدن">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./rev-app-icon.svg" type="image/svg+xml">
+<title>دستیار انرژی | REV</title>
+<link rel="stylesheet" href="./rev-mobile-theme.css?v=20261022-energy1">
+<style>
+:root{--blue:#0887a7;--blue2:#066d88;--ink:#17253b;--muted:#65758b;--line:#e2eaf4;--soft:#e5f3f8}
+*{box-sizing:border-box}body{margin:0;background:#f5f8fc;color:var(--ink);font:15px/1.85 Vazirmatn,Vazir,Tahoma,sans-serif;padding-bottom:88px}
+header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line);padding:13px 16px}
+.head{max-width:760px;margin:auto;display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--soft);color:var(--blue);font-size:23px}.head h1{font-size:18px;margin:0;font-weight:900}.head p{margin:0;color:var(--muted);font-size:11px}
+main{max-width:760px;margin:14px auto;padding:0 12px}.intro{background:linear-gradient(135deg,#fff,#f1f9fc);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:12px}.intro strong{display:block;font-size:17px}.intro p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 4px 18px rgba(20,41,59,.045)}.card h2{font-size:15px;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{display:grid;gap:5px;min-width:0}.field label{font-size:12px;font-weight:800;color:#3c5266}.field input,.field select{width:100%;min-width:0;min-height:45px;border:1px solid #d5e2ec;border-radius:11px;background:#fff;color:var(--ink);padding:9px 10px;font:inherit;font-size:14px}.field input:focus,.field select:focus{outline:2px solid #b8e3ee;border-color:var(--blue)}.wide{grid-column:1/-1}.hint{font-size:11px;color:var(--muted);margin:10px 0 0}
+button,.linkbtn{font:inherit;cursor:pointer}.primary{width:100%;min-height:48px;border:0;border-radius:13px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;font-weight:900;margin-top:14px}.secondary{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid var(--line);border-radius:11px;padding:8px 12px;color:var(--blue2);font-size:12px;font-weight:800;background:#fff}
+.results[hidden]{display:none}.hero-result{padding:17px;border-radius:16px;background:#e5f3f8;border:1px solid #cbe6f0;margin-bottom:10px}.hero-result .eyebrow{font-size:11px;color:var(--blue2);font-weight:800}.hero-result strong{display:block;font-size:29px;line-height:1.5;font-variant-numeric:tabular-nums}.hero-result p{font-size:12px;margin:0;color:#3c5266}.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{border:1px solid var(--line);border-radius:13px;padding:12px;background:#fff;min-width:0}.metric span{display:block;font-size:11px;color:var(--muted)}.metric strong{font-size:19px;display:block;font-variant-numeric:tabular-nums}.metric small{font-size:10px;color:var(--muted)}.status{padding:12px;border-radius:12px;font-size:12px;font-weight:800;margin-top:10px}.status.good{background:#eaf8f0;color:#187547;border:1px solid #c8ead6}.status.warn{background:#fff6e5;color:#8a5a0a;border:1px solid #f1d69b}.status.bad{background:#fff0f0;color:#a52b2b;border:1px solid #f0caca}.status.neutral{background:#f5f8fc;color:var(--muted);border:1px solid var(--line)}
+.bottom-nav{position:fixed;z-index:50;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -4px 18px #14293b0c}.tabs{max-width:560px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.tabs a{min-height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#8192a5;font-size:10px;text-decoration:none;border-radius:11px}.tabs a.active{background:var(--soft);color:var(--blue);font-weight:900}.tabs svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+@media(max-width:480px){.grid{gap:9px}.card{padding:13px}.field label{font-size:11px}.metrics{gap:7px}.metric strong{font-size:17px}}
+</style>
+<script src="./rev-auth-guard.js?v=20261019-1"></script>
+<script src="./rev-energy-core.js?v=1"></script>
+</head>
+<body>
+<header><div class="head"><div class="logo" aria-hidden="true">⚡</div><div><h1>دستیار انرژی REV</h1><p>پیش‌بینی برد، مصرف و شارژ مقصد</p></div><div style="margin-inline-start:auto"><a class="secondary" id="backLink" href="./nearby-map.html?app=1">بازگشت</a></div></div></header>
+<main>
+<section class="intro"><strong>قبل از حرکت، وضعیت انرژی را بسنج.</strong><p>برآورد بر پایه مشخصات خودرو و شرایط انتخاب‌شده است؛ نتیجه جایگزین داده واقعی باتری یا سامانه خودرو نیست.</p></section>
+<section class="card" aria-labelledby="vehicleHeading">
+<h2 id="vehicleHeading">خودرو و وضعیت باتری</h2>
+<div class="grid">
+<div class="field wide"><label for="vehicleName">نام خودرو</label><input id="vehicleName" maxlength="100" placeholder="مثلاً خودروی من"></div>
+<div class="field"><label for="capacity">ظرفیت باتری (kWh)</label><input id="capacity" type="number" min="1" max="300" step="0.1" value="60" inputmode="decimal" required></div>
+<div class="field"><label for="soc">شارژ فعلی (%)</label><input id="soc" type="number" min="0" max="100" step="1" value="80" inputmode="decimal" required></div>
+<div class="field"><label for="consumption">مصرف پایه (kWh/100km)</label><input id="consumption" type="number" min="1" max="100" step="0.1" value="18" inputmode="decimal" required></div>
+<div class="field"><label for="reserve">ذخیره امن مقصد (%)</label><input id="reserve" type="number" min="0" max="50" step="1" value="15" inputmode="decimal" required></div>
+</div>
+<p class="hint">مشخصات خودرو پس از محاسبه روی همین دستگاه ذخیره می‌شود تا دفعه بعد دوباره واردشان نکنی.</p>
+</section>
+<section class="card" aria-labelledby="routeHeading">
+<h2 id="routeHeading">پیش‌بینی مسیر</h2>
+<div class="grid">
+<div class="field wide"><label for="destination">مقصد (اختیاری)</label><input id="destination" maxlength="180" placeholder="نام یا نشانی مقصد"></div>
+<div class="field"><label for="distance">مسافت باقی‌مانده (km)</label><input id="distance" type="number" min="0" max="100000" step="0.1" value="0" inputmode="decimal" required></div>
+<div class="field"><label for="conditions">شرایط مسیر</label><select id="conditions"><option value="1">عادی — ضریب ۱٫۰۰</option><option value="1.12">بزرگراه / سرعت بالا — ۱٫۱۲</option><option value="1.18">هوای سرد یا کولر سنگین — ۱٫۱۸</option><option value="1.3">شیب و شرایط سخت — ۱٫۳۰</option><option value="0.9">مسیر آرام و اقتصادی — ۰٫۹۰</option></select></div>
+</div>
+<p class="hint">ضریب شرایط، یک فرض تقریبی برای سناریوسازی است؛ شیب، دما، سرعت و ترافیک واقعی هنوز به‌طور خودکار از مسیر استخراج نمی‌شوند.</p>
+<button class="primary" id="calculate" type="button">محاسبه برد و شارژ مقصد</button>
+<div id="error" class="status bad" role="alert" hidden></div>
+</section>
+<section class="card results" id="results" hidden aria-live="polite">
+<h2>نتیجه برآورد انرژی</h2>
+<div class="hero-result"><span class="eyebrow">برد قابل پیمایش با شارژ فعلی</span><strong id="totalRange">—</strong><p>کیلومتر تا شارژ صفر؛ در عمل بهتر است ذخیره امن را حفظ کنی.</p></div>
+<div class="metrics">
+<div class="metric"><span>انرژی موردنیاز مسیر</span><strong id="energyNeeded">—</strong><small>کیلووات‌ساعت</small></div>
+<div class="metric"><span>شارژ تخمینی هنگام رسیدن</span><strong id="arrivalSoc">—</strong><small>درصد باتری</small></div>
+<div class="metric"><span>برد تا ذخیره امن</span><strong id="safeRange">—</strong><small>کیلومتر با حفظ ذخیره</small></div>
+<div class="metric"><span>حاشیه انرژی بالاتر از ذخیره</span><strong id="margin">—</strong><small>کیلووات‌ساعت</small></div>
+</div>
+<div id="reachability" class="status neutral"></div>
+<p id="resultFootnote" class="hint"></p>
+</section>
+<section class="card"><h2>مراحل بعدی</h2><p class="hint">در نسخه‌های بعدی می‌توان این برآورد را با تاریخچه سفرهای ثبت‌شده، مسیر واقعی، وضعیت آب‌وهوا و داده تأییدشده خودرو دقیق‌تر کرد.</p><a class="secondary" href="./profile.html?from=rev-app">مشاهده تحلیل سفرها</a> <a class="secondary" href="./trips.html?app=1">برنامه‌ریزی سفر</a></section>
+</main>
+<nav class="bottom-nav" aria-label="پیمایش اصلی"><div class="tabs">
+<a href="./index.html"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg>خانه</a>
+<a href="./nearby-map.html?app=1"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>نقشه</a>
+<a href="./trips.html?app=1"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15l4-4 3 3 4-5M14 9h4v4"/></svg>سفر</a>
+<a href="./businesses.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></svg>خدمات</a>
+</div></nav>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var params=new URLSearchParams(location.search);
+var profileKey='rev_driver_vehicle_profile';
+function fmt(value,digits){return Number(value).toLocaleString('fa-IR',{maximumFractionDigits:digits==null?1:digits,minimumFractionDigits:0});}
+function parse(v){if(v==null||v==='')return NaN;return Number(v);}
+function loadProfile(){
+ try{
+  var p=JSON.parse(localStorage.getItem(profileKey)||'null');
+  if(p&&typeof p==='object'){
+   if(p.vehicle_name)$('vehicleName').value=p.vehicle_name;
+   if(Number(p.battery_kwh)>0)$('capacity').value=p.battery_kwh;
+   if(Number(p.consumption)>0)$('consumption').value=p.consumption;
+  }
+ }catch(e){}
+}
+function applyQuery(){
+ var qmap={capacity:'capacity',soc:'soc',consumption:'consumption',distance:'distance',destination:'destination',reserve:'reserve'};
+ Object.keys(qmap).forEach(function(key){var v=params.get(key);if(v!==null&&v!==''&&$(qmap[key]))$(qmap[key]).value=v;});
+ if(params.get('from')==='map')$('backLink').href='./nearby-map.html?app=1';
+ else if(params.get('from')==='trips')$('backLink').href='./trips.html?app=1';
+}
+function saveProfile(){
+ try{
+  var old=JSON.parse(localStorage.getItem(profileKey)||'{}');
+  old.vehicle_name=$('vehicleName').value.trim()||old.vehicle_name||'خودروی من';
+  old.battery_kwh=parse($('capacity').value);
+  old.consumption=parse($('consumption').value);
+  localStorage.setItem(profileKey,JSON.stringify(old));
+ }catch(e){}
+}
+function calculate(){
+ $('error').hidden=true;
+ try{
+  var result=window.REVEnergy.calculate({capacityKwh:parse($('capacity').value),soc:parse($('soc').value),consumption:parse($('consumption').value),distanceKm:parse($('distance').value),reserveSoc:parse($('reserve').value),factor:parse($('conditions').value)});
+  saveProfile();
+  $('totalRange').textContent=fmt(result.totalRangeKm)+' km';
+  $('energyNeeded').textContent=fmt(result.energyKwh);
+  $('arrivalSoc').textContent=fmt(result.arrivalSoc)+'٪';
+  $('safeRange').textContent=fmt(result.safeRangeKm)+' km';
+  $('margin').textContent=fmt(result.marginKwh)+' kWh';
+  var box=$('reachability');
+  if(result.reachable){box.className='status good';box.textContent='برآورد: با حفظ ذخیره '+fmt(result.reserveSoc)+'٪، انرژی مسیر کافی به نظر می‌رسد.';}
+  else if(result.arrivalSoc>=0){box.className='status warn';box.textContent='هشدار: طبق این برآورد به مقصد می‌رسی اما ذخیره امن '+fmt(result.reserveSoc)+'٪ حفظ نمی‌شود؛ شارژ در مسیر را بررسی کن.';}
+  else{box.className='status bad';box.textContent='هشدار جدی: انرژی فعلی طبق این برآورد برای رسیدن به مقصد کافی نیست؛ پیش از حرکت شارژ یا مسیر را تغییر بده.';}
+  $('resultFootnote').textContent='مصرف مؤثر فرض‌شده: '+fmt(result.effectiveConsumption)+' kWh/100km · انرژی قابل استفاده فعلی: '+fmt(result.usableEnergyKwh)+' kWh. نتیجه به شرایط واقعی وابسته است.';
+  $('results').hidden=false;
+ }catch(e){$('error').textContent=e.message||'محاسبه انجام نشد.';$('error').hidden=false;$('results').hidden=true;}
+}
+loadProfile();
+applyQuery();
+$('calculate').addEventListener('click',calculate);
+['capacity','soc','consumption','distance','reserve','conditions'].forEach(function(id){$(id).addEventListener('change',calculate);});
+if(params.has('distance')||params.has('soc')||params.has('capacity'))calculate();
+})();
+</script>
+<script src="./rev-app-mode.js?v=20261022-energy1"></script>
+</body>
+</html>

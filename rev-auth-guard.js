@@ -7,7 +7,7 @@
   var path = (location.pathname.split('/').pop() || 'index.html');
   // The travel-experiences feed is public; write actions are authenticated by the API itself.
   // Tow drivers use their own driver token and must not be redirected by the consumer-account gate.
-  if (path === 'index.html' || path === '' || path === 'experiences.html' || path === 'tow-driver.html') return;
+  if (path === 'index.html' || path === '' || path === 'experiences.html' || path === 'tow-driver.html' || path === 'energy-assistant.html') return;
   var next = path + location.search + location.hash;
   if (!allowed.test(path)) next = 'index.html';
 
