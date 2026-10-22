@@ -7,7 +7,7 @@
 <meta name="description" content="پنل راننده یدک‌کش REV — دریافت و پذیرش درخواست امداد خودروی برقی">
 <title>پنل راننده یدک‌کش | REV</title>
 <link rel="stylesheet" href="https://mojtabaalimi64-cloud.github.io/rev-mobile/rev-visual-identity.css?v=20261017-3">
-<!-- این پنل از توکن مستقل راننده یدک‌کش استفاده می‌کند؛ احراز هویت عمومی اپ نباید آن را به صفحه ورود هدایت کند. -->
+<script src="./rev-auth-guard.js?v=20261019-1"></script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
 <style>
   body{margin:0;background:#f4f8fb;color:#14293b;font-family:Vazirmatn,Vazir,Tahoma,sans-serif}
@@ -57,23 +57,11 @@
   <div class="hello">🚛 پنل راننده یدک‌کش</div>
   <div class="sub">درخواست‌های امداد نزدیک تو اینجا میاد؛ ۳ دقیقه فرصت داری قبول یا رد کنی.</div>
 
-  <!-- ورود راننده با شماره موبایل و رمز شخصی -->
-  <section class="card" id="loginCard">
-    <h3>🔐 ورود راننده همکار</h3>
-    <div class="field"><label for="loginPhone">شماره موبایل</label><input id="loginPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789" autocomplete="username"></div>
-    <div class="field"><label for="loginPassword">رمز عبور شخصی</label><input id="loginPassword" type="password" dir="ltr" style="text-align:left" placeholder="رمز عبور" autocomplete="current-password"></div>
-    <div class="err" id="loginErr"></div>
-    <button class="btn btn-teal" id="dLogin" type="button">ورود به پنل</button>
-    <p class="note">اگر رمز را فراموش کرده‌ای، با مدیر REV تماس بگیر تا رمز موقت جدید صادر کند.</p>
-  </section>
-
   <!-- ثبت‌نام راننده -->
   <section class="card" id="regCard">
     <h3>ثبت‌نام راننده همکار</h3>
     <div class="field"><label for="dName">نام و نام خانوادگی</label><input id="dName" placeholder="مثلاً محمد کریمی"></div>
-    <div class="field"><label for="dPhone">شماره موبایل</label><input id="dPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789" autocomplete="username"></div>
-    <div class="field"><label for="dPassword">رمز عبور شخصی (حداقل ۸ نویسه)</label><input id="dPassword" type="password" dir="ltr" style="text-align:left" placeholder="رمز دلخواه" autocomplete="new-password"></div>
-    <div class="field"><label for="dPasswordConfirm">تکرار رمز عبور</label><input id="dPasswordConfirm" type="password" dir="ltr" style="text-align:left" placeholder="تکرار رمز" autocomplete="new-password"></div>
+    <div class="field"><label for="dPhone">شماره موبایل</label><input id="dPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789"></div>
     <div class="field"><label for="dVehicle">خودروبر و پلاک</label><input id="dVehicle" placeholder="مثلاً کفی نیسان — ۲۲ ب ۳۴۵ ایران ۶۶"></div>
     <div class="field"><label for="dCity">شهر محل خدمت</label><input id="dCity" placeholder="مثلاً تهران"></div>
     <div class="field"><label for="dRadius">شعاع پوشش (کیلومتر)</label>
@@ -104,28 +92,12 @@
   <section class="card hidden" id="panelCard">
     <h3 id="drvTitle">راننده</h3>
     <div class="note" id="drvMeta"></div>
-    <div class="field" id="shiftControls" style="border:1px solid #dce6ee;border-radius:12px;padding:12px;background:#f8fbfd">
-      <div style="font-weight:900;margin-bottom:5px">وضعیت شیفت کاری</div>
-      <div id="shiftState" class="pill grey">در حال بررسی وضعیت…</div>
-      <p class="note" id="shiftHint">برای دریافت درخواست امداد، شیفت را شروع کن.</p>
-      <button class="btn btn-green" id="btnStartShift" type="button">🟢 آماده فعالیت هستم — شروع شیفت</button>
-      <button class="btn btn-red hidden" id="btnEndShift" type="button">⏹️ اتمام شیفت کاری</button>
-      <div class="err" id="shiftErr"></div>
-    </div>
-    <div style="margin-top:8px"><span class="pill grey" id="livePill">● وضعیت آماده‌به‌کاری بررسی می‌شود</span></div>
+    <div style="margin-top:8px"><span class="pill grey" id="livePill">○ شیفت خاموش است</span></div>
+    <button class="btn btn-teal" id="btnShift" type="button" style="margin-top:10px">▶️ شروع شیفت — آماده دریافت درخواست</button>
+    <div class="ok" id="shiftOk"></div><div class="err" id="shiftErr"></div>
     <div class="field"><label for="pRadius">شعاع پوشش من (کیلومتر)</label>
       <select id="pRadius"><option value="50">۵۰ کیلومتر</option><option value="80">۸۰ کیلومتر</option><option value="100">۱۰۰ کیلومتر</option></select>
       <div class="ok" id="radiusOk"></div>
-    </div>
-    <div class="field" style="margin-top:12px;border:1px solid #dce6ee;border-radius:12px;padding:12px;background:#f8fbfd">
-      <h3 style="margin-top:0">🔐 مدیریت رمز عبور</h3>
-      <p class="note">هر زمان خواستی از همین بخش رمز حسابت را عوض کن. رمز فعلی برای تأیید لازم است.</p>
-      <div class="field"><label for="currentPassword">رمز عبور فعلی</label><input id="currentPassword" type="password" autocomplete="current-password" dir="ltr" style="text-align:left" placeholder="رمز فعلی"></div>
-      <div class="field"><label for="newPassword">رمز عبور جدید (حداقل ۸ نویسه)</label><input id="newPassword" type="password" autocomplete="new-password" dir="ltr" style="text-align:left" placeholder="رمز جدید"></div>
-      <div class="field"><label for="confirmNewPassword">تکرار رمز جدید</label><input id="confirmNewPassword" type="password" autocomplete="new-password" dir="ltr" style="text-align:left" placeholder="تکرار رمز جدید"></div>
-      <button class="btn btn-teal" id="dChangePassword" type="button">تغییر رمز عبور</button>
-      <div class="err" id="passwordErr"></div>
-      <div class="ok" id="passwordOk"></div>
     </div>
     <p class="note">این صفحه هر چند ثانیه درخواست تازه را چک می‌کند و موقعیتت را به‌روز نگه می‌دارد. صفحه را نبند.</p>
     <button class="btn btn-ghost" id="dRefresh" type="button">🔄 بررسی فوری درخواست</button>
@@ -168,7 +140,7 @@
 (function(){
   var API='https://rev-tow-dispatch.mojtaba-alimi64.workers.dev';
   var KEY='rev_tow_driver_v1';
-  var gpsPos=null, curOffer=null, timerInt=null, pollInt=null, pendInt=null, shiftBusy=false;
+  var gpsPos=null, curOffer=null, timerInt=null, pollInt=null, pendInt=null;
   function $(id){return document.getElementById(id)}
   function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
   function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
@@ -190,12 +162,9 @@
     var name=$('dName').value.trim(),phone=$('dPhone').value.trim(),radius=$('dRadius').value;
     if(name.length<2){$('regErr').textContent='نام را کامل وارد کن.';return}
     if(!/^09\d{9}$/.test(phone)){$('regErr').textContent='شماره موبایل معتبر وارد کن.';return}
-    var password=$('dPassword').value,confirmPassword=$('dPasswordConfirm').value;
-    if(password.length<8){$('regErr').textContent='رمز عبور باید حداقل ۸ نویسه داشته باشد.';return}
-    if(password!==confirmPassword){$('regErr').textContent='تکرار رمز عبور یکسان نیست.';return}
     if(!gpsPos){$('regErr').textContent='اول موقعیت پایگاه را با GPS ثبت کن.';return}
     var btn=this;btn.disabled=true;btn.textContent='در حال ثبت‌نام…';
-    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,password:password,vehicle:$('dVehicle').value.trim(),city:$('dCity').value.trim(),lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
+    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,vehicle:$('dVehicle').value.trim(),city:$('dCity').value.trim(),lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
     .then(function(r){return r.json()})
     .then(function(d){
       btn.disabled=false;btn.textContent='ثبت‌نام راننده';
@@ -206,25 +175,7 @@
     .catch(function(){btn.disabled=false;btn.textContent='ثبت‌نام راننده';$('regErr').textContent='اتصال به سرور برقرار نشد.';});
   });
 
-  /* ---------- ورود با شماره موبایل و رمز عبور ---------- */
-  $('dLogin').addEventListener('click',function(){
-    var phone=$('loginPhone').value.trim(),password=$('loginPassword').value;
-    if(!/^09\d{9}$/.test(phone)){$('loginErr').textContent='شماره موبایل معتبر وارد کن.';return}
-    if(!password){$('loginErr').textContent='رمز عبور را وارد کن.';return}
-    var btn=this;btn.disabled=true;btn.textContent='در حال ورود…';$('loginErr').textContent='';
-    fetch(API+'/api/driver/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,password:password}),cache:'no-store'})
-    .then(function(r){return r.json()})
-    .then(function(res){
-      btn.disabled=false;btn.textContent='ورود به پنل';
-      if(!res||!res.ok){$('loginErr').textContent=(res&&res.err)||'ورود انجام نشد.';return}
-      save({id:res.id,token:res.token,name:res.name,phone:res.phone,radius:res.radius,approved:res.approved===true});
-      $('loginPassword').value='';
-      syncFromServer();
-    })
-    .catch(function(){btn.disabled=false;btn.textContent='ورود به پنل';$('loginErr').textContent='اتصال به سرور برقرار نشد.';});
-  });
-
-  /* ---------- بازیابی قدیمی با توکن ---------- */
+  /* ---------- بازیابی با توکن ---------- */
   $('dRestore').addEventListener('click',function(){
     var t=$('dTokenRestore').value.trim();
     if(t.length<16){$('restoreErr').textContent='توکن را کامل وارد کن.';return}
@@ -240,7 +191,6 @@
 
   /* ---------- وضعیت و نما ---------- */
   function showApproved(){
-    $('loginCard').classList.add('hidden');
     $('regCard').classList.add('hidden');
     $('pendingCard').classList.add('hidden');
     $('panelCard').classList.remove('hidden');
@@ -248,7 +198,6 @@
   }
   function showPending(){
     var d=load();
-    $('loginCard').classList.add('hidden');
     $('regCard').classList.add('hidden');
     $('panelCard').classList.add('hidden');
     $('statsCard').classList.add('hidden');
@@ -256,7 +205,6 @@
     if(d)$('pendingText').textContent='ثبت‌نام «'+d.name+'» رسیده و در صف بررسی مدیر REV است. به محض تأیید، این پنل فعال می‌شود و درخواست‌های امداد را می‌گیری.';
   }
   function showReg(){
-    $('loginCard').classList.remove('hidden');
     $('regCard').classList.remove('hidden');
     $('pendingCard').classList.add('hidden');
     $('panelCard').classList.add('hidden');
@@ -289,30 +237,19 @@
     fetch(API+'/api/driver/history?token='+encodeURIComponent(d.token),{cache:'no-store'})
     .then(function(r){return r.json()})
     .then(function(res){
-      // وضعیت لغو ثبت‌نام باید قبل از مسیرهای عادی نمایش بررسی شود.
-      var drv=res&&res.driver;
-      var revoked=!!(res&&res.registrationRevoked===true) || !!(drv&&drv.registrationRevoked===true)
-        || !!(drv&&drv.approved===false&&drv.active===false);
-      if(revoked){
-        try{localStorage.removeItem(KEY)}catch(e){}
-        clearInterval(pendInt);clearInterval(pollInt);clearInterval(timerInt);
-        showReg();
-        $('regErr').textContent='تأیید حساب قبلی توسط مدیر لغو شده است. برای ادامه همکاری، فرم ثبت‌نام را دوباره تکمیل و ارسال کن.';
-        $('loginErr').textContent='حساب قبلی دیگر فعال نیست؛ ابتدا دوباره ثبت‌نام کن.';
-        return;
-      }
-      if(!res||!res.ok||!drv){showReg();return}
-      d.name=drv.name;d.phone=drv.phone;d.radius=drv.radius;d.approved=drv.approved===true;d.active=drv.active!==false;d.onShift=drv.onShift===true;save(d);
+      if(!res||!res.ok||!res.driver){showReg();return}
+      var drv=res.driver;
+      d.name=drv.name;d.phone=drv.phone;d.radius=drv.radius;d.approved=drv.approved===true;save(d);
       if(!drv.approved){showPending();startPendingPoll();return}
       clearInterval(pendInt);
       $('drvTitle').textContent='🚛 '+drv.name;
       $('drvMeta').textContent='کد راننده: '+drv.id+(drv.vehicle?' · '+drv.vehicle:'')+(drv.city?' · '+drv.city:'')+' · '+drv.phone;
-      renderShift(drv);
       $('pRadius').value=String(drv.radius||80);
       $('stScore').textContent=faN(drv.score);
       $('stDone').textContent=faN(drv.stats.completed);
       $('stAccepted').textContent=faN(drv.stats.accepted);
       $('stMissed').textContent=faN((drv.stats.rejected||0)+(drv.stats.missed||0));
+      onShift=drv.onShift===true;setShiftUI();
       renderMissions(res.missions);
       showApproved();
       startPolling();
@@ -322,29 +259,31 @@
     });
   }
 
-  /* ---------- مدیریت رمز شخصی راننده ---------- */
-  $('dChangePassword').addEventListener('click',function(){
-    var driver=load(),current=$('currentPassword').value,newPass=$('newPassword').value,confirmPass=$('confirmNewPassword').value;
-    $('passwordErr').textContent='';$('passwordOk').textContent='';
-    if(!driver||!driver.token){$('passwordErr').textContent='نشست ورود پیدا نشد؛ دوباره وارد شو.';return}
-    if(!current){$('passwordErr').textContent='رمز فعلی را وارد کن.';return}
-    if(newPass.length<8){$('passwordErr').textContent='رمز جدید باید حداقل ۸ نویسه داشته باشد.';return}
-    if(newPass!==confirmPass){$('passwordErr').textContent='تکرار رمز جدید یکسان نیست.';return}
-    var btn=this;btn.disabled=true;btn.textContent='در حال ذخیره…';
-    fetch(API+'/api/driver/password/change',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:driver.token,currentPassword:current,newPassword:newPass}),cache:'no-store'})
+  /* ---------- شیفت ---------- */
+  var onShift=false;
+  function setShiftUI(){
+    var pill=$('livePill'),btn=$('btnShift');
+    if(onShift){pill.className='pill green';pill.textContent='● شیفت فعال — آماده دریافت درخواست';btn.textContent='⏸ پایان شیفت'}
+    else{pill.className='pill grey';pill.textContent='○ شیفت خاموش است';btn.textContent='▶️ شروع شیفت — آماده دریافت درخواست'}
+  }
+  function shiftCall(on){
+    var d=load();if(!d)return;
+    fetch(API+'/api/driver/shift',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:d.token,onShift:on})})
     .then(function(r){return r.json()})
     .then(function(res){
-      if(!res||!res.ok)throw new Error(res&&res.err||'تغییر رمز انجام نشد.');
-      $('currentPassword').value='';$('newPassword').value='';$('confirmNewPassword').value='';
-      $('passwordOk').textContent='رمز عبور با موفقیت تغییر کرد.';
+      if(res&&res.ok){onShift=!!res.onShift;setShiftUI();$('shiftErr').textContent='';$('shiftOk').textContent=onShift?'✓ شیفت شروع شد — درخواست‌ها مستقیم برات میاد':'✓ شیفت تمام شد'}
+      else{$('shiftErr').textContent=(res&&res.err)||'تغییر وضعیت شیفت نشد.'}
     })
-    .catch(function(e){$('passwordErr').textContent=e.message||'خطا در تغییر رمز عبور.'})
-    .finally(function(){btn.disabled=false;btn.textContent='تغییر رمز عبور'});
+    .catch(function(){$('shiftErr').textContent='اتصال برقرار نشد.';});
+  }
+  $('btnShift').addEventListener('click',function(){
+    if(onShift){shiftCall(false);clearInterval(pollInt)}
+    else{shiftCall(true);heartbeat();poll();clearInterval(pollInt);pollInt=setInterval(function(){heartbeat();poll();},15000)}
   });
 
   /* ---------- آماده‌باش ---------- */
   function heartbeat(){
-    var d=load();if(!d||d.approved!==true||d.active===false||d.onShift!==true)return;
+    var d=load();if(!d)return;
     var body={token:d.token,radius:d.radius};
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(p){
@@ -359,7 +298,7 @@
   }
 
   function poll(){
-    var d=load();if(!d||!d.approved||d.active===false||d.onShift!==true)return;
+    var d=load();if(!d||!d.approved)return;
     fetch(API+'/api/driver/offers?token='+encodeURIComponent(d.token),{cache:'no-store'})
     .then(function(r){return r.json()})
     .then(function(res){
@@ -445,37 +384,6 @@
     else{$('doneCard').classList.add('hidden')}
   });
 
-  function renderShift(drv){
-    var on=drv.onShift===true, active=drv.active!==false, approved=drv.approved===true;
-    var state=$('shiftState'),hint=$('shiftHint'),start=$('btnStartShift'),end=$('btnEndShift');
-    state.className='pill '+(on&&active&&approved?'green':(!active?'grey':'amber'));
-    state.textContent=!active?'حساب توسط مدیریت غیرفعال شده':(!approved?'در انتظار تأیید مدیر':(on?'شیفت فعال — آماده دریافت درخواست':'شیفت پایان یافته'));
-    hint.textContent=!active?'برای فعال‌سازی با مدیر REV تماس بگیر.':(!approved?'پس از تأیید مدیر امکان شروع شیفت فعال می‌شود.':(on?'تا زمانی که شیفت فعال است، درخواست‌های جدید برایت ارسال می‌شوند.':'برای دریافت درخواست امداد، دکمه شروع شیفت را بزن.'));
-    start.classList.toggle('hidden',on);
-    end.classList.toggle('hidden',!on);
-    start.disabled=shiftBusy||!active||!approved;
-    end.disabled=shiftBusy||!on;
-    $('livePill').className='pill '+(on&&active&&approved?'green':'grey');
-    $('livePill').textContent=on&&active&&approved?'● آنلاین و آماده دریافت درخواست':'● آماده دریافت درخواست نیست';
-  }
-  function setShift(on){
-    var d=load();if(!d||!d.token||shiftBusy)return;
-    shiftBusy=true;$('btnStartShift').disabled=true;$('btnEndShift').disabled=true;$('shiftErr').textContent='';
-    $('btnStartShift').textContent=on?'در حال شروع شیفت…':'🟢 آماده فعالیت هستم — شروع شیفت';
-    $('btnEndShift').textContent=!on?'در حال پایان شیفت…':'⏹️ اتمام شیفت کاری';
-    fetch(API+'/api/driver/shift',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:d.token,onShift:on})})
-    .then(function(r){return r.json().then(function(j){if(!r.ok||!j||!j.ok)throw new Error((j&&j.err)||'ثبت وضعیت شیفت انجام نشد.');return j})})
-    .then(function(j){
-      d.onShift=j.onShift===true;save(d);
-      if(!d.onShift){clearInterval(pollInt);clearInterval(pendInt);clearInterval(timerInt);curOffer=null;$('offerCard').classList.add('hidden')}
-      syncFromServer();
-    })
-    .catch(function(e){$('shiftErr').textContent=(e&&e.message)||'ارتباط با سرور برقرار نشد.';renderShift({approved:d.approved,active:d.active!==false,onShift:d.onShift===true})})
-    .finally(function(){shiftBusy=false;var latest=load()||d;renderShift({approved:latest.approved,active:latest.active!==false,onShift:latest.onShift===true});$('btnStartShift').textContent='🟢 آماده فعالیت هستم — شروع شیفت';$('btnEndShift').textContent='⏹️ اتمام شیفت کاری'});
-  }
-  $('btnStartShift').addEventListener('click',function(){setShift(true)});
-  $('btnEndShift').addEventListener('click',function(){if(confirm('از پایان شیفت کاری مطمئنی؟ درخواست‌های جدید به تو ارسال نمی‌شوند.'))setShift(false)});
-
   $('pRadius').addEventListener('change',function(){
     var d=load();if(!d)return;
     d.radius=Number(this.value);save(d);
@@ -486,17 +394,11 @@
   $('btnCheckApproval').addEventListener('click',function(){syncFromServer();});
 
   function startPolling(){
-    clearInterval(pollInt);clearInterval(pendInt);
-    // بررسی وضعیت تأیید باید حتی خارج از شیفت هم ادامه یابد؛ مدیر ممکن است تأیید را لغو کند.
-    pendInt=setInterval(function(){syncFromServer();},20000);
-    var d=load();
-    if(!d||d.approved!==true||d.active===false||d.onShift!==true){
-      clearInterval(timerInt);curOffer=null;
-      $('offerCard').classList.add('hidden');
-      return;
-    }
-    heartbeat();poll();
-    pollInt=setInterval(function(){heartbeat();poll();},15000);
+    if(onShift){heartbeat();poll()}
+    clearInterval(pollInt);
+    pollInt=setInterval(function(){if(onShift){heartbeat();poll()}},15000);
+    clearInterval(pendInt);
+    pendInt=setInterval(function(){syncFromServer();},45000);
   }
   function startPendingPoll(){
     clearInterval(pendInt);
