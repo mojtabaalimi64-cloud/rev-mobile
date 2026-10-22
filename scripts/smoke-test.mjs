@@ -100,7 +100,7 @@ if (!towPage.includes("function shiftCall(on)") ||
   failures.push("Tow-driver shift must start polling only after server confirmation");
 }
 if (!sw.includes('"./nearby-map.html"') || !sw.includes('"./profile.html"') ||
-    !sw.includes("rev-mobile-shell-v79") || !sw.includes('"./energy-assistant.html"') || !sw.includes('"./rev-energy-core.js"')) {
+    !sw.includes("rev-mobile-shell-v80") || !sw.includes('"./energy-assistant.html"') || !sw.includes('"./rev-energy-core.js"')) {
   failures.push("Service-worker shell must include core mobile pages and use a fresh cache version");
 }
 if (!mapPage.includes('id="details-drag-handle"') ||
@@ -116,7 +116,7 @@ vm.runInNewContext(fs.readFileSync(path.join(root, "rev-energy-core.js"), "utf8"
 const energy = energyContext.REVEnergy;
 if (!energy || energy.version !== "1.0.0" || !energyPage.includes('id="calculate"') || !energyPage.includes('id="socRing"') || !energyPage.includes('id="tripBar"') || !energyPage.includes("summaryText") ||
     !energyPage.includes("rev-energy-core.js") || !energyMap.includes("revEnergyLaunch") ||
-    !mapPage.includes("rev-energy-map.js") || !energyPage.includes("./rev-auth-guard.js") || !energyPage.includes("resumeNav=1") || !mapPage.includes("rev_energy_resume_route_v1") || !energyMap.includes("function resumeNavigation()")) {
+    !mapPage.includes("rev-energy-map.js") || !energyPage.includes("./rev-auth-guard.js") || !energyPage.includes("resumeNav=1") || !mapPage.includes("rev_energy_resume_route_v1") || !energyMap.includes("function resumeNavigation()") || !energyMap.includes("rev-live-energy-advice") || !energyMap.includes("rev_energy_live_state_v1") || !energyMap.includes("rev-energy-recommendation-pin") || !energyPage.includes("old.soc_pct")) {
   failures.push("REV energy assistant is not fully connected to its shared core and navigation entry point");
 }
 try {
