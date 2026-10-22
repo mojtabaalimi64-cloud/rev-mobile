@@ -124,6 +124,19 @@
 body.rev-tab-group #meetupPlanningSection,body.rev-tab-group #liveMeetupSection{display:block}
 body.rev-tab-group .hero-card,body.rev-tab-group #evpResult,body.rev-tab-group #resumeSection,body.rev-tab-group #savedPlansSection,body.rev-tab-group section[aria-labelledby="recentTitle"],body.rev-tab-group section[aria-labelledby="toolsTitle"]{display:none!important}
 </style>
+<style id="evp-guard-style">
+#evpStaleBar{background:#fff7e8;border:1px solid #f0c36d;color:#8a6d1f;border-radius:14px;padding:10px 12px;font-size:12.5px;margin-top:10px;display:flex;gap:10px;align-items:center;justify-content:space-between;line-height:1.9}
+#evpStaleBar[hidden]{display:none}
+#evpStaleRecalc{flex:0 0 auto;min-height:36px;border:0;border-radius:10px;background:#0887a7;color:#fff;font:800 12px Tahoma,sans-serif;padding:0 14px;cursor:pointer}
+#evpExecModal{position:fixed;inset:0;background:rgba(10,25,35,.55);z-index:100000;display:grid;place-items:center;padding:18px}
+#evpExecModal[hidden]{display:none}
+.evp-exec-card{background:#fff;border-radius:20px;max-width:420px;width:100%;padding:18px;color:#14293b;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.evp-exec-card h3{font-size:15px;margin-bottom:8px}
+.evp-exec-card p{font-size:13px;line-height:2;color:#3c5266}
+#evpExecBtns{display:grid;gap:8px;margin-top:12px}
+.evp-exec-btn{min-height:44px;border-radius:12px;border:1.5px solid #d5e2ec;background:#fff;font-family:Tahoma,sans-serif;font-size:13px;font-weight:800;cursor:pointer;color:#14293b}
+.evp-exec-btn.primary{background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;border:0}
+</style>
 </head>
 <body class="has-bottom-nav">
 
@@ -156,6 +169,8 @@ body.rev-tab-group .hero-card,body.rev-tab-group #evpResult,body.rev-tab-group #
     </div>
     <p id="planStatus" role="status" aria-live="polite" style="min-height:20px;font-size:12px;margin:8px 0 0;color:#ffe9a8"></p>
   </section>
+
+  <div id="evpStaleBar" hidden><span>⚠️ ورودی‌ها بعد از محاسبه تغییر کرده‌اند؛ این برنامه دیگر با تنظیمات فعلی یکی نیست.</span><button type="button" id="evpStaleRecalc">محاسبه مجدد</button></div>
 
   <section class="section" id="evpResult" hidden aria-labelledby="evpResultTitle">
   <div class="section-head"><h2 id="evpResultTitle">برنامه سفر تو</h2></div>
@@ -798,12 +813,132 @@ locBtn.addEventListener('click',function(){
   $('planStatus').textContent='در حال گرفتن مکان فعلی…';
   navigator.geolocation.getCurrentPosition(function(p){
     var o=$('planOrigin');o.value='مکان فعلی من';o.dataset.lat=p.coords.latitude;o.dataset.lng=p.coords.longitude;
-    $('planStatus').textContent='مکان فعلی ثبت شد ✓';
+    $('planStatus').textContent='مکان فعلی ثبت شد ✓';checkStale();
   },function(){ $('planStatus').textContent='دسترسی مکان داده نشد؛ مبدأ را دستی بنویس.' },{enableHighAccuracy:true,timeout:10000});
 });
 var originField=$('planOrigin');if(originField&&originField.parentNode)originField.parentNode.appendChild(locBtn);
 $('planDest').addEventListener('input',function(){this.removeAttribute('data-lat');this.removeAttribute('data-lng')});
 originField.addEventListener('input',function(){this.removeAttribute('data-lat');this.removeAttribute('data-lng')});
+
+
+/* ---------- نگهبان تازگی برنامه و چک موقع اجرا ---------- */
+function divF(a,b){return Math.floor(a/b)}
+function jalaliToGregorian(jy,jm,jd){
+  var jy2=jy+1595;
+  var days=-355668+365*jy2+divF(jy2,33)*8+divF((jy2%33)+3,4)+jd+(jm<7?(jm-1)*31:(jm-7)*30+186);
+  var gy=400*divF(days,146097); days%=146097;
+  if(days>36524){gy+=100*divF(--days,36524); days%=36524; if(days>=365)days++;}
+  gy+=4*divF(days,1461); days%=1461;
+  if(days>365){gy+=divF(--days,365); days%=365;}
+  var leap=(gy%4===0&&(gy%100!==0||gy%400===0))?29:28;
+  var sal=[0,31,leap,31,30,31,30,31,31,30,31,30,31], gm;
+  for(gm=1;gm<=12&&days>=sal[gm];gm++)days-=sal[gm];
+  return [gy,gm,days+1];
+}
+function gregorianToJalali(gy,gm,gd){
+  var target=Date.UTC(gy,gm-1,gd);
+  function ord(jy,jm,jd){var g=jalaliToGregorian(jy,jm,jd);return Date.UTC(g[0],g[1]-1,g[2])}
+  var jy=gy-621;
+  while(ord(jy+1,1,1)<=target)jy++;
+  while(ord(jy,1,1)>target)jy--;
+  var jm=1;
+  for(var m=12;m>=1;m--){if(ord(jy,m,1)<=target){jm=m;break}}
+  var jd=1+Math.round((target-ord(jy,jm,1))/86400000);
+  return [jy,jm,jd];
+}
+function currentFingerprint(){
+  var o=$('planOrigin'),d=$('planDest');if(!o||!d)return '';
+  return [o.value.trim(),(o.dataset&&o.dataset.lat)||'',(o.dataset&&o.dataset.lng)||'',d.value.trim(),($('planDate')||{}).value||'',($('planTime')||{}).value||'',
+    $('evpVehicle').value,$('evpBatt').value,$('evpCons').value,$('evpMaxKw').value,
+    $('evpStartSoc').value,$('evpMinSoc').value,$('evpDestSoc').value,$('evpStyle').value,$('evpMinKw').value].join('|');
+}
+function showStale(v){
+  var bar=$('evpStaleBar');if(bar)bar.hidden=!v;
+  var sec=$('evpResult');if(sec)sec.style.opacity=v?'.5':'';
+}
+function checkStale(){
+  if(!lastPlan||!lastPlan.res||!lastPlan.res.ok||!lastPlan.fingerprint){showStale(false);return}
+  showStale(currentFingerprint()!==lastPlan.fingerprint);
+}
+['planOrigin','planDest','planTime','evpVehicle','evpBatt','evpCons','evpMaxKw','evpStartSoc','evpMinSoc','evpDestSoc','evpStyle','evpMinKw'].forEach(function(id){
+  var el=$(id);if(el){el.addEventListener('input',checkStale);el.addEventListener('change',checkStale)}
+});
+var pdisp=$('planDateDisplay');if(pdisp)pdisp.addEventListener('click',function(){setTimeout(checkStale,500)});
+var jpick=$('jalaliDatePicker');if(jpick)jpick.addEventListener('click',function(){setTimeout(checkStale,300)});
+var srb=$('evpStaleRecalc');if(srb)srb.addEventListener('click',function(){runPlan()});
+function showExecModal(cfg){
+  var m=$('evpExecModal');if(!m)return;
+  $('evpExecTitle').textContent=cfg.title;
+  $('evpExecText').textContent=cfg.text;
+  var box=$('evpExecBtns');box.innerHTML='';
+  cfg.buttons.forEach(function(b,i){
+    var btn=document.createElement('button');btn.type='button';btn.textContent=b.label;
+    btn.className='evp-exec-btn'+(i===0?' primary':'');
+    btn.addEventListener('click',function(){m.hidden=true;if(b.action)b.action()});
+    box.appendChild(btn);
+  });
+  m.hidden=false;
+}
+function departurePastInfo(inp){
+  var jd=(lastPlan&&lastPlan.jdate)||'';
+  var m=/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(jd);
+  var hh=Math.floor(inp.departMin/60), mm=inp.departMin%60, when, label;
+  if(m){var g=jalaliToGregorian(+m[1],+m[2],+m[3]);when=new Date(g[0],g[1]-1,g[2],hh,mm);label='ساعت '+fmtClock(inp.departMin)+' روز '+fa(jd)}
+  else{var n=new Date();when=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm);label='ساعت '+fmtClock(inp.departMin)+' امروز'}
+  return {past:when.getTime()<Date.now()-10*60000,label:label};
+}
+function setTimeToNow(){
+  var n=new Date();
+  $('planTime').value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  var j=gregorianToJalali(n.getFullYear(),n.getMonth()+1,n.getDate());
+  var js=j[0]+'/'+String(j[1]).padStart(2,'0')+'/'+String(j[2]).padStart(2,'0');
+  if($('planDate'))$('planDate').value=js;
+  if($('planDateDisplay'))$('planDateDisplay').value=fa(js);
+}
+function evpDoStart(inp,res){
+  var plan={origin:inp.originName,destination:inp.destName,distance:Math.round(res.totalKm*1000),duration:Math.round(res.totalMin*60),createdAt:Date.now(),
+    stops:res.stops.map(function(s){return {name:s.station.name,lat:s.station.lat,lon:s.station.lng,routeKm:Math.round(s.routeKm),arrivalSoc:s.arrivalSoc,targetSoc:s.targetSoc,chargeMinutes:s.chargeMinutes,power:s.station.power||null}})};
+  try{localStorage.setItem('rev_planned_route',JSON.stringify(plan));sessionStorage.setItem('rev_planned_route',JSON.stringify(plan));
+      sessionStorage.setItem('rev_nav_start',JSON.stringify({origin:inp.originName,destination:inp.destName}));}catch(e){}
+  location.href='./nearby-map.html?navstart=1';
+}
+function checkLocationThenStart(inp,route,res){
+  if(!navigator.geolocation){evpDoStart(inp,res);return}
+  $('planStatus').textContent='در حال بررسی موقعیت فعلی…';
+  navigator.geolocation.getCurrentPosition(function(p){
+    $('planStatus').textContent='';
+    var d=hav(p.coords.latitude,p.coords.longitude,route.origin.lat,route.origin.lng);
+    if(d>2){
+      showExecModal({title:'📍 مبدأ برنامه با موقعیت فعلی‌ات فرق دارد',
+        text:'الان حدود '+fa(Math.round(d))+' کیلومتر از مبدأ برنامه («'+inp.originName+'») فاصله داری. از همین‌جا تا «'+inp.destName+'» دوباره برنامه‌ریزی کنم، یا برنامه را از مبدأ خودش اجرا کنم؟',
+        buttons:[
+          {label:'🧭 از همین‌جا دوباره برنامه‌ریزی کن',action:function(){var o=$('planOrigin');o.value='مکان فعلی من';o.dataset.lat=p.coords.latitude;o.dataset.lng=p.coords.longitude;runPlan()}},
+          {label:'▶ اجرا از مبدأ برنامه',action:function(){evpDoStart(inp,res)}},
+          {label:'لغو',action:null}
+        ]});
+    }else{evpDoStart(inp,res)}
+  },function(){$('planStatus').textContent='';evpDoStart(inp,res)},{enableHighAccuracy:true,timeout:6000,maximumAge:60000});
+}
+function evpGuardedStart(inp,route,res){
+  if(lastPlan&&lastPlan.fingerprint&&currentFingerprint()!==lastPlan.fingerprint){
+    showStale(true);
+    $('planStatus').textContent='ورودی‌ها تغییر کرده؛ اول برنامه را دوباره محاسبه کن.';
+    var bar=$('evpStaleBar');if(bar)bar.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  var pi=departurePastInfo(inp);
+  if(pi.past){
+    showExecModal({title:'⏰ ساعت حرکت این برنامه گذشته',
+      text:'این برنامه برای '+pi.label+' چیده شده بود. با ساعت الان دوباره زمان‌بندی‌اش کنم، یا با همین برنامه ادامه می‌دهی؟',
+      buttons:[
+        {label:'🔄 با ساعت الان دوباره حساب کن',action:function(){setTimeToNow();runPlan()}},
+        {label:'▶ با همین برنامه ادامه بده',action:function(){checkLocationThenStart(inp,route,res)}},
+        {label:'لغو',action:null}
+      ]});
+    return;
+  }
+  checkLocationThenStart(inp,route,res);
+}
 
 /* ---------- داده و محاسبه ---------- */
 var stationsCache=null,statusCache=null,lastPlan=null,overrides={};
@@ -983,13 +1118,7 @@ function render(inp,route,res){
       rerun();
     });
   });
-  $('evpStartNav').addEventListener('click',function(){
-    var plan={origin:inp.originName,destination:inp.destName,distance:Math.round(res.totalKm*1000),duration:Math.round(res.totalMin*60),createdAt:Date.now(),
-      stops:res.stops.map(function(s){return {name:s.station.name,lat:s.station.lat,lon:s.station.lng,routeKm:Math.round(s.routeKm),arrivalSoc:s.arrivalSoc,targetSoc:s.targetSoc,chargeMinutes:s.chargeMinutes,power:s.station.power||null}})};
-    try{localStorage.setItem('rev_planned_route',JSON.stringify(plan));sessionStorage.setItem('rev_planned_route',JSON.stringify(plan));
-        sessionStorage.setItem('rev_nav_start',JSON.stringify({origin:inp.originName,destination:inp.destName}));}catch(e){}
-    location.href='./nearby-map.html?navstart=1';
-  });
+  $('evpStartNav').addEventListener('click',function(){ evpGuardedStart(inp,route,res); });
   $('evpSave').addEventListener('click',function(){
     try{
       var arr=JSON.parse(localStorage.getItem('rev_saved_trip_plans_v1')||'[]');if(!Array.isArray(arr))arr=[];
@@ -1057,8 +1186,10 @@ function runPlan(){
       return elevPromise.then(function(){
         var res=simulate(inp,route,corridor);
         lastPlan={inp:inp,route:route,corridor:corridor,res:res};
+        lastPlan.fingerprint=currentFingerprint(); lastPlan.jdate=($('planDate').value||'');
         $('planStatus').textContent=res.ok?'برنامه آماده شد ✓':'';
         render(inp,route,res);
+        checkStale();
       });
     });
   }).catch(function(err){ $('planStatus').textContent='خطا: '+(err&&err.message?err.message:'مشکلی پیش آمد؛ دوباره تلاش کن.'); });
@@ -1090,5 +1221,6 @@ if(oldBtn){var nb=oldBtn.cloneNode(true);nb.textContent='🗺️ برنامه‌
 })();
 </script>
 
+<div id="evpExecModal" hidden><div class="evp-exec-card"><h3 id="evpExecTitle"></h3><p id="evpExecText"></p><div id="evpExecBtns"></div></div></div>
 </body>
 </html>
