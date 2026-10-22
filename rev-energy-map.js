@@ -143,6 +143,7 @@ async function update(lat,lon,progress){
  }
  var routePos=routeDistanceAlong(route,lat,lon);
  if(!routePos){showBanner('⚡ برآورد انرژی موقتاً در دسترس نیست','مسیر فعال برای محاسبه فاصله باقی‌مانده پیدا نشد؛ تا زمان بازیابی مسیر، به این برآورد برای تصمیم‌گیری درباره شارژ اتکا نکن.','info');return;}
+ if(routePos.offRoute>1500){showBanner('⚠️ از مسیر ثبت‌شده فاصله گرفته‌ای','موقعیت فعلی بیش از ۱٫۵ کیلومتر با مسیر ثبت‌شده فاصله دارد؛ برآورد شارژ مقصد و پیشنهادهای شارژ تا به‌روزرسانی مسیر قابل اتکا نیستند.','warn');return;}
  var remainingKm=Math.max(0,routePos.remaining/1000),effective=cons*1.2;
  var coords=route&&Array.isArray(route.coords)?route.coords:[],signature=coords.length>1?[coords[0].join(','),coords[coords.length-1].join(',')].join('|'):'';
  var liveFresh=live&&Number.isFinite(num(live.updatedAt))&&Date.now()-num(live.updatedAt)<8*60*60*1000;
