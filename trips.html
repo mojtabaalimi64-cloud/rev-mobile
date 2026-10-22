@@ -116,6 +116,14 @@
 .evp-fail button{margin-top:8px;min-height:38px;border-radius:11px;border:0;background:#c62f35;color:#fff;font:800 12.5px Tahoma,sans-serif;padding:0 14px;cursor:pointer}
 </style>
 
+<style id="rev-tabs-style">
+.rev-tabs{display:flex;gap:6px;background:#e7eff4;border:1.5px solid #d5e2ec;border-radius:99px;padding:5px;margin-top:16px}
+.rev-tab{flex:1;border:0;background:transparent;border-radius:99px;min-height:42px;font-family:Vazirmatn,Vazir,Tahoma,sans-serif;font-size:14px;font-weight:800;color:#5b7183;cursor:pointer}
+.rev-tab.active{background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;box-shadow:0 6px 16px rgba(8,135,167,.35)}
+#meetupPlanningSection,#liveMeetupSection{display:none}
+body.rev-tab-group #meetupPlanningSection,body.rev-tab-group #liveMeetupSection{display:block}
+body.rev-tab-group .hero-card,body.rev-tab-group #evpResult,body.rev-tab-group #resumeSection,body.rev-tab-group #savedPlansSection,body.rev-tab-group section[aria-labelledby="recentTitle"],body.rev-tab-group section[aria-labelledby="toolsTitle"]{display:none!important}
+</style>
 </head>
 <body class="has-bottom-nav">
 
@@ -131,6 +139,11 @@
 </div></header>
 
 <main class="wrap">
+  <div class="rev-tabs" role="tablist" aria-label="نوع سفر">
+    <button type="button" id="tabMineBtn" class="rev-tab active" role="tab" aria-selected="true">🧭 سفر من</button>
+    <button type="button" id="tabGroupBtn" class="rev-tab" role="tab" aria-selected="false">👥 سفر گروهی</button>
+  </div>
+
   <section class="hero-card" aria-labelledby="planTitle" style="margin-top:18px">
     <div class="eyebrow" style="color:#bfe3ee">سفر بعدی‌ات را بچین</div>
     <h1 id="planTitle" style="font-size:19px">از کجا به کجا؟</h1>
@@ -1053,6 +1066,27 @@ function runPlan(){
 /* جایگزینی دکمه: حذف هندلر قدیمی (رفتن به برنامه‌ریز سایت) با کلون بدون هندلر */
 var oldBtn=$('planGo');
 if(oldBtn){var nb=oldBtn.cloneNode(true);nb.textContent='🗺️ برنامه‌ریزی سفر';oldBtn.parentNode.replaceChild(nb,oldBtn);nb.addEventListener('click',runPlan)}
+})();
+</script>
+
+<script>
+/* تب‌های صفحه سفر: «سفر من» و «سفر گروهی» (برنامه‌ریزی گروهی + قرار زنده گروهی) */
+(function(){
+  var KEY='rev_trips_tab';
+  function setTab(group,save){
+    document.body.classList.toggle('rev-tab-group',group);
+    var m=document.getElementById('tabMineBtn'),g=document.getElementById('tabGroupBtn');
+    if(m){m.classList.toggle('active',!group);m.setAttribute('aria-selected',String(!group))}
+    if(g){g.classList.toggle('active',group);g.setAttribute('aria-selected',String(group))}
+    if(save!==false){try{localStorage.setItem(KEY,group?'group':'mine')}catch(e){}}
+    if(group){[80,350].forEach(function(t){setTimeout(function(){try{window.dispatchEvent(new Event('resize'))}catch(e){}},t)})}
+  }
+  var mb=document.getElementById('tabMineBtn'),gb=document.getElementById('tabGroupBtn');
+  if(mb)mb.addEventListener('click',function(){setTab(false)});
+  if(gb)gb.addEventListener('click',function(){setTab(true)});
+  var hint=/meetup|group|live/i.test(location.search+' '+location.hash);
+  var saved=null;try{saved=localStorage.getItem(KEY)}catch(e){}
+  setTab(hint?true:saved==='group',false);
 })();
 </script>
 
