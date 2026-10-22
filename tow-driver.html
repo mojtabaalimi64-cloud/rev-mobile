@@ -292,18 +292,25 @@
   }
   function shiftCall(on){
     var d=load();if(!d)return;
+    var btn=$('btnShift');
+    if(btn)btn.disabled=true;
+    $('shiftErr').textContent='';
     fetch(API+'/api/driver/shift',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:d.token,onShift:on})})
     .then(function(r){return r.json()})
     .then(function(res){
-      if(res&&res.ok){onShift=!!res.onShift;setShiftUI();$('shiftErr').textContent='';$('shiftOk').textContent=onShift?'✓ شیفت شروع شد — درخواست‌ها مستقیم برات میاد':'✓ شیفت تمام شد'}
-      else{$('shiftErr').textContent=(res&&res.err)||'تغییر وضعیت شیفت نشد.'}
+      if(res&&res.ok){
+        onShift=!!res.onShift;setShiftUI();$('shiftErr').textContent='';
+        $('shiftOk').textContent=onShift?'✓ شیفت شروع شد — درخواست‌ها مستقیم برات میاد':'✓ شیفت تمام شد';
+        if(onShift){heartbeat();poll();startPolling()}
+        else{clearInterval(pollInt);pollInt=null;}
+      }else{
+        $('shiftErr').textContent=(res&&res.err)||'تغییر وضعیت شیفت نشد.';
+      }
     })
-    .catch(function(){$('shiftErr').textContent='اتصال برقرار نشد.';});
+    .catch(function(){$('shiftErr').textContent='اتصال برقرار نشد؛ وضعیت شیفت تغییر نکرد.';})
+    .finally(function(){if(btn)btn.disabled=false;});
   }
-  $('btnShift').addEventListener('click',function(){
-    if(onShift){shiftCall(false);clearInterval(pollInt)}
-    else{shiftCall(true);heartbeat();poll();clearInterval(pollInt);pollInt=setInterval(function(){heartbeat();poll();},15000)}
-  });
+  $('btnShift').addEventListener('click',function(){shiftCall(!onShift)});
 
   /* ---------- آماده‌باش ---------- */
   function heartbeat(){
