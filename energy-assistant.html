@@ -47,7 +47,7 @@ button,.linkbtn{font:inherit;cursor:pointer}.primary{width:100%;min-height:48px;
 <div class="field"><label for="distance">مسافت باقی‌مانده (km)</label><input id="distance" type="number" min="0" max="100000" step="0.1" value="0" inputmode="decimal" required></div>
 <div class="field"><label for="conditions">شرایط مسیر</label><select id="conditions"><option value="1">عادی — ضریب ۱٫۰۰</option><option value="1.12">بزرگراه / سرعت بالا — ۱٫۱۲</option><option value="1.18">هوای سرد یا کولر سنگین — ۱٫۱۸</option><option value="1.3">شیب و شرایط سخت — ۱٫۳۰</option><option value="0.9">مسیر آرام و اقتصادی — ۰٫۹۰</option></select></div>
 </div>
-<p class="hint">ضریب شرایط، یک فرض تقریبی برای سناریوسازی است؛ شیب، دما، سرعت و ترافیک واقعی هنوز به‌طور خودکار از مسیر استخراج نمی‌شوند.</p>
+<p class="hint">ضریب شرایط، یک فرض تقریبی برای سناریوسازی است؛ شیب، دما، سرعت و ترافیک واقعی هنوز خودکار استخراج نمی‌شوند. برای احتیاط، محاسبه ۵ واحد درصد حاشیه اضافه روی ذخیره انتخابی در نظر می‌گیرد؛ این برآورد تضمین رسیدن نیست.</p>
 <button class="primary" id="calculate" type="button">محاسبه برد و شارژ مقصد</button>
 <div id="error" class="status bad" role="alert" hidden></div>
 </section>
@@ -135,7 +135,7 @@ function calculate(){
   if(result.reachable){box.className='status good';box.textContent='برآورد: با حفظ ذخیره '+fmt(result.reserveSoc)+'٪، انرژی مسیر کافی به نظر می‌رسد.';}
   else if(result.arrivalSoc>=0){box.className='status warn';box.textContent='هشدار: طبق این برآورد به مقصد می‌رسی اما ذخیره امن '+fmt(result.reserveSoc)+'٪ حفظ نمی‌شود؛ شارژ در مسیر را بررسی کن.';}
   else{box.className='status bad';box.textContent='هشدار جدی: انرژی فعلی طبق این برآورد برای رسیدن به مقصد کافی نیست؛ پیش از حرکت شارژ یا مسیر را تغییر بده.';}
-  $('resultFootnote').textContent='مصرف مؤثر فرض‌شده: '+fmt(result.effectiveConsumption)+' kWh/100km · انرژی قابل استفاده فعلی: '+fmt(result.usableEnergyKwh)+' kWh. نتیجه به شرایط واقعی وابسته است.';
+  $('resultFootnote').textContent='مصرف مؤثر فرض‌شده: '+fmt(result.effectiveConsumption)+' kWh/100km · انرژی قابل استفاده فعلی: '+fmt(result.usableEnergyKwh)+' kWh · ذخیره برنامه‌ریزی با حاشیه اطمینان: '+fmt(result.planningReserveSoc)+'٪ (ذخیره انتخابی + '+fmt(result.safetyBufferPct)+' واحد درصد). این حاشیه تضمین رسیدن نیست؛ نتیجه به شرایط واقعی وابسته است.';
   $('results').hidden=false;
  }catch(e){$('error').textContent=e.message||'محاسبه انجام نشد.';$('error').hidden=false;$('results').hidden=true;}
 }
