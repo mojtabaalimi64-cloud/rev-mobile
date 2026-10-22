@@ -100,7 +100,7 @@ if (!towPage.includes("function shiftCall(on)") ||
   failures.push("Tow-driver shift must start polling only after server confirmation");
 }
 if (!sw.includes('"./nearby-map.html"') || !sw.includes('"./profile.html"') ||
-    !sw.includes("rev-mobile-shell-v77") || !sw.includes('"./energy-assistant.html"') || !sw.includes('"./rev-energy-core.js"')) {
+    !sw.includes("rev-mobile-shell-v78") || !sw.includes('"./energy-assistant.html"') || !sw.includes('"./rev-energy-core.js"')) {
   failures.push("Service-worker shell must include core mobile pages and use a fresh cache version");
 }
 if (!mapPage.includes('id="details-drag-handle"') ||
