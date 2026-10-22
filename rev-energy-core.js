@@ -14,16 +14,20 @@
     var usableKwh=capacity*soc/100;
     var energyKwh=distance*effective/100;
     var arrivalSoc=soc-(energyKwh/capacity*100);
-    var safeRangeKm=(capacity*Math.max(0,soc-reserve)/100)/effective*100;
+    /* Keep an additional 5 percentage-point planning buffer because real consumption is uncertain. */
+    var safetyBufferPct=5;
+    var planningReserve=Math.min(100,reserve+safetyBufferPct);
+    var safeRangeKm=(capacity*Math.max(0,soc-planningReserve)/100)/effective*100;
     var totalRangeKm=usableKwh/effective*100;
-    var marginKwh=capacity*(arrivalSoc-reserve)/100;
+    var marginKwh=capacity*(arrivalSoc-planningReserve)/100;
     return {
       capacityKwh:capacity,startSoc:soc,reserveSoc:reserve,consumption:consumption,
       factor:factor,effectiveConsumption:effective,distanceKm:distance,
       usableEnergyKwh:usableKwh,energyKwh:energyKwh,arrivalSoc:arrivalSoc,
       totalRangeKm:totalRangeKm,safeRangeKm:safeRangeKm,marginKwh:marginKwh,
-      reachable:arrivalSoc>=reserve,deficitKwh:Math.max(0,-marginKwh),
-      requiredSocPct:energyKwh/capacity*100+reserve
+      planningReserveSoc:planningReserve,safetyBufferPct:safetyBufferPct,
+      reachable:arrivalSoc>=planningReserve,deficitKwh:Math.max(0,-marginKwh),
+      requiredSocPct:energyKwh/capacity*100+planningReserve
     };
   }
   root.REVEnergy={calculate:calculate,version:'1.0.0'};
