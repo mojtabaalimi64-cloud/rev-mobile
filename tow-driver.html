@@ -291,6 +291,14 @@
     .then(function(res){
       if(!res||!res.ok||!res.driver){showReg();return}
       var drv=res.driver;
+      if(res.registrationRevoked===true || drv.registrationRevoked===true){
+        try{localStorage.removeItem(KEY)}catch(e){}
+        clearInterval(pendInt);clearInterval(pollInt);clearInterval(timerInt);
+        showReg();
+        $('regErr').textContent='تأیید حساب قبلی توسط مدیر لغو شده است. برای ادامه همکاری، فرم ثبت‌نام را دوباره تکمیل و ارسال کن.';
+        $('loginErr').textContent='حساب قبلی دیگر فعال نیست؛ ابتدا دوباره ثبت‌نام کن.';
+        return;
+      }
       d.name=drv.name;d.phone=drv.phone;d.radius=drv.radius;d.approved=drv.approved===true;d.active=drv.active!==false;d.onShift=drv.onShift===true;save(d);
       if(!drv.approved){showPending();startPendingPoll();return}
       clearInterval(pendInt);
