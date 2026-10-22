@@ -1218,4 +1218,26 @@ body.rev-navigating #tripLivePanel.rev-trip-expanded .trip-live-head{display:fle
 <script>
 (()=>{const panel=document.getElementById('navDash'),handle=document.getElementById('navDashHandle');if(!panel||!handle)return;let startY=0,lastY=0,dragging=false;const setExpanded=(expanded)=>{panel.classList.toggle('nav-sheet-expanded',expanded);handle.setAttribute('aria-expanded',String(expanded));handle.setAttribute('aria-label',expanded?'جمع کردن اطلاعات سفر':'باز کردن اطلاعات سفر');const hint=handle.querySelector('small');if(hint)hint.textContent=expanded?'برای جمع کردن به پایین بکشید':'برای جزئیات بیشتر به بالا بکشید';};handle.addEventListener('click',()=>{if(!dragging)setExpanded(!panel.classList.contains('nav-sheet-expanded'));});handle.addEventListener('pointerdown',e=>{startY=lastY=e.clientY;dragging=false;try{handle.setPointerCapture(e.pointerId)}catch(_){};});handle.addEventListener('pointermove',e=>{if(!e.buttons&&!e.pointerType==='touch')return;lastY=e.clientY;if(Math.abs(lastY-startY)>10)dragging=true;});handle.addEventListener('pointerup',()=>{if(dragging){const delta=lastY-startY;if(delta < -12)setExpanded(true);else if(delta > 12)setExpanded(false);setTimeout(()=>{dragging=false},80);} });handle.addEventListener('pointercancel',()=>{dragging=false});})();
 </script>
+
+<style id="rev-trip-sheet-layer-hotfix">
+/* Put the trip-status sheet grip above the navigation dashboard, never behind it. */
+@media(max-width:900px){
+ html body.rev-navigating #tripLivePanel:not([hidden]){
+  display:block!important;position:fixed!important;top:auto!important;
+  left:10px!important;right:10px!important;
+  bottom:calc(92px + env(safe-area-inset-bottom))!important;
+  width:auto!important;max-width:560px!important;max-height:88px!important;
+  overflow:hidden!important;z-index:2147482000!important;
+  transform:none!important;touch-action:pan-y!important;
+ }
+ html body.rev-navigating #tripLivePanel.rev-trip-expanded{
+  max-height:min(62dvh,520px)!important;overflow-y:auto!important;
+  z-index:2147482000!important;padding-bottom:14px!important;
+ }
+ html body.rev-navigating #tripLivePanel #revTripSheetGrip{
+  position:relative!important;z-index:1!important;display:block!important;
+  min-height:42px!important;padding-top:4px!important;touch-action:pan-y!important;
+ }
+}
+</style>
 </body></html>
