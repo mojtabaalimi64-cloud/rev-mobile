@@ -75,3 +75,5 @@ self.addEventListener("fetch", event => {
     }))
   );
 });
+
+// pages-ci retrigger 2026-10-23 (v7 rollout)
