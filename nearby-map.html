@@ -1277,7 +1277,7 @@ body.rev-navigating #navStartFloat{display:none!important}
   }
   var searchMatch=t.match(/^(?:جستجو کن|جستجو|پیدا کن|دنبال کن)\s+(.+)$/);
   if(searchMatch){
-   var input=document.getElementById('placeSearch'), form=document.getElementById('mapSearchForm')||document.getElementById('mapSearchBar')?.querySelector('form');
+   var input=document.getElementById('placeSearch'), form=document.getElementById('placeSearchForm');
    if(input&&form){input.value=searchMatch[1];form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));var msg='جست‌وجوی «'+searchMatch[1]+'» انجام می‌شود.';setStatus(msg);say(msg);return}
   }
   if(/توقف|لغو|بس کن/.test(t)){setStatus('فرمان صوتی متوقف شد.');stop();return}
