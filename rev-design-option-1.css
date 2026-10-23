@@ -59,3 +59,60 @@ header a{color:var(--rev-o1-blue)}
  .bottom-nav a{font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+
+/* Option 1 — stronger mobile overrides for the existing full-screen app.
+   These target the actual map controls and beat legacy inline !important rules;
+   layout, IDs, handlers, APIs and feature visibility remain unchanged. */
+:root{
+ --rev-o1-blue:#2563EB;--rev-o1-blue-dark:#1D4ED8;
+ --rev-o1-surface:#F4F7FB;--rev-o1-border:#D9E2EF;
+ --rev-o1-ink:#172B4D;--rev-o1-muted:#64748B;
+}
+.map-search-form{
+ background:#FFFFFF!important;border:1px solid #D9E2EF!important;
+ border-radius:20px!important;box-shadow:0 10px 30px rgba(23,43,77,.16)!important;
+}
+#placeSearch{color:#172B4D!important}
+#placeSearch::placeholder{color:#7B8798!important}
+#mapSearchBar button,#mapSearchBar .filter-btn,#locate,#routeToggle,#navRecenterFloat{
+ background:#FFFFFF!important;color:#2563EB!important;border:1px solid #D9E2EF!important;
+ border-radius:16px!important;box-shadow:0 6px 20px rgba(23,43,77,.14)!important;
+}
+#mapSearchBar button svg,#locate svg,#navRecenterFloat svg{stroke:#2563EB!important}
+#routeToggle{background:#2563EB!important;color:#FFFFFF!important;border-color:#2563EB!important}
+#routePanel{
+ background:#FFFFFF!important;border:1px solid #D9E2EF!important;border-radius:24px!important;
+ box-shadow:0 18px 50px rgba(23,43,77,.22)!important;color:#172B4D!important;
+}
+#routePanel .route-head{color:#172B4D!important}
+#routePanel input,#routePanel select,#routePanel textarea{
+ background:#F8FAFC!important;color:#172B4D!important;border:1px solid #D9E2EF!important;
+ border-radius:13px!important;min-height:44px!important;
+}
+#routePanel button.route-submit,#routePanel .route-submit,
+#routePanel button.primary{background:#2563EB!important;color:#FFFFFF!important;border-color:#2563EB!important}
+#details-panel:not([hidden]){
+ background:#FFFFFF!important;border:1px solid #D9E2EF!important;border-radius:24px!important;
+ box-shadow:0 16px 40px rgba(23,43,77,.18)!important;color:#172B4D!important;
+}
+#details-drag-handle span{background:#B7C5D8!important}
+.detail-type{background:#EFF6FF!important;color:#1D4ED8!important;border-color:#BFDBFE!important}
+.filter-menu,.search-history-panel,.music-panel{
+ background:#FFFFFF!important;border:1px solid #D9E2EF!important;
+ border-radius:20px!important;box-shadow:0 14px 36px rgba(23,43,77,.18)!important;
+}
+.filter-menu button.active,.filter-menu button[aria-pressed="true"]{
+ background:#2563EB!important;color:#FFFFFF!important;border-color:#2563EB!important;
+}
+.map-top-widgets .weather-widget,.map-top-widgets .music-launch{
+ border-radius:16px!important;border-color:#D9E2EF!important;
+ box-shadow:0 6px 20px rgba(23,43,77,.12)!important;
+}
+.bottom-nav{background:#FFFFFF!important;border-top:1px solid #D9E2EF!important}
+.bottom-nav a.active{background:#EFF6FF!important;color:#2563EB!important}
+@media(max-width:700px){
+ .map-search-form{min-height:56px!important}
+ #details-panel:not([hidden]){padding:16px!important}
+ #routePanel{border-radius:22px!important}
+}
