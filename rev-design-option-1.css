@@ -53,9 +53,9 @@ header a{color:var(--rev-o1-blue)}
  .title{font-size:19px}
  .actions{gap:7px}
  .actions button,.actions select{min-height:42px;padding:8px 11px;font-size:13px}
- .map-layout{display:flex;flex-direction:column;gap:8px}
- #map{height:58vh;min-height:300px;max-height:680px;border-radius:16px;flex:none;width:100%}
- #details-panel{height:auto;min-height:0;max-width:none;width:100%;flex:none;padding:16px}
+ /* Keep the existing full-screen map and overlay layout intact on mobile. */
+ #map{border-radius:16px}
+ #details-panel{padding:16px}
  .bottom-nav a{font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
