@@ -1,0 +1,61 @@
+/* REV mobile design option 1 — presentation-only layer.
+   Intentionally changes no IDs, DOM structure, event handlers, API calls or navigation logic. */
+:root{
+  --rev-o1-blue:#087FA5;--rev-o1-blue-dark:#075B78;--rev-o1-ink:#172B3A;
+  --rev-o1-muted:#64748B;--rev-o1-border:#DCE5EF;--rev-o1-surface:#F2F6FA;
+  --rev-o1-white:#FFFFFF;--rev-o1-shadow:0 8px 24px rgba(23,43,58,.08);
+}
+html{color-scheme:light}
+body{background:var(--rev-o1-surface);color:var(--rev-o1-ink);font-family:Vazirmatn,Vazir,Tahoma,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button,a,[role=button]{-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(8,127,165,.35);outline-offset:2px}
+button{transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease}
+button:active{transform:translateY(1px)}
+/* Primary actions share one calm blue, without touching disabled/hidden state. */
+button.primary,.primary-btn,.btn-primary,.search-go,#searchSubmit,#routeToggle,.route-submit{
+ background:var(--rev-o1-blue);border-color:var(--rev-o1-blue);color:#fff
+}
+button.primary:hover,.primary-btn:hover,.btn-primary:hover,.search-go:hover,#searchSubmit:hover,#routeToggle:hover,.route-submit:hover{
+ background:var(--rev-o1-blue-dark);border-color:var(--rev-o1-blue-dark)
+}
+input,select,textarea{border-color:var(--rev-o1-border);border-radius:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--rev-o1-blue);box-shadow:0 0 0 3px rgba(8,127,165,.12)}
+/* Map page: white cards, spacious controls, clearer type. */
+header{background:#fff;color:var(--rev-o1-ink);border-color:var(--rev-o1-border);box-shadow:0 2px 10px rgba(23,43,58,.035)}
+header a{color:var(--rev-o1-blue)}
+.title,h1,h2,h3,.title strong{color:var(--rev-o1-ink)}
+.muted,.note,small{color:var(--rev-o1-muted)}
+.actions button,.actions select,.filter-btn,.filter-menu button{min-height:42px;border-radius:12px;border-color:var(--rev-o1-border);background:#fff;color:var(--rev-o1-ink)}
+.actions button.primary,.filter-btn.on,.filter-menu button.active{background:var(--rev-o1-blue);color:#fff;border-color:var(--rev-o1-blue)}
+#map{border-radius:16px;border-color:var(--rev-o1-border)}
+#details-panel,.detail-card,.search-history-panel,.filter-menu,.music-panel,#routePanel,.weather-main{
+ background:#fff;border-color:var(--rev-o1-border);border-radius:18px;box-shadow:var(--rev-o1-shadow)
+}
+.detail-type{color:var(--rev-o1-blue-dark);background:#E8F5FA;border-color:#C8E7F0}
+.map-search-bar,.map-search-form{border-radius:18px}
+.map-search-form{border-color:var(--rev-o1-border);box-shadow:0 8px 24px rgba(23,43,58,.10)}
+#placeSearch{min-height:44px;color:var(--rev-o1-ink)}
+#locate,#searchSubmit,.map-search-bar button,.filter-btn{min-width:44px;min-height:44px}
+.bottom-nav{background:rgba(255,255,255,.97);border-top:1px solid var(--rev-o1-border);box-shadow:0 -5px 22px rgba(23,43,58,.07);padding-bottom:env(safe-area-inset-bottom)}
+.bottom-nav-inner{max-width:720px;margin-inline:auto}
+.bottom-nav a{min-height:54px;color:var(--rev-o1-muted);border-radius:13px}
+.bottom-nav a.active{color:var(--rev-o1-blue);background:#EAF6FA}
+.bottom-nav a.active svg{color:var(--rev-o1-blue)}
+/* App landing pages: retain existing component structure and behavior. */
+#onboard,.ob-card,#revAccountCard{color:var(--rev-o1-ink)}
+.ob-card,#revAccountCard{border-color:var(--rev-o1-border);border-radius:24px;box-shadow:var(--rev-o1-shadow)}
+.ob-card button,#revAccountCard button,#revAccountCard a{border-radius:14px}
+@media(max-width:700px){
+ body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+ header{padding:12px 14px}
+ main{width:calc(100% - 12px);margin:6px auto 14px}
+ .title{font-size:19px}
+ .actions{gap:7px}
+ .actions button,.actions select{min-height:42px;padding:8px 11px;font-size:13px}
+ .map-layout{display:flex;flex-direction:column;gap:8px}
+ #map{height:58vh;min-height:300px;max-height:680px;border-radius:16px;flex:none;width:100%}
+ #details-panel{height:auto;min-height:0;max-width:none;width:100%;flex:none;padding:16px}
+ .bottom-nav a{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
