@@ -243,3 +243,58 @@ button.primary,.primary-btn,.btn-primary,.search-go,#searchSubmit,#routeToggle,.
 .bottom-nav a.active,.bottom-nav a[aria-current="page"]{background:#E9F5FC!important;color:#0E8BD0!important}
 .port-opt.sel{background:#EAF6FD!important;border-color:#0E8BD0!important}
 .news-filter.active{background:#0E8BD0!important;border-color:#0E8BD0!important}
+
+/* === v8 — Hybrid build (user-approved 23 Oct) ===
+   A skeleton · C dashboard touches · D energy accents · B night navigation.
+   Rollback = remove this section. */
+:root{--hyb-grad:linear-gradient(90deg,#7C5CFF,#0E8BD0);--hyb-grad135:linear-gradient(135deg,#7C5CFF,#0E8BD0)}
+button.primary,.primary-btn,.btn-primary,.search-go,#searchSubmit,#routeToggle,.route-submit,.svc-btn{
+ background:var(--hyb-grad)!important;border-color:#6A4DFF!important;color:#fff!important}
+.news-hero{background:linear-gradient(140deg,#7C5CFF 0%,#0E8BD0 55%,#12B76A 115%)!important}
+.user-avatar{background:var(--hyb-grad135)!important;color:#fff!important}
+/* خدمات: کاشی‌های رنگی آیکون (D) */
+.row-item .ico{width:46px;height:46px;border-radius:15px;background:#E9F5FC;display:inline-flex;align-items:center;justify-content:center;font-size:21px;flex:none}
+.row-item:nth-child(4n+2) .ico{background:#EAFBF3}
+.row-item:nth-child(4n+3) .ico{background:#FDF3E0}
+.row-item:nth-child(4n+4) .ico{background:#F3EEFC}
+/* خانه: کارت انرژی/سفر ترکیبی (تزریقی با rev-hybrid-home.js) */
+#hybHomeCard{background:#fff;border-radius:24px;box-shadow:0 14px 34px rgba(16,42,67,.12);padding:15px 17px 17px;margin:14px 0 4px}
+#hybHomeCard .hyb-energy{display:flex;align-items:center;gap:11px;padding-bottom:12px;border-bottom:1px solid #EEF3F7}
+#hybHomeCard .hyb-ring{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+#hybHomeCard .hyb-ring i{width:41px;height:41px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#0A6A96;font-style:normal}
+#hybHomeCard .hyb-energy b{font-size:14px;display:block;color:#172B3A}
+#hybHomeCard .hyb-energy span{font-size:11.5px;color:#0E9F6E;font-weight:700}
+#hybHomeCard .hyb-car{margin-inline-start:auto;text-align:left}
+#hybHomeCard .hyb-car b{font-size:12.5px;color:#33566b}
+#hybHomeCard .hyb-car span{color:#7d93a3;font-weight:400}
+#hybHomeCard .hyb-trip{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+#hybHomeCard .hyb-trip b{font-size:15px;color:#172B3A}
+#hybHomeCard .hyb-eta{font-size:12px;font-weight:700;color:#6A4DFF;background:#EFEAFF;border-radius:999px;padding:5px 11px}
+#hybHomeCard .hyb-route{display:flex;align-items:center;gap:9px;margin:11px 0 3px}
+#hybHomeCard .hyb-route b{font-size:16px;color:#172B3A}
+#hybHomeCard .hyb-line{flex:1;height:4px;border-radius:99px;background:linear-gradient(90deg,#FF7A59,#FFD166,#12B76A)}
+#hybHomeCard .hyb-meta{display:flex;gap:14px;margin-top:8px;font-size:12.5px;color:#5b7689}
+#hybHomeCard .hyb-meta b{color:#172B3A}
+#hybHomeCard .hyb-go{margin-top:13px;width:100%;border:0;border-radius:16px;padding:14px;background:var(--hyb-grad);color:#fff;font-size:15.5px;font-weight:800;box-shadow:0 12px 26px rgba(110,90,240,.30);cursor:pointer}
+/* B: مُد شب هنگام هدایت */
+body.rev-navigating .leaflet-tile-pane{filter:invert(.92) hue-rotate(185deg) saturate(.55) brightness(.92)}
+body.rev-navigating #navBanner,body.rev-navigating #navDash{
+ background:rgba(13,26,36,.95)!important;color:#E9F2F7!important;
+ border:1px solid rgba(120,200,240,.25)!important;box-shadow:0 16px 36px rgba(0,0,0,.45)!important}
+body.rev-navigating #navBanner *,body.rev-navigating #navDash *{color:#DCEBF5!important}
+body.rev-navigating #navDash strong,body.rev-navigating #navBanner strong{color:#39C2F0!important}
+body.rev-navigating .bottom-nav{background:rgba(13,26,36,.96)!important;border-top:1px solid rgba(120,200,240,.18)!important}
+body.rev-navigating .bottom-nav a{color:#7E9BAC!important}
+body.rev-navigating .bottom-nav a.active{background:rgba(25,181,230,.16)!important;color:#39C2F0!important}
+body.rev-navigating #revEnergyBanner{background:rgba(13,26,36,.95)!important;color:#E9F2F7!important;border-color:rgba(120,200,240,.3)!important}
+/* v8.1 — جزئیات مُد شب: آیکون مانور، خطوط راهنما، پیشرفت و کارت‌های داشبورد */
+body.rev-navigating .nav-maneuver-icon{background:linear-gradient(135deg,#19B5E6,#0A6A96)!important;color:#fff!important}
+body.rev-navigating .nav-maneuver-dist,body.rev-navigating .nav-maneuver-instr,body.rev-navigating .nav-maneuver-next{background:transparent!important}
+body.rev-navigating #navDist{color:#39C2F0!important}
+body.rev-navigating .rev-nav-progress{background:rgba(255,255,255,.14)!important}
+body.rev-navigating #navProgressFill{background:linear-gradient(90deg,#19B5E6,#2BD98A)!important}
+body.rev-navigating .env-line{background:rgba(255,255,255,.06)!important;color:#BFE6FA!important}
+body.rev-navigating [class*="nav-dash"]{background:rgba(255,255,255,.06)!important;color:#DCEBF5!important}
+/* v8.2 — آیکون مانور و کارت‌های آمار در مُد شب (ویژه‌گی ID برای غلبه بر استایل‌های ویز) */
+body.rev-navigating #navIcon{background:linear-gradient(135deg,#19B5E6,#0A6A96)!important;color:#fff!important}
+body.rev-navigating .nav-stat{background:rgba(255,255,255,.07)!important;border-color:rgba(120,200,240,.22)!important}
