@@ -116,3 +116,67 @@ header a{color:var(--rev-o1-blue)}
  #details-panel:not([hidden]){padding:16px!important}
  #routePanel{border-radius:22px!important}
 }
+
+
+/* REV MOBILE THEME LOCK v5 — enforce the agreed white + blue app palette
+   across the home shell and map, overriding legacy page-level declarations. */
+:root{
+  color-scheme:light!important;
+  --rev-blue:#2563EB;
+  --rev-blue-dark:#1D4ED8;
+  --rev-app-white:#FFFFFF;
+  --rev-app-ink:#172B4D;
+  --rev-app-muted:#64748B;
+  --rev-app-border:#D9E2EF;
+}
+html,body,body.has-bottom-nav{
+  background:#FFFFFF!important;
+  color:var(--rev-app-ink)!important;
+  color-scheme:light!important;
+}
+body,button,input,select,textarea{
+  font-family:Vazirmatn,Vazir,Tahoma,sans-serif!important;
+}
+button.btn-primary,button.primary,.primary-btn,.btn-primary,
+button[type=submit],#obSend,#obVerify,.ob-big-btn,
+#searchSubmit,#routeToggle,#routePanel .route-submit,
+button.route-submit{
+  background:var(--rev-blue)!important;
+  color:#FFFFFF!important;
+  border-color:var(--rev-blue)!important;
+}
+button.btn-primary:hover,button.primary:hover,.primary-btn:hover,.btn-primary:hover,
+button[type=submit]:hover,#obSend:hover,#obVerify:hover,
+#routePanel .route-submit:hover,button.route-submit:hover{
+  background:var(--rev-blue-dark)!important;
+  border-color:var(--rev-blue-dark)!important;
+}
+input,select,textarea{
+  background:#FFFFFF!important;
+  color:var(--rev-app-ink)!important;
+  border-color:var(--rev-app-border)!important;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--rev-blue)!important;
+  box-shadow:0 0 0 3px rgba(37,99,235,.14)!important;
+}
+.ob-card,#revAccountCard,.card,.panel,.modal-content,
+#details-panel:not([hidden]),#routePanel,.detail-card,
+.search-history-panel,.filter-menu,.music-panel{
+  background:#FFFFFF!important;
+  color:var(--rev-app-ink)!important;
+  border-color:var(--rev-app-border)!important;
+}
+.bottom-nav,.bottom-nav nav,.bottom-nav-inner{
+  background:#FFFFFF!important;
+  border-color:var(--rev-app-border)!important;
+}
+.bottom-nav a.active{
+  color:var(--rev-blue)!important;
+  background:#EFF6FF!important;
+}
+.bottom-nav a.active svg{color:var(--rev-blue)!important;stroke:var(--rev-blue)!important}
+a{ -webkit-tap-highlight-color:rgba(37,99,235,.12); }
+@media(max-width:700px){
+  body.has-bottom-nav{background:#FFFFFF!important}
+}
