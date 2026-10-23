@@ -220,3 +220,7 @@ input,select,textarea{border-radius:12px!important;border-color:#DCE5EF!importan
 .port-opt.sel{background:#EAF7FB!important;border-color:var(--rev-d1-accent)!important}
 .ra-conn{background:#fff!important;color:#14293b!important}
 .ra-conn.sel{background:#DCF5E3!important;color:#11703C!important;border-color:#16A34A!important}
+/* Icon & accent harmony (v6): one line-icon size in the tab bar, one accent for active filters */
+.bottom-nav a svg{width:22px!important;height:22px!important}
+.news-filter{border-radius:999px!important}
+.news-filter.active{background:var(--rev-d1-accent)!important;border-color:var(--rev-d1-accent)!important;color:#fff!important}
