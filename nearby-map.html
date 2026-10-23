@@ -1195,4 +1195,110 @@ body.rev-navigating #navStartFloat{display:none!important}
  var observer=new MutationObserver(function(){if(panel.hidden)setExpanded(false);});
  observer.observe(panel,{attributes:true,attributeFilter:['hidden']});
 })();
-</script></body></html>
+</script>
+<style id="revVoiceAssistantStyles">
+#revVoiceFab{position:fixed;z-index:1200;left:14px;bottom:calc(145px + env(safe-area-inset-bottom));width:54px;height:54px;border:0;border-radius:19px;background:linear-gradient(145deg,#3B82F6,#1744A0);color:#fff;box-shadow:0 8px 22px rgba(36,107,253,.3);display:grid;place-items:center;cursor:pointer}
+#revVoiceFab svg{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#revVoiceFab[aria-pressed="true"]{background:linear-gradient(145deg,#ef4444,#b91c1c);animation:revVoicePulse 1.4s infinite}
+@keyframes revVoicePulse{50%{box-shadow:0 0 0 8px rgba(239,68,68,.12),0 8px 22px rgba(36,107,253,.18)}}
+#revVoiceAssistant{position:fixed;z-index:5000;inset:0;background:rgba(10,25,45,.38);display:none;align-items:flex-end;justify-content:center;padding:14px 12px calc(82px + env(safe-area-inset-bottom))}
+#revVoiceAssistant.open{display:flex}
+#revVoiceAssistant .rva-card{width:min(480px,100%);background:#fff;border:1px solid #e2eaf5;border-radius:24px;padding:18px;box-shadow:0 18px 55px rgba(10,35,70,.24);color:#14293b}
+#revVoiceAssistant .rva-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#revVoiceAssistant .rva-title{font-size:17px;font-weight:900}
+#revVoiceAssistant .rva-close{border:1px solid #e2eaf5;background:#f6f8fc;border-radius:11px;width:36px;height:36px;font-size:22px;color:#52667b}
+#revVoiceAssistant .rva-sub{font-size:12px;line-height:1.9;color:#71849a;margin:8px 0 12px}
+#revVoiceAssistant .rva-status{background:#f3f7ff;border:1px solid #e1eaff;border-radius:14px;padding:12px;font-size:13px;min-height:46px;line-height:1.9;overflow-wrap:anywhere}
+#revVoiceAssistant .rva-actions{display:flex;gap:8px;margin-top:12px}
+#revVoiceAssistant .rva-listen{flex:1;border:0;border-radius:13px;background:#246BFD;color:#fff;padding:12px;font:inherit;font-weight:900}
+#revVoiceAssistant .rva-listen:disabled{opacity:.55}
+#revVoiceAssistant .rva-cancel{border:1px solid #dce5f2;background:#fff;border-radius:13px;padding:12px 16px;font:inherit;color:#33475c}
+#revVoiceAssistant .rva-examples{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+#revVoiceAssistant .rva-example{border:1px solid #dce7f5;background:#fff;color:#2456a6;border-radius:999px;padding:6px 10px;font:inherit;font-size:11px}
+#revVoiceAssistant .rva-privacy{font-size:10.5px;line-height:1.8;color:#7c8da1;margin-top:10px}
+@media(max-width:380px){#revVoiceAssistant .rva-card{padding:15px}#revVoiceFab{width:50px;height:50px;left:10px}}
+</style>
+<button id="revVoiceFab" type="button" aria-label="باز کردن دستیار صوتی REV" aria-pressed="false" title="دستیار صوتی REV">
+<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg>
+</button>
+<div id="revVoiceAssistant" role="dialog" aria-modal="true" aria-labelledby="revVoiceTitle">
+ <div class="rva-card">
+  <div class="rva-head"><div class="rva-title" id="revVoiceTitle">دستیار صوتی REV</div><button class="rva-close" id="revVoiceClose" type="button" aria-label="بستن">×</button></div>
+  <p class="rva-sub">فرمان را فارسی بگویید؛ برای نمونه شارژرها را نشان بده، تعمیرگاه‌های نزدیک، مکان من یا مسیریابی را باز کن.</p>
+  <div class="rva-status" id="revVoiceStatus" role="status" aria-live="polite">برای شروع، دکمه «صحبت کن» را بزنید.</div>
+  <div class="rva-actions"><button id="revVoiceListen" class="rva-listen" type="button">🎙 صحبت کن</button><button id="revVoiceCancel" class="rva-cancel" type="button">توقف</button></div>
+  <div class="rva-examples"><button class="rva-example" type="button" data-voice-command="شارژرهای نزدیک را نشان بده">شارژرهای نزدیک</button><button class="rva-example" type="button" data-voice-command="تعمیرگاه های نزدیک را نشان بده">تعمیرگاه‌ها</button><button class="rva-example" type="button" data-voice-command="مسیریابی را باز کن">باز کردن مسیریابی</button><button class="rva-example" type="button" data-voice-command="مکان من را نشان بده">مکان من</button></div>
+  <div class="rva-privacy">نسخه آزمایشی فرمان‌محور است و به API پولی REV متصل نیست. پردازش گفتار به پشتیبانی مرورگر بستگی دارد؛ بعضی مرورگرها ممکن است صدا را برای تشخیص به سرویس خود ارسال کنند. برای این نسخه، «سلام REV» در حالت آماده‌باش پشتیبانی نمی‌شود.</div>
+ </div>
+</div>
+<script id="revVoiceAssistantScript">
+(function(){
+ 'use strict';
+ var fab=document.getElementById('revVoiceFab'), modal=document.getElementById('revVoiceAssistant'), closeBtn=document.getElementById('revVoiceClose'), listenBtn=document.getElementById('revVoiceListen'), cancelBtn=document.getElementById('revVoiceCancel'), status=document.getElementById('revVoiceStatus');
+ if(!fab||!modal||!listenBtn||!status)return;
+ var Recognition=window.SpeechRecognition||window.webkitSpeechRecognition, recognition=null, listening=false;
+ function say(text){try{if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance)return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang='fa-IR';u.rate=.96;window.speechSynthesis.speak(u)}catch(e){}}
+ function setStatus(text){status.textContent=text}
+ function stop(){listening=false;fab.setAttribute('aria-pressed','false');listenBtn.disabled=false;listenBtn.textContent='🎙 صحبت کن';if(recognition){try{recognition.stop()}catch(e){}}}
+ function open(){modal.classList.add('open');setStatus(Recognition?'برای شنیدن فرمان، «صحبت کن» را بزنید.':'این مرورگر قابلیت تشخیص گفتار را در دسترس قرار نمی‌دهد. از دکمه‌های فرمان نمونه استفاده کنید.');}
+ function close(){stop();modal.classList.remove('open')}
+ function clickIfVisible(el){if(el&&!el.disabled&&el.getClientRects().length){el.click();return true}return false}
+ function runCommand(raw){
+  var t=String(raw||'').toLowerCase().replace(/[؟?!،,.؛:]/g,' ').replace(/\s+/g,' ').trim();
+  if(!t){setStatus('فرمان واضحی دریافت نشد؛ دوباره تلاش کنید.');return}
+  setStatus('شنیدم: «'+raw+'»');
+  var charging=/(شارژر|ایستگاه شارژ|شارژ خودرو|شارژهای نزدیک)/.test(t);
+  var repair=/(تعمیرگاه|تعمیرکار|تعمیر خودرو)/.test(t);
+  var store=/(فروشگاه|قطعات|لوازم یدکی)/.test(t);
+  if(charging||repair||store){
+   var filter=charging?'charging':repair?'repair':'store';
+   var filterBtn=document.getElementById('filterBtn');
+   if(filterBtn&&document.getElementById('filterMenu')?.hidden)filterBtn.click();
+   var choice=document.querySelector('#filterMenu [data-f="'+filter+'"]');
+   if(choice){choice.click();var msg=charging?'فیلتر ایستگاه‌های شارژ فعال شد.':repair?'فیلتر تعمیرگاه‌ها فعال شد.':'فیلتر فروشگاه‌ها فعال شد.';setStatus(msg);say(msg);return}
+   setStatus('فیلتر نقشه در دسترس نیست؛ لطفاً از فیلترهای نقشه استفاده کنید.');return
+  }
+  if(/مسیریاب|مسیریابی|مسیر را باز|باز کن.*مسیر|مسیر جدید/.test(t)){
+   var route=document.getElementById('routeToggle');
+   if(route&&document.getElementById('routePanel')?.hidden)route.click();
+   var msg='پنل مسیریابی باز شد. مبدأ و مقصد را وارد کنید.';
+   setStatus(msg);say(msg);return
+  }
+  if(/مکان من|موقعیت من|لوکیشن من|مکان فعلی/.test(t)){
+   var locate=document.getElementById('locate');
+   if(clickIfVisible(locate)){var msg='درخواست مکان‌یابی ارسال شد؛ اگر خواسته شد اجازه دسترسی را تأیید کنید.';setStatus(msg);say(msg)}else setStatus('دکمه مکان‌یابی در این صفحه در دسترس نیست.');
+   return
+  }
+  if(/نمایش مسیر|محاسبه مسیر|مسیر را پیدا کن|مسیر را بساز/.test(t)){
+   var end=document.getElementById('routeEnd'), build=document.getElementById('routeBuild');
+   if(end&&end.value.trim()&&clickIfVisible(build)){setStatus('درخواست محاسبه مسیر ارسال شد.');say('درخواست محاسبه مسیر ارسال شد.');return}
+   if(document.getElementById('routePanel')?.hidden)document.getElementById('routeToggle')?.click();
+   setStatus('ابتدا مبدأ و مقصد را در پنل مسیریابی وارد کنید.');say('لطفاً ابتدا مقصد را وارد کنید.');return
+  }
+  var searchMatch=t.match(/^(?:جستجو کن|جستجو|پیدا کن|دنبال کن)\s+(.+)$/);
+  if(searchMatch){
+   var input=document.getElementById('placeSearch'), form=document.getElementById('mapSearchForm')||document.getElementById('mapSearchBar')?.querySelector('form');
+   if(input&&form){input.value=searchMatch[1];form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));var msg='جست‌وجوی «'+searchMatch[1]+'» انجام می‌شود.';setStatus(msg);say(msg);return}
+  }
+  if(/توقف|لغو|بس کن/.test(t)){setStatus('فرمان صوتی متوقف شد.');stop();return}
+  setStatus('این فرمان هنوز پشتیبانی نمی‌شود. از فرمان‌های نمونه استفاده کنید.');say('این فرمان هنوز پشتیبانی نمی‌شود.');
+ }
+ function start(){
+  if(!Recognition){setStatus('تشخیص گفتار در این مرورگر پشتیبانی نمی‌شود. می‌توانید از فرمان‌های نمونه استفاده کنید.');return}
+  stop();
+  try{
+   recognition=new Recognition();recognition.lang='fa-IR';recognition.continuous=false;recognition.interimResults=true;recognition.maxAlternatives=1;
+   recognition.onstart=function(){listening=true;fab.setAttribute('aria-pressed','true');listenBtn.disabled=false;listenBtn.textContent='🎙 در حال شنیدن…';setStatus('گوش می‌دهم؛ فرمان را واضح بگویید.');};
+   recognition.onresult=function(event){var finalText='';var interim='';for(var i=event.resultIndex;i<event.results.length;i++){var text=event.results[i][0].transcript;if(event.results[i].isFinal)finalText+=text;else interim+=text;}if(interim)setStatus('در حال شنیدن: '+interim);if(finalText){stop();runCommand(finalText)}};
+   recognition.onerror=function(event){stop();var message=event.error==='not-allowed'?'اجازه میکروفون داده نشد؛ مجوز مرورگر را بررسی کنید.':event.error==='no-speech'?'صدایی تشخیص داده نشد؛ دوباره تلاش کنید.':'تشخیص گفتار در دسترس نیست ('+event.error+').';setStatus(message)};
+   recognition.onend=function(){if(listening)stop();if(status.textContent==='گوش می‌دهم؛ فرمان را واضح بگویید.')setStatus('شنیدن پایان یافت. برای فرمان بعدی دوباره بزنید.');};
+   recognition.start();
+  }catch(e){stop();setStatus('شروع میکروفون ناموفق بود. مرورگر و مجوز میکروفون را بررسی کنید.')}
+ }
+ fab.addEventListener('click',open);closeBtn.addEventListener('click',close);cancelBtn.addEventListener('click',function(){stop();setStatus('شنیدن متوقف شد.')});listenBtn.addEventListener('click',start);
+ modal.addEventListener('click',function(e){if(e.target===modal)close()});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('open'))close()});
+ modal.querySelectorAll('[data-voice-command]').forEach(function(b){b.addEventListener('click',function(){runCommand(b.getAttribute('data-voice-command'))})});
+})();
+</script>
+</body></html>
