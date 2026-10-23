@@ -11,7 +11,7 @@
 <title>برنامه‌ریزی سفر | REV</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="./rev-visual-identity.css?v=20261021-5">
-<link rel="stylesheet" href="./rev-design-option-1.css?v=6">
+<link rel="stylesheet" href="./rev-design-option-1.css?v=7">
 <style>
 /* یکدست‌سازی کارت‌های برنامه با تم teal آپ */
 #resumeSection .card.row-item,
@@ -89,7 +89,7 @@
 .evp-depart{display:flex;gap:7px}
 .evp-depart .opt{flex:1;border:1.5px solid #d5e2ec;border-radius:12px;padding:8px 6px;text-align:center;font-size:11px;color:#5b7183;background:#f8fafc}
 .evp-depart .opt b{display:block;font-size:14px;color:#14293b}
-.evp-depart .opt.best{border-color:#0887a7;background:#eaf7fb;color:#066d88}
+.evp-depart .opt.best{border-color:#0e8bd0;background:#eaf7fb;color:#0a6a96}
 .evp-tag{display:inline-block;background:#e9f8f0;color:#087b48;border-radius:99px;font-size:9.5px;padding:1px 7px;font-weight:800}
 .evp-warn{background:#fff7e8;border:1px solid #f0c36d;color:#8a6d1f;border-radius:10px;font-size:11.5px;padding:7px 10px;margin-top:7px;line-height:1.9}
 .evp-stop{display:flex;gap:10px}
@@ -103,19 +103,19 @@
 .evp-scard .name{font-weight:800;font-size:13.5px}
 .evp-scard .meta{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:11.5px;color:#5b7183;margin-top:5px}
 .evp-scard .meta .bat{color:#14293b;font-weight:800}
-.evp-badge{display:inline-block;border-radius:99px;font-size:10px;padding:1px 8px;font-weight:800;background:#e5f3f8;color:#066d88}
+.evp-badge{display:inline-block;border-radius:99px;font-size:10px;padding:1px 8px;font-weight:800;background:#e5f3f8;color:#0a6a96}
 .evp-badge.live{background:#eef7ee;color:#2e7d32}
 .evp-badge.warn{background:#fff7e8;color:#8a6d1f}
 .evp-editrow{display:flex;gap:7px;margin-top:8px}
-.evp-editrow button{flex:1;min-height:30px;border-radius:9px;border:1px solid #cbe6f0;background:#f2f9fc;color:#066d88;font:700 11px Tahoma,sans-serif;cursor:pointer}
-.evp-editrow button.on{background:#0887a7;color:#fff;border-color:#0887a7}
-.evp-startbtn{width:100%;min-height:50px;border:0;border-radius:14px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 10px 24px rgba(8,135,167,.35);font-family:inherit}
+.evp-editrow button{flex:1;min-height:30px;border-radius:9px;border:1px solid #cbe6f0;background:#f2f9fc;color:#0a6a96;font:700 11px Tahoma,sans-serif;cursor:pointer}
+.evp-editrow button.on{background:#0e8bd0;color:#fff;border-color:#0e8bd0}
+.evp-startbtn{width:100%;min-height:50px;border:0;border-radius:14px;background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 10px 24px rgba(14,139,208,.35);font-family:inherit}
 .evp-subactions{display:flex;gap:7px;margin-top:8px}
 .evp-subactions button,.evp-subactions a{flex:1;min-height:38px;border-radius:11px;border:1px solid #d5e2ec;background:#fff;color:#3c5266;font:700 11.5px Tahoma,sans-serif;cursor:pointer;display:grid;place-items:center;text-decoration:none}
 .evp-check{font-size:12.5px;line-height:2.15;color:#3c5266}
 .evp-fail{background:#fff3f3;border:1px solid #f0b4b4;border-radius:18px;padding:14px;color:#7a2020;margin-bottom:10px;font-size:13px;line-height:2}
 .evp-socbar{height:6px;background:#e6edf2;border-radius:99px;margin-top:7px;position:relative;overflow:hidden}
-.evp-socbar i{position:absolute;top:0;bottom:0;right:0;background:linear-gradient(90deg,#57b6cf,#0887a7)}
+.evp-socbar i{position:absolute;top:0;bottom:0;right:0;background:linear-gradient(90deg,#57b6cf,#0e8bd0)}
 .evp-socbar b{position:absolute;top:0;bottom:0;width:2px;background:#e5484d}
 .evp-soclbl{display:flex;justify-content:space-between;font-size:9.5px;color:#7e93a6;margin-top:3px}
 .evp-fail button{margin-top:8px;min-height:38px;border-radius:11px;border:0;background:#c62f35;color:#fff;font:800 12.5px Tahoma,sans-serif;padding:0 14px;cursor:pointer}
@@ -124,7 +124,7 @@
 <style id="rev-tabs-style">
 .rev-tabs{display:flex;gap:6px;background:#e7eff4;border:1.5px solid #d5e2ec;border-radius:99px;padding:5px;margin-top:16px}
 .rev-tab{flex:1;border:0;background:transparent;border-radius:99px;min-height:42px;font-family:Vazirmatn,Vazir,Tahoma,sans-serif;font-size:14px;font-weight:800;color:#5b7183;cursor:pointer}
-.rev-tab.active{background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;box-shadow:0 6px 16px rgba(8,135,167,.35)}
+.rev-tab.active{background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff;box-shadow:0 6px 16px rgba(14,139,208,.35)}
 #meetupPlanningSection,#liveMeetupSection{display:none}
 body.rev-tab-group #meetupPlanningSection,body.rev-tab-group #liveMeetupSection{display:block}
 body.rev-tab-group .hero-card,body.rev-tab-group #evpResult,body.rev-tab-group #resumeSection,body.rev-tab-group #savedPlansSection,body.rev-tab-group section[aria-labelledby="recentTitle"],body.rev-tab-group section[aria-labelledby="toolsTitle"]{display:none!important}
@@ -132,7 +132,7 @@ body.rev-tab-group .hero-card,body.rev-tab-group #evpResult,body.rev-tab-group #
 <style id="evp-guard-style">
 #evpStaleBar{background:#fff7e8;border:1px solid #f0c36d;color:#8a6d1f;border-radius:14px;padding:10px 12px;font-size:12.5px;margin-top:10px;display:flex;gap:10px;align-items:center;justify-content:space-between;line-height:1.9}
 #evpStaleBar[hidden]{display:none}
-#evpStaleRecalc{flex:0 0 auto;min-height:36px;border:0;border-radius:10px;background:#0887a7;color:#fff;font:800 12px Tahoma,sans-serif;padding:0 14px;cursor:pointer}
+#evpStaleRecalc{flex:0 0 auto;min-height:36px;border:0;border-radius:10px;background:#0e8bd0;color:#fff;font:800 12px Tahoma,sans-serif;padding:0 14px;cursor:pointer}
 #evpExecModal{position:fixed;inset:0;background:rgba(10,25,35,.55);z-index:100000;display:grid;place-items:center;padding:18px}
 #evpExecModal[hidden]{display:none}
 .evp-exec-card{background:#fff;border-radius:20px;max-width:420px;width:100%;padding:18px;color:#14293b;box-shadow:0 24px 60px rgba(0,0,0,.35)}
@@ -140,7 +140,7 @@ body.rev-tab-group .hero-card,body.rev-tab-group #evpResult,body.rev-tab-group #
 .evp-exec-card p{font-size:13px;line-height:2;color:#3c5266}
 #evpExecBtns{display:grid;gap:8px;margin-top:12px}
 .evp-exec-btn{min-height:44px;border-radius:12px;border:1.5px solid #d5e2ec;background:#fff;font-family:Tahoma,sans-serif;font-size:13px;font-weight:800;cursor:pointer;color:#14293b}
-.evp-exec-btn.primary{background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;border:0}
+.evp-exec-btn.primary{background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff;border:0}
 </style>
 </head>
 <body class="has-bottom-nav">
@@ -163,8 +163,8 @@ body.rev-tab-group .hero-card,body.rev-tab-group #evpResult,body.rev-tab-group #
   </div>
 
   <a href="./energy-assistant.html?from=trips" style="display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border:1px solid #cbe6f0;border-radius:15px;background:#f1f9fc;color:#17253b;text-decoration:none">
-    <span aria-hidden="true" style="width:38px;height:38px;display:grid;place-items:center;background:#e5f3f8;color:#0887a7;border-radius:12px;font-size:21px">⚡</span>
-    <span style="flex:1;min-width:0"><b style="display:block;font-size:13px">دستیار انرژی</b><small style="display:block;color:#65758b;font-size:11px">قبل از حرکت، برد و شارژ مقصد را تخمین بزن</small></span><span aria-hidden="true" style="color:#0887a7">←</span>
+    <span aria-hidden="true" style="width:38px;height:38px;display:grid;place-items:center;background:#e5f3f8;color:#0e8bd0;border-radius:12px;font-size:21px">⚡</span>
+    <span style="flex:1;min-width:0"><b style="display:block;font-size:13px">دستیار انرژی</b><small style="display:block;color:#65758b;font-size:11px">قبل از حرکت، برد و شارژ مقصد را تخمین بزن</small></span><span aria-hidden="true" style="color:#0e8bd0">←</span>
   </a>
 
   <section class="hero-card" aria-labelledby="planTitle" style="margin-top:18px">
@@ -1202,7 +1202,7 @@ function runPlan(){
             var mx=Math.max.apply(null,els),mn=Math.min.apply(null,els);
             route.elevMax=Math.round(mx);
             var pts=els.map(function(v,i){var x=(eIdx[i]/totalKm*340).toFixed(1);var y=(64-((v-mn)/Math.max(1,(mx-mn)))*52).toFixed(1);return x+','+y}).join(' ');
-            route.elevSvg='<svg viewBox="0 0 340 74" width="100%" height="74" aria-hidden="true"><polygon points="0,74 '+pts+' 340,74" fill="#cfe8f2"/><polyline points="'+pts+'" fill="none" stroke="#0887a7" stroke-width="2.5"/></svg>';
+            route.elevSvg='<svg viewBox="0 0 340 74" width="100%" height="74" aria-hidden="true"><polygon points="0,74 '+pts+' 340,74" fill="#cfe8f2"/><polyline points="'+pts+'" fill="none" stroke="#0e8bd0" stroke-width="2.5"/></svg>';
             route.factorAt=function(a,b){
               var gain=0,loss=0;
               for(var i=1;i<els.length;i++){ if(eIdx[i]>=a&&eIdx[i]<=b){var d=els[i]-els[i-1]; if(d>0)gain+=d; else loss-=d; } }

@@ -7,7 +7,7 @@
 <meta name="description" content="پنل راننده یدک‌کش REV — دریافت و پذیرش درخواست امداد خودروی برقی">
 <title>پنل راننده یدک‌کش | REV</title>
 <link rel="stylesheet" href="https://mojtabaalimi64-cloud.github.io/rev-mobile/rev-visual-identity.css?v=20261017-3">
-<link rel="stylesheet" href="./rev-design-option-1.css?v=6">
+<link rel="stylesheet" href="./rev-design-option-1.css?v=7">
 <script src="./rev-auth-guard.js?v=20261019-1"></script>
 <script src="./rev-app-mode.js?v=20261019-11"></script>
 <style>
@@ -23,8 +23,8 @@
   .btn{display:block;width:100%;border:0;border-radius:12px;padding:13px;font:inherit;font-size:14.5px;font-weight:900;cursor:pointer;margin-top:14px}
   .btn:active{transform:scale(.98)}
   .btn:disabled{opacity:.5;cursor:default}
-  .btn-teal{background:linear-gradient(135deg,#0887a7,#066d88);color:#fff}
-  .btn-ghost{background:#fff;color:#066d88;border:1.5px solid #cbe6f0}
+  .btn-teal{background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff}
+  .btn-ghost{background:#fff;color:#0a6a96;border:1.5px solid #cbe6f0}
   .btn-red{background:#fdf1f1;color:#a52820;border:1.5px solid #f0c9c6}
   .btn-green{background:#11703c;color:#fff}
   .btn-small{padding:8px 12px;font-size:12.5px;width:auto;margin-top:0}
@@ -35,7 +35,7 @@
   .pill.green{background:#dcf5e3;color:#11703c}
   .pill.grey{background:#eef1f3;color:#61707a}
   .pill.amber{background:#fdf0d7;color:#8a5a00}
-  .pill.teal{background:#e5f3f8;color:#066d88}
+  .pill.teal{background:#e5f3f8;color:#0a6a96}
   .offer{border:2px solid #b7791f;background:#fffdf4}
   .offer .timer{font-size:26px;font-weight:900;color:#b7791f;text-align:center;margin:6px 0}
   .offer .row,.row{font-size:13px;line-height:2}
@@ -45,7 +45,7 @@
   .gpsok{font-size:12px;color:#11703c;margin-top:6px;display:none}
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}
   .stat{background:#f7fafc;border:1px solid #e4edf3;border-radius:12px;padding:9px 4px;text-align:center}
-  .stat b{display:block;font-size:17px;color:#066d88}
+  .stat b{display:block;font-size:17px;color:#0a6a96}
   .stat span{font-size:10.5px;color:#687b8d}
   .mission{border:1px solid #e4edf3;border-radius:12px;padding:10px 12px;margin-top:8px;background:#fff}
   .mission .mtop{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -53,20 +53,20 @@
   .codebox{background:#eaf7fb;border:1px solid #cbe6f0;border-radius:10px;padding:10px;margin-top:8px;text-align:center;line-height:1.9}
 </style>
 <style id="tm-style">
-#missionCard{border:1.5px solid #bfe3ee;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(8,135,167,.14);margin-top:14px}
-#missionCard .tm-head{padding:12px 15px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;font-weight:900;font-size:15px;display:flex;gap:9px;align-items:center}
+#missionCard{border:1.5px solid #bfe3ee;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(14,139,208,.14);margin-top:14px}
+#missionCard .tm-head{padding:12px 15px;background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff;font-weight:900;font-size:15px;display:flex;gap:9px;align-items:center}
 #tmMap{height:250px;background:#e7eff4}
 .tm-body{padding:12px 15px}
 .tm-eta{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
-.tm-eta .big{font-size:23px;font-weight:900;color:#066d88}
+.tm-eta .big{font-size:23px;font-weight:900;color:#0a6a96}
 .tm-eta .sub{font-size:12.5px;color:#5b7183}
 .tm-info{background:#f4f9fb;border:1px solid #e2eef4;border-radius:13px;padding:10px 12px;margin-top:10px;font-size:13px;line-height:2}
 .tm-code{background:#eef7ee;border:1.5px dashed #57a773;border-radius:13px;padding:8px 12px;margin-top:10px;text-align:center;font-size:12.5px;color:#2e5d3a}
-.tm-code b{font-size:21px;letter-spacing:4px;color:#066d88;direction:ltr;display:inline-block}
+.tm-code b{font-size:21px;letter-spacing:4px;color:#0a6a96;direction:ltr;display:inline-block}
 .tm-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .tm-btns a,.tm-btns button{flex:1;min-width:100px;min-height:46px;border-radius:12px;display:grid;place-items:center;font:800 13px Tahoma,sans-serif;text-decoration:none;cursor:pointer;border:0}
-.tm-call{background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff}
-.tm-nav{background:#fff;border:1.5px solid #bfe3ee!important;color:#066d88}
+.tm-call{background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff}
+.tm-nav{background:#fff;border:1.5px solid #bfe3ee!important;color:#0a6a96}
 .tm-done{background:#e9f8f0;color:#087b48;border:1.5px solid #a9dfc0!important}
 .tm-tips{margin-top:12px;background:#fff7e8;border:1px solid #f0c36d;border-radius:13px;padding:10px 13px;font-size:12.5px;line-height:2.05;color:#6b5518}
 .tm-tips ul{margin:0;padding-right:17px}
@@ -389,7 +389,7 @@
   function showDone(last){
     if(!last)return;
     $('doneBody').innerHTML='<b>مشکل:</b> '+esc(last.problem)+'<br><b>مشتری:</b> <a href="tel:'+esc(last.phone)+'" dir="ltr">'+esc(last.phone)+'</a><br><b>موقعیت:</b> '+esc(last.loc||'—')
-      +(last.serviceCode?'<div class="codebox">🔐 <b>کد اختصاصی امداد REV</b><br><span dir="ltr" style="font-size:24px;font-weight:900;letter-spacing:4px;color:#066d88">'+esc(last.serviceCode)+'</span><br><span style="font-size:12px">وقتی رسیدی از مشتری بخواه این کد را بگوید؛ این کد ثابت می‌کند امداد از طرف REV است.</span></div>':'');
+      +(last.serviceCode?'<div class="codebox">🔐 <b>کد اختصاصی امداد REV</b><br><span dir="ltr" style="font-size:24px;font-weight:900;letter-spacing:4px;color:#0a6a96">'+esc(last.serviceCode)+'</span><br><span style="font-size:12px">وقتی رسیدی از مشتری بخواه این کد را بگوید؛ این کد ثابت می‌کند امداد از طرف REV است.</span></div>':'');
     $('doneCard').classList.remove('hidden');
   }
 
@@ -563,7 +563,7 @@ function updateRoute(cu){
     $('tmEta').textContent='حدود '+fa(Math.max(1,Math.round(r0.duration/60)))+' دقیقه تا مشتری';
     $('tmDist').textContent='فاصله جاده‌ای: '+fa(Math.round(r0.distance/100)/10)+' کیلومتر';
     var coords=r0.geometry.coordinates.map(function(c){return [c[1],c[0]]});
-    if(routeLine)routeLine.setLatLngs(coords);else routeLine=L.polyline(coords,{color:'#0887a7',weight:5,opacity:.85}).addTo(map);
+    if(routeLine)routeLine.setLatLngs(coords);else routeLine=L.polyline(coords,{color:'#0e8bd0',weight:5,opacity:.85}).addTo(map);
     try{map.fitBounds(routeLine.getBounds(),{padding:[28,28]})}catch(e){}
   }).catch(function(){etaBusy=false});
 }

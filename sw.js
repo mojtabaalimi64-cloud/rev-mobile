@@ -1,4 +1,4 @@
-const CACHE_NAME = "rev-mobile-shell-v81";
+const CACHE_NAME = "rev-mobile-shell-v82";
 // Keep the new mobile information pages available in the install/offline shell.
 const SHELL = ["./", "./index.html", "./trips.html", "./nearby-map.html", "./nearby-map-ml.html", "./profile.html", "./businesses.html", "./experiences.html", "./tow-driver.html", "./news.html", "./safety-checklist.html", "./rev-app-mode.js", "./rev-auth-guard.js", "./rev-visual-identity.css", "./rev-mobile-theme.css", "./rev-design-option-1.css", "./rev-announcements.js", "./energy-assistant.html", "./rev-energy-core.js", "./rev-energy-map.js", "./manifest.webmanifest", "./rev-app-icon.svg"];
 
@@ -24,7 +24,7 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const url = event.request.url;
   // فایل ناوبری همیشه تازه
-  if (url.includes("rev-app-mode.js")) {
+  if (url.includes("rev-app-mode.js") || url.includes("rev-design-option-1.css") || url.includes("rev-mobile-theme.css") || url.includes("rev-visual-identity.css")) {
     event.respondWith(fetch(url, {cache: "reload"}).then(r => {
       const copy = r.clone();
       caches.open(CACHE_NAME).then(c => c.put(event.request, copy));

@@ -1,7 +1,7 @@
 /* REV mobile design option 1 — presentation-only layer.
    Intentionally changes no IDs, DOM structure, event handlers, API calls or navigation logic. */
 :root{
-  --rev-o1-blue:#087FA5;--rev-o1-blue-dark:#075B78;--rev-o1-ink:#172B3A;
+  --rev-o1-blue:#0e8bd0;--rev-o1-blue-dark:#0a6a96;--rev-o1-ink:#172B3A;
   --rev-o1-muted:#64748B;--rev-o1-border:#DCE5EF;--rev-o1-surface:#F2F6FA;
   --rev-o1-white:#FFFFFF;--rev-o1-shadow:0 8px 24px rgba(23,43,58,.08);
 }
@@ -9,7 +9,7 @@ html{color-scheme:light}
 body{background:var(--rev-o1-surface);color:var(--rev-o1-ink);font-family:Vazirmatn,Vazir,Tahoma,sans-serif}
 button,input,select,textarea{font-family:inherit}
 button,a,[role=button]{-webkit-tap-highlight-color:transparent}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(8,127,165,.35);outline-offset:2px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(14,139,208,.35);outline-offset:2px}
 button{transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease}
 button:active{transform:translateY(1px)}
 /* Primary actions share one calm blue, without touching disabled/hidden state. */
@@ -20,7 +20,7 @@ button.primary:hover,.primary-btn:hover,.btn-primary:hover,.search-go:hover,#sea
  background:var(--rev-o1-blue-dark);border-color:var(--rev-o1-blue-dark)
 }
 input,select,textarea{border-color:var(--rev-o1-border);border-radius:12px}
-input:focus,select:focus,textarea:focus{border-color:var(--rev-o1-blue);box-shadow:0 0 0 3px rgba(8,127,165,.12)}
+input:focus,select:focus,textarea:focus{border-color:var(--rev-o1-blue);box-shadow:0 0 0 3px rgba(14,139,208,.12)}
 /* Map page: white cards, spacious controls, clearer type. */
 header{background:#fff;color:var(--rev-o1-ink);border-color:var(--rev-o1-border);box-shadow:0 2px 10px rgba(23,43,58,.035)}
 header a{color:var(--rev-o1-blue)}
@@ -187,7 +187,7 @@ a{ -webkit-tap-highlight-color:rgba(37,99,235,.12); }
    circular floating map buttons, ring gauges, hairline list rows.
    Reverse-engineered competitor points: Google Maps capsule search + filter chips
    and bottom-sheet depth; Waze circular floating actions; iOS-style grouped rows. */
-:root{--rev-d1-accent:#087FA5;--rev-d1-accent-deep:#075B78;--rev-d1-ink:#172B3A;--rev-d1-muted:#64748B;--rev-d1-line:#E1EAF2;--rev-d1-shadow-soft:0 10px 30px rgba(23,43,58,.07);--rev-d1-shadow-lift:0 12px 32px rgba(23,43,58,.13)}
+:root{--rev-d1-accent:#0e8bd0;--rev-d1-accent-deep:#0a6a96;--rev-d1-ink:#172B3A;--rev-d1-muted:#64748B;--rev-d1-line:#E1EAF2;--rev-d1-shadow-soft:0 10px 30px rgba(23,43,58,.07);--rev-d1-shadow-lift:0 12px 32px rgba(23,43,58,.13)}
 /* Cards & panels: rounder, softer, more air */
 .card,.hero-card,.list-card,.ob-card{border-radius:20px!important;border-color:var(--rev-d1-line)!important;box-shadow:var(--rev-d1-shadow-soft)!important}
 input,select,textarea{border-radius:12px!important;border-color:#DCE5EF!important}
@@ -208,7 +208,7 @@ input,select,textarea{border-radius:12px!important;border-color:#DCE5EF!importan
 #routePanel{border-radius:22px!important;box-shadow:0 18px 44px rgba(23,43,58,.2)!important}
 #rev-live-energy-advice{border-radius:18px!important;box-shadow:var(--rev-d1-shadow-lift)!important}
 /* Energy assistant ring gauge (Design 1 signature) */
-.soc-ring{background:conic-gradient(var(--rev-d1-accent) var(--soc-angle),#E9F1F7 var(--soc-angle))!important;width:124px!important;height:124px!important;box-shadow:0 12px 28px rgba(8,127,165,.15)}
+.soc-ring{background:conic-gradient(var(--rev-d1-accent) var(--soc-angle),#E9F1F7 var(--soc-angle))!important;width:124px!important;height:124px!important;box-shadow:0 12px 28px rgba(14,139,208,.15)}
 /* Service rows: grouped-list look, generous touch height */
 .row-item{min-height:60px!important;border-radius:18px!important}
 .service-tabs button{border-radius:999px!important}
@@ -224,3 +224,22 @@ input,select,textarea{border-radius:12px!important;border-color:#DCE5EF!importan
 .bottom-nav a svg{width:22px!important;height:22px!important}
 .news-filter{border-radius:999px!important}
 .news-filter.active{background:var(--rev-d1-accent)!important;border-color:var(--rev-d1-accent)!important;color:#fff!important}
+
+/* === v7 — Palette & Type (Design 1, brighter azure + Vazirmatn) ===
+   User lifted the old color lock (23 Oct): palette and type may change freely.
+   Delivery fix: sw.js treats this file as always-fresh and shell version bumps,
+   so design changes actually reach the device instead of dying in cache. */
+@font-face{font-family:'Vazirmatn';src:url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Vazirmatn';src:url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Vazirmatn';src:url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Vazirmatn';src:url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
+:root{
+ --rev-o1-blue:#0E8BD0;--rev-o1-blue-dark:#0A6A96;
+ --rev-d1-accent:#0E8BD0;--rev-d1-accent-deep:#0A6A96;
+}
+html,body,button,input,select,textarea{font-family:'Vazirmatn',Tahoma,sans-serif!important}
+button.primary,.primary-btn,.btn-primary,.search-go,#searchSubmit,#routeToggle,.route-submit{
+ background:linear-gradient(135deg,#0E8BD0,#0A6A96)!important;border-color:#0A6A96!important;color:#fff!important}
+.bottom-nav a.active,.bottom-nav a[aria-current="page"]{background:#E9F5FC!important;color:#0E8BD0!important}
+.port-opt.sel{background:#EAF6FD!important;border-color:#0E8BD0!important}
+.news-filter.active{background:#0E8BD0!important;border-color:#0E8BD0!important}

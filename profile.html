@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#080B0D"><meta name="color-scheme" content="light"><title>پروفایل راننده و تحلیل مصرف | REV</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css'">
 <style>
-:root{color-scheme:light;--bg:#f2f6f9;--panel:#ffffff;--line:#e4edf3;--text:#14293b;--muted:#7e93a6;--teal:#0887a7;--teal-dark:#066d88;--teal-soft:#e5f3f8;--teal-line:#cbe6f0;--amber:#b7791f;--amber-bg:#fdf6e3;--red:#cf4444;--red-bg:#fdf1f1;--shadow:0 4px 18px rgba(20,41,59,.06);--radius:18px}
+:root{color-scheme:light;--bg:#f2f6f9;--panel:#ffffff;--line:#e4edf3;--text:#14293b;--muted:#7e93a6;--teal:#0e8bd0;--teal-dark:#0a6a96;--teal-soft:#e5f3f8;--teal-line:#cbe6f0;--amber:#b7791f;--amber-bg:#fdf6e3;--red:#cf4444;--red-bg:#fdf1f1;--shadow:0 4px 18px rgba(20,41,59,.06);--radius:18px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,Vazir,IRANSansX,Tahoma,sans-serif;line-height:1.7;font-size:15px}
 a{color:var(--teal);text-decoration:none}
@@ -24,7 +24,7 @@ button,input,select,textarea{font:inherit}
 .dp-tabs{position:sticky;top:10px;z-index:60;display:flex;gap:6px;padding:6px;margin:0 0 14px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
 .dp-tabs button{flex:1;border:0;border-radius:11px;background:transparent;color:var(--muted);font-weight:800;font-size:13px;padding:11px 6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px}
 .dp-tabs button .ico{font-size:16px}
-.dp-tabs button.active{background:var(--teal);color:#fff;box-shadow:0 4px 12px rgba(8,135,167,.3)}
+.dp-tabs button.active{background:var(--teal);color:#fff;box-shadow:0 4px 12px rgba(14,139,208,.3)}
 /* flatten old dashboard layout — tabs control visibility */
 .dashboard,.sidebar,.workspace{display:contents}
 .tab-hidden{display:none!important}
@@ -39,12 +39,12 @@ button,input,select,textarea{font:inherit}
 .pill{display:inline-block;font-size:10px;border:1px solid var(--teal-line);color:var(--teal-dark);background:var(--teal-soft);border-radius:99px;padding:2px 9px;white-space:nowrap;font-weight:800}
 /* identity */
 .identity{display:flex;gap:14px;align-items:center}
-.user-avatar{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#0b93b8,#066d88);color:#fff;font-size:24px;font-weight:900}
+.user-avatar{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff;font-size:24px;font-weight:900}
 .identity-name{font-size:18px;font-weight:900}
 .vehicle-chip{display:inline-block;margin-top:4px;font-size:11px;color:var(--teal-dark);background:var(--teal-soft);border:1px solid var(--teal-line);border-radius:99px;padding:2px 10px;font-weight:700}
 /* buttons */
 .btn{display:inline-flex;justify-content:center;align-items:center;gap:7px;padding:11px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--text);font-size:13px;font-weight:800;cursor:pointer;min-height:46px}
-.btn.primary,.btn:not(.secondary):not(.danger){background:linear-gradient(135deg,#0b93b8,#066d88);border-color:var(--teal);color:#fff}
+.btn.primary,.btn:not(.secondary):not(.danger){background:linear-gradient(135deg,#0e8bd0,#0a6a96);border-color:var(--teal);color:#fff}
 .btn.secondary{background:#fff;color:var(--teal-dark);border-color:var(--teal-line)}
 .btn.danger{background:var(--red-bg);color:var(--red);border-color:#f0c9c9}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -76,7 +76,7 @@ button,input,select,textarea{font:inherit}
 .live-stat b{font-size:17px;font-variant-numeric:tabular-nums}
 /* battery bars */
 .bar{height:9px;border-radius:99px;background:#edf1f5;overflow:hidden;margin-top:6px}
-.barrow{height:100%;border-radius:99px;background:linear-gradient(90deg,#0b93b8,#066d88)}
+.barrow{height:100%;border-radius:99px;background:linear-gradient(90deg,#0e8bd0,#0a6a96)}
 .health-visual{display:flex;align-items:center;gap:14px}
 .health-ring{width:86px;height:86px;flex:0 0 86px}
 .health-info{font-size:12px;color:var(--muted)}
@@ -120,7 +120,7 @@ label{font-size:12px;color:var(--muted)}
 body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 /* driver behavior analysis — compact */
-.da-predict{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0887a7,#066d88);color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.da-predict{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:10px}
 .da-predict .da-big{font-size:26px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap}
 .da-predict .da-cap{font-size:10px;opacity:.9;line-height:1.5}
 .da-predict .da-side{margin-inline-start:auto;text-align:end;font-size:11px;line-height:1.7}
@@ -145,7 +145,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 <style id="navigationGateStyle">#navigationGate{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#080b0d,#102126);color:#f5f7f8;font:16px/1.9 Vazirmatn,Vazir,Tahoma,sans-serif}#navigationGate[hidden]{display:none!important}.gate-card{width:min(100%,600px);padding:26px;border:1px solid #2a343a;border-radius:18px;background:#121a1f;box-shadow:0 20px 70px #0008}.gate-card h1{font-size:26px;line-height:1.5}.gate-card p{color:#aab6bc}.gate-card a,.gate-card button{display:inline-block;margin:6px 5px 0 0;border-radius:10px;padding:10px 14px;text-decoration:none;font:inherit;font-weight:800;cursor:pointer}.gate-primary{background:#39ff88;color:#07100b;border:1px solid #39ff88}.gate-secondary{background:transparent;color:#39ff88;border:1px solid #395648}#navigationGateStatus{margin-top:12px;color:#ffdda0;white-space:pre-wrap;font-size:13px}</style>
 <link rel="stylesheet" href="./rev-mobile-theme.css?v=20261017-7">
-<link rel="stylesheet" href="./rev-design-option-1.css?v=6">
+<link rel="stylesheet" href="./rev-design-option-1.css?v=7">
 <style id="rev-mobile-profile-overrides">:root{--teal:#0866ff;--teal-dark:#0756d8;--teal-soft:#eaf1ff;--teal-line:#c8d9ff}a{color:#0866ff}.dp-tabs button.active,.btn.primary,.btn:not(.secondary):not(.danger){background:#0866ff!important;border-color:#0866ff!important;color:#fff!important}.bottom-nav a.active{color:#0866ff;background:#eaf1ff}</style>
 
 <style id="rev-mobile-profile-shell">
@@ -275,16 +275,16 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   </main>
 </div>
 <section data-tab="group" id="revLiveSharePanel" dir="rtl" style="width:100%;margin:0 0 14px;padding:20px;border:1px solid #e4edf3;border-radius:20px;background:#ffffff;color:#14293b;font-family:Vazirmatn,Vazir,Tahoma,sans-serif">
-  <div style="color:#0887a7;font-size:12px;font-weight:800">اشتراک زنده سفر</div>
+  <div style="color:#0e8bd0;font-size:12px;font-weight:800">اشتراک زنده سفر</div>
   <h2 style="margin:3px 0 6px;font-size:23px">اشتراک‌گذاری زنده موقعیت سفر</h2>
   <p style="margin:0;color:#7e93a6;font-size:14px">با رضایت خودت، موقعیت فعلی دستگاه برای یک لینک خصوصی ارسال می‌شود. لینک حداکثر ۸ ساعت اعتبار دارد و هر لحظه می‌توانی اشتراک را متوقف کنی. موقعیت فقط هنگام فعال بودن این قابلیت ارسال می‌شود.</p>
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px">
     <label style="font-size:13px;color:#3c5266">مدت اعتبار <select id="revShareHours" style="margin-inline-start:6px;padding:8px;border-radius:9px;border:1px solid #d5e2ec;background:#f7fafc;color:#14293b;font:inherit"><option value="1">۱ ساعت</option><option value="2" selected>۲ ساعت</option><option value="4">۴ ساعت</option><option value="8">۸ ساعت</option></select></label>
-    <button id="revStartLiveShare" type="button" style="border:1px solid #0887a7;border-radius:10px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#ffffff;font-weight:800;padding:10px 15px;cursor:pointer;font:inherit">شروع اشتراک زنده</button>
+    <button id="revStartLiveShare" type="button" style="border:1px solid #0e8bd0;border-radius:10px;background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#ffffff;font-weight:800;padding:10px 15px;cursor:pointer;font:inherit">شروع اشتراک زنده</button>
     <button id="revStopLiveShare" type="button" disabled style="border:1px solid #f0c9c9;border-radius:10px;background:#fdf1f1;color:#cf4444;padding:10px 15px;cursor:pointer;font:inherit">توقف و لغو لینک</button>
   </div>
   <div id="revShareStatus" role="status" aria-live="polite" style="margin-top:12px;padding:10px 12px;border:1px solid #e4edf3;border-radius:10px;background:#f7fafc;color:#3c5266;font-size:13px">اشتراک زنده خاموش است.</div>
-  <div id="revShareLinkWrap" hidden style="margin-top:10px"><label for="revShareLink" style="display:block;color:#7e93a6;font-size:12px;margin-bottom:5px">لینک برای خانواده یا دوستان</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="revShareLink" readonly style="flex:1;min-width:220px;padding:10px;border-radius:9px;border:1px solid #d5e2ec;background:#f7fafc;color:#0887a7;font:inherit"><button id="revCopyShareLink" type="button" style="border:1px solid #cbe6f0;border-radius:10px;background:#e5f3f8;color:#0887a7;padding:9px 13px;cursor:pointer;font:inherit">کپی لینک</button></div></div>
+  <div id="revShareLinkWrap" hidden style="margin-top:10px"><label for="revShareLink" style="display:block;color:#7e93a6;font-size:12px;margin-bottom:5px">لینک برای خانواده یا دوستان</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="revShareLink" readonly style="flex:1;min-width:220px;padding:10px;border-radius:9px;border:1px solid #d5e2ec;background:#f7fafc;color:#0e8bd0;font:inherit"><button id="revCopyShareLink" type="button" style="border:1px solid #cbe6f0;border-radius:10px;background:#e5f3f8;color:#0e8bd0;padding:9px 13px;cursor:pointer;font:inherit">کپی لینک</button></div></div>
   <p style="font-size:12px;color:#7e93a6;margin:12px 0 0">برای کارکردن، GPS دستگاه و اینترنت باید روشن باشد. در این نسخه فقط آخرین مختصات ذخیره می‌شود؛ این قابلیت جایگزین خدمات اضطراری نیست.</p>
 </section>
 <script>
@@ -332,8 +332,8 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 <section data-tab="history" id="revTripتاریخچهPanel" dir="rtl" style="width:100%;margin:0 0 14px;padding:20px;border:1px solid #e4edf3;border-radius:20px;background:#ffffff;color:#14293b;font-family:Vazirmatn,Vazir,Tahoma,sans-serif">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
-    <div><div style="color:#0887a7;font-size:12px;font-weight:800">تحلیل رانندگی REV</div><h2 style="margin:3px 0 6px;font-size:23px">تاریخچه سفر و تحلیل مصرف</h2><p style="margin:0;color:#7e93a6;font-size:14px">سفرهای انجام‌شده را ثبت کن تا میانگین مصرف واقعی حساب تو به‌مرور دقیق‌تر شود. اطلاعات در حساب کاربری ذخیره می‌شود.</p></div>
-    <button id="revTripsRefresh" type="button" style="border:1px solid #cbe6f0;border-radius:10px;background:#e5f3f8;color:#0887a7;padding:9px 13px;cursor:pointer;font:inherit">به‌روزرسانی</button>
+    <div><div style="color:#0e8bd0;font-size:12px;font-weight:800">تحلیل رانندگی REV</div><h2 style="margin:3px 0 6px;font-size:23px">تاریخچه سفر و تحلیل مصرف</h2><p style="margin:0;color:#7e93a6;font-size:14px">سفرهای انجام‌شده را ثبت کن تا میانگین مصرف واقعی حساب تو به‌مرور دقیق‌تر شود. اطلاعات در حساب کاربری ذخیره می‌شود.</p></div>
+    <button id="revTripsRefresh" type="button" style="border:1px solid #cbe6f0;border-radius:10px;background:#e5f3f8;color:#0e8bd0;padding:9px 13px;cursor:pointer;font:inherit">به‌روزرسانی</button>
   </div>
   <div id="revTripsStatus" role="status" aria-live="polite" style="margin:14px 0;padding:10px 12px;border:1px solid #e4edf3;border-radius:10px;background:#f7fafc;color:#3c5266;font-size:13px">برای بارگذاری تاریخچه، وضعیت ورود بررسی می‌شود…</div>
   <div id="revTripInsightCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:12px 0">
@@ -352,7 +352,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
     <label style="display:grid;gap:5px;font-size:13px;color:#3c5266">شارژ باتری در پایان (%)<input name="end_soc" type="number" min="0" max="100" step="1" placeholder="اختیاری" style="width:100%;padding:10px;border-radius:9px;border:1px solid #d5e2ec;background:#f7fafc;color:#14293b;font:inherit"></label>
     <label style="display:grid;gap:5px;font-size:13px;color:#3c5266">شروع سفر<input name="started_at" type="datetime-local" required style="width:100%;padding:10px;border-radius:9px;border:1px solid #d5e2ec;background:#f7fafc;color:#14293b;font:inherit"></label>
     <label style="display:grid;gap:5px;font-size:13px;color:#3c5266">پایان سفر<input name="ended_at" type="datetime-local" required style="width:100%;padding:10px;border-radius:9px;border:1px solid #d5e2ec;background:#f7fafc;color:#14293b;font:inherit"></label>
-    <div style="grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button type="submit" style="border:1px solid #0887a7;border-radius:10px;background:linear-gradient(135deg,#0b93b8,#066d88);color:#ffffff;font-weight:800;padding:10px 18px;cursor:pointer;font:inherit">ثبت سفر در حساب من</button><span style="color:#7e93a6;font-size:12px">فقط اطلاعاتی که خودت وارد می‌کنی ذخیره می‌شود؛ موقعیت GPS ثبت نمی‌شود.</span></div>
+    <div style="grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button type="submit" style="border:1px solid #0e8bd0;border-radius:10px;background:linear-gradient(135deg,#0e8bd0,#0a6a96);color:#ffffff;font-weight:800;padding:10px 18px;cursor:pointer;font:inherit">ثبت سفر در حساب من</button><span style="color:#7e93a6;font-size:12px">فقط اطلاعاتی که خودت وارد می‌کنی ذخیره می‌شود؛ موقعیت GPS ثبت نمی‌شود.</span></div>
   </form>
   <div style="margin-top:20px"><h3 style="font-size:18px;margin:0 0 10px">آخرین سفرها</h3><div id="revTripsList" style="display:grid;gap:9px"><div style="color:#7e93a6;font-size:13px">هنوز داده‌ای بارگذاری نشده است.</div></div></div>
 </section>
@@ -651,7 +651,7 @@ function bars(items){
   items.forEach(function(it,i){
     var h=Math.max(2,(H-pT-pB)*(it.value/max));
     var x=pL+slot*i+(slot-bw)/2,y=H-pB-h;
-    s+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="4" fill="'+(it.color||'#0887a7')+'"/>';
+    s+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="4" fill="'+(it.color||'#0e8bd0')+'"/>';
     s+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(y-5).toFixed(1)+'" font-size="9.5" fill="#14293b" text-anchor="middle" font-weight="700">'+esc(it.top)+'</text>';
     s+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(H-10)+'" font-size="9" fill="#7e93a6" text-anchor="middle">'+esc(it.label)+'</text>';});
   return s+'</svg>';
@@ -785,7 +785,7 @@ function render(trips,ins){
   // consumption
   var cs=last12.map(function(t){var d=Number(t.distance_km),e=Number(t.energy_kwh);return(d>0&&e>0)?{label:shortDate(t.ended_at),top:fa(e/d*100,1),value:e/d*100}:null}).filter(Boolean);
   html+='<div class="analysis-box"><h3>مصرف انرژی سفرها</h3><div class="sub">kWh/100km</div>'
-    +(cs.length?bars(cs.map(function(x){x.color='#0b93b8';return x})): '<div class="muted">برای رسم نمودار، سفرهای دارای داده انرژی ثبت کنید.</div>')+'</div>';
+    +(cs.length?bars(cs.map(function(x){x.color='#0e8bd0';return x})): '<div class="muted">برای رسم نمودار، سفرهای دارای داده انرژی ثبت کنید.</div>')+'</div>';
   // events
   var ev=last12.map(function(t){var ds=t.driving_stats||{};var a=Number(ds.hard_acceleration_events)||0,b=Number(ds.hard_braking_events)||0;
     return(a>0||b>0||ds.average_speed_kmh!=null)?{label:shortDate(t.ended_at),a:a,b:b}:null}).filter(Boolean);
@@ -796,7 +796,7 @@ function render(trips,ins){
   var gradeBox;
   if(gr.points>10){
     var gi=[{label:'سربالایی',top:gr.up!=null?fa(gr.up,0):'—',value:gr.up||0,color:'#e8a13d'},
-            {label:'هموار',top:gr.flat!=null?fa(gr.flat,0):'—',value:gr.flat||0,color:'#0887a7'},
+            {label:'هموار',top:gr.flat!=null?fa(gr.flat,0):'—',value:gr.flat||0,color:'#0e8bd0'},
             {label:'سرپایینی',top:gr.down!=null?fa(gr.down,0):'—',value:gr.down||0,color:'#1ea56c'}];
     gradeBox='<h3>میانگین سرعت در شیب مسیر</h3><div class="sub">km/h · از '+fa(gr.points,0)+' نقطه دارای ارتفاع</div>'+bars(gi);
   }else{

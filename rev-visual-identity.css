@@ -7,17 +7,17 @@
 }
 :root{
   color-scheme:light;
-  --teal:#246BFD;          /* primary action blue */
+  --teal:#0e8bd0;          /* primary action blue */
   --teal-dark:#1557D4;     /* pressed / gradient end */
   --teal-deep:#1744A0;     /* deep gradient start */
-  --teal-soft:#EAF1FF;     /* icon chips, soft fills */
-  --teal-softer:#F4F7FF;   /* hero card wash */
+  --teal-soft:#E9F5FC;     /* icon chips, soft fills */
+  --teal-softer:#F3F9FC;   /* hero card wash */
   --ink:#14293b;
   --muted:#7e93a6;
   --line:#e4edf3;
   --bg:#FFFFFF;
   --surface:#ffffff;
-  --green:#246BFD; --green-soft:#EAF1FF;
+  --green:#0e8bd0; --green-soft:#E9F5FC;
   --red:#df5454;   --red-soft:#fdecec;
   --amber:#f0a02c; --amber-soft:#fdf3e0;
   --radius:18px;
