@@ -1301,4 +1301,17 @@ body.rev-navigating #navStartFloat{display:none!important}
  modal.querySelectorAll('[data-voice-command]').forEach(function(b){b.addEventListener('click',function(){runCommand(b.getAttribute('data-voice-command'))})});
 })();
 </script>
+<style id="revVoiceAssistantPositionFix">
+/* Keep voice assistant clear of the map-registration action and above map controls. */
+#revVoiceFab{
+  position:fixed!important;
+  left:14px!important;
+  right:auto!important;
+  bottom:calc(235px + env(safe-area-inset-bottom))!important;
+  z-index:2400!important;
+}
+@media(max-width:380px){
+  #revVoiceFab{left:10px!important;bottom:calc(235px + env(safe-area-inset-bottom))!important}
+}
+</style>
 </body></html>
