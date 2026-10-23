@@ -1197,7 +1197,7 @@ body.rev-navigating #navStartFloat{display:none!important}
 })();
 </script>
 <style id="revVoiceAssistantStyles">
-#revVoiceFab{position:fixed;z-index:1200;left:14px;bottom:calc(145px + env(safe-area-inset-bottom));width:54px;height:54px;border:0;border-radius:19px;background:linear-gradient(145deg,#3B82F6,#1744A0);color:#fff;box-shadow:0 8px 22px rgba(36,107,253,.3);display:grid;place-items:center;cursor:pointer}
+#revVoiceFab{position:fixed;z-index:1600;left:14px;bottom:calc(220px + env(safe-area-inset-bottom));width:54px;height:54px;border:0;border-radius:19px;background:linear-gradient(145deg,#3B82F6,#1744A0);color:#fff;box-shadow:0 8px 22px rgba(36,107,253,.3);display:grid;place-items:center;cursor:pointer}
 #revVoiceFab svg{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #revVoiceFab[aria-pressed="true"]{background:linear-gradient(145deg,#ef4444,#b91c1c);animation:revVoicePulse 1.4s infinite}
 @keyframes revVoicePulse{50%{box-shadow:0 0 0 8px rgba(239,68,68,.12),0 8px 22px rgba(36,107,253,.18)}}
@@ -1216,7 +1216,7 @@ body.rev-navigating #navStartFloat{display:none!important}
 #revVoiceAssistant .rva-examples{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
 #revVoiceAssistant .rva-example{border:1px solid #dce7f5;background:#fff;color:#2456a6;border-radius:999px;padding:6px 10px;font:inherit;font-size:11px}
 #revVoiceAssistant .rva-privacy{font-size:10.5px;line-height:1.8;color:#7c8da1;margin-top:10px}
-@media(max-width:380px){#revVoiceAssistant .rva-card{padding:15px}#revVoiceFab{width:50px;height:50px;left:10px}}
+@media(max-width:380px){#revVoiceAssistant .rva-card{padding:15px}#revVoiceFab{width:50px;height:50px;left:10px;bottom:calc(220px + env(safe-area-inset-bottom))}}
 </style>
 <button id="revVoiceFab" type="button" aria-label="باز کردن دستیار صوتی REV" aria-pressed="false" title="دستیار صوتی REV">
 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg>
