@@ -480,7 +480,7 @@
   (function init(){
     var d=load();
     try{var last=JSON.parse(localStorage.getItem(KEY+'_last')||'null');if(last&&d)showDone(last)}catch(e){}
-    if(d&&d.token){syncFromServer()}else{showReg()}
+    if(d&&d.token){syncFromServer()}else{showLogin()}
   })();
 })();
 </script>
