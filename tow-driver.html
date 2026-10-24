@@ -82,11 +82,21 @@
   <div class="hello">🚛 پنل راننده یدک‌کش</div>
   <div class="sub">درخواست‌های امداد نزدیک تو اینجا میاد؛ ۳ دقیقه فرصت داری قبول یا رد کنی.</div>
 
+  <section class="card" id="loginCard">
+    <h3>ورود راننده یدک‌کش</h3>
+    <div class="field"><label for="loginPhone">شماره موبایل</label><input id="loginPhone" type="tel" inputmode="numeric" autocomplete="tel" dir="ltr" placeholder="09123456789"></div>
+    <div class="field"><label for="loginPassword">رمز عبور</label><input id="loginPassword" type="password" autocomplete="current-password" dir="ltr" placeholder="رمز حساب راننده"></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-teal" id="loginSubmit" type="button">ورود به پنل راننده</button>
+    <p class="note">راننده جدید هستی؟ <button class="btn btn-ghost btn-small" type="button" id="goRegister">ثبت‌نام راننده جدید</button></p>
+  </section>
   <!-- ثبت‌نام راننده -->
-  <section class="card" id="regCard">
+  <section class="card hidden" id="regCard">
     <h3>ثبت‌نام راننده همکار</h3>
     <div class="field"><label for="dName">نام و نام خانوادگی</label><input id="dName" placeholder="مثلاً محمد کریمی"></div>
     <div class="field"><label for="dPhone">شماره موبایل</label><input id="dPhone" inputmode="numeric" dir="ltr" style="text-align:left" placeholder="09123456789"></div>
+    <div class="field"><label for="dPassword">رمز عبور (حداقل ۸ نویسه)</label><input id="dPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" dir="ltr"></div>
+    <div class="field"><label for="dPasswordConfirm">تکرار رمز عبور</label><input id="dPasswordConfirm" type="password" autocomplete="new-password" minlength="8" maxlength="128" dir="ltr"></div>
     <div class="field"><label for="dVehicle">خودروبر و پلاک</label><input id="dVehicle" placeholder="مثلاً کفی نیسان — ۲۲ ب ۳۴۵ ایران ۶۶"></div>
     <div class="field"><label for="dCity">شهر محل خدمت</label><input id="dCity" placeholder="مثلاً تهران"></div>
     <div class="field"><label for="dRadius">شعاع پوشش (کیلومتر)</label>
@@ -99,6 +109,7 @@
     <div class="err" id="regErr"></div>
     <button class="btn btn-teal" id="dRegister">ثبت‌نام راننده</button>
     <p class="note">بعد از ثبت‌نام، مدیر REV مشخصاتت را بررسی و تأیید می‌کند؛ از لحظه تأیید، درخواست‌های امداد در شعاع پوششت برایت می‌آید.</p>
+    <p class="note"><button class="btn btn-ghost btn-small" type="button" id="goLogin">قبلاً ثبت‌نام کرده‌ام — ورود</button></p>
     <hr style="border:0;border-top:1px solid #eef1f3;margin:16px 0 4px">
     <div class="field"><label for="dTokenRestore">قبلاً ثبت‌نام کردی و توکن بازیابی داری؟</label>
       <div style="display:flex;gap:8px"><input id="dTokenRestore" dir="ltr" style="text-align:left;flex:1" placeholder="توکن دریافتی از مدیر"><button class="btn btn-ghost btn-small" id="dRestore" type="button">بازیابی</button></div>
@@ -173,6 +184,28 @@
   function faN(n){try{return Number(n).toLocaleString('fa-IR')}catch(e){return String(n)}}
   function faDate(ts){try{return new Date(ts).toLocaleDateString('fa-IR')+' '+new Date(ts).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
 
+  function showLogin(){
+    $('loginCard').classList.remove('hidden');
+    $('regCard').classList.add('hidden');
+    $('pendingCard').classList.add('hidden');
+    $('panelCard').classList.add('hidden');
+    $('statsCard').classList.add('hidden');
+  }
+  $('goRegister').addEventListener('click',showReg);
+  $('goLogin').addEventListener('click',showLogin);
+  $('loginSubmit').addEventListener('click',function(){
+    var phone=$('loginPhone').value.trim(),password=$('loginPassword').value;
+    $('loginErr').textContent='';
+    if(!/^09\\d{9}$/.test(phone)||!password){$('loginErr').textContent='شماره موبایل و رمز عبور را وارد کن.';return}
+    var btn=this;btn.disabled=true;btn.textContent='در حال ورود…';
+    fetch(API+'/api/driver/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,password:password})})
+    .then(function(r){return r.json()}).then(function(d){
+      if(!d||!d.ok||!d.token){$('loginErr').textContent=(d&&d.err)||'ورود ناموفق بود.';return}
+      save({id:d.id,token:d.token,name:d.name||'',phone:phone,approved:d.approved===true});
+      syncFromServer();
+    }).catch(function(){$('loginErr').textContent='اتصال به سرور برقرار نشد.'})
+    .finally(function(){btn.disabled=false;btn.textContent='ورود به پنل راننده'});
+  });
   /* ---------- ثبت‌نام ---------- */
   $('dGps').addEventListener('click',function(){
     var b=this;b.disabled=true;b.textContent='در حال گرفتن موقعیت…';
@@ -187,9 +220,12 @@
     var name=$('dName').value.trim(),phone=$('dPhone').value.trim(),radius=$('dRadius').value;
     if(name.length<2){$('regErr').textContent='نام را کامل وارد کن.';return}
     if(!/^09\d{9}$/.test(phone)){$('regErr').textContent='شماره موبایل معتبر وارد کن.';return}
+    var password=$('dPassword').value;
+    if(password.length<8||password.length>128){$('regErr').textContent='رمز عبور باید حداقل ۸ نویسه داشته باشد.';return}
+    if(password!==$('dPasswordConfirm').value){$('regErr').textContent='تکرار رمز عبور مطابقت ندارد.';return}
     if(!gpsPos){$('regErr').textContent='اول موقعیت پایگاه را با GPS ثبت کن.';return}
     var btn=this;btn.disabled=true;btn.textContent='در حال ثبت‌نام…';
-    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,vehicle:$('dVehicle').value.trim(),city:$('dCity').value.trim(),lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
+    fetch(API+'/api/driver/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,password:password,vehicle:$('dVehicle').value.trim(),city:$('dCity').value.trim(),lat:gpsPos.lat,lng:gpsPos.lng,radius:Number(radius)})})
     .then(function(r){return r.json()})
     .then(function(d){
       btn.disabled=false;btn.textContent='ثبت‌نام راننده';
@@ -216,12 +252,14 @@
 
   /* ---------- وضعیت و نما ---------- */
   function showApproved(){
+    $('loginCard').classList.add('hidden');
     $('regCard').classList.add('hidden');
     $('pendingCard').classList.add('hidden');
     $('panelCard').classList.remove('hidden');
     $('statsCard').classList.remove('hidden');
   }
   function showPending(){
+    $('loginCard').classList.add('hidden');
     var d=load();
     $('regCard').classList.add('hidden');
     $('panelCard').classList.add('hidden');
@@ -230,6 +268,7 @@
     if(d)$('pendingText').textContent='ثبت‌نام «'+d.name+'» رسیده و در صف بررسی مدیر REV است. به محض تأیید، این پنل فعال می‌شود و درخواست‌های امداد را می‌گیری.';
   }
   function showReg(){
+    $('loginCard').classList.add('hidden');
     $('regCard').classList.remove('hidden');
     $('pendingCard').classList.add('hidden');
     $('panelCard').classList.add('hidden');
@@ -258,11 +297,11 @@
   }
 
   function syncFromServer(){
-    var d=load();if(!d){showReg();return}
+    var d=load();if(!d){showLogin();return}
     fetch(API+'/api/driver/history?token='+encodeURIComponent(d.token),{cache:'no-store'})
     .then(function(r){return r.json()})
     .then(function(res){
-      if(!res||!res.ok||!res.driver){showReg();return}
+      if(!res||!res.ok||!res.driver){localStorage.removeItem(KEY);showLogin();return}
       var drv=res.driver;
       d.name=drv.name;d.phone=drv.phone;d.radius=drv.radius;d.approved=drv.approved===true;save(d);
       if(!drv.approved){showPending();startPendingPoll();return}
@@ -280,7 +319,7 @@
       startPolling();
     })
     .catch(function(){
-      if(d.approved){showApproved();startPolling()}else if(d.id){showPending()}else{showReg()}
+      if(d.approved){showApproved();startPolling()}else if(d.id){showPending()}else{showLogin()}
     });
   }
 
